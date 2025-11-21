@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+ <th:block th:replace="~{fragments/head :: head}"></th:block>
+</head>
+
+<body id="page-top">
+ <div id="wrapper">
+
+  <th:block th:replace="~{fragments/sidebar :: sidebar}"></th:block>
+  <div id="content-wrapper" class="d-flex flex-column">
+
+   <div id="content">
+
+    <th:block th:replace="~{fragments/topbar :: topbar}"></th:block>
+    <div class="container-fluid">
+     <div layout:fragment="content">
+     </div>
+    </div>
+
+   </div>
+
+   <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+  </div>
+ </div>
+ <a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+ </a>
+
+ <th:block th:replace="~{fragments/modals :: modals}"></th:block>
+
+ <th:block th:replace="~{fragments/scripts :: scripts}"></th:block>
+
+</body>
+
+</html>
