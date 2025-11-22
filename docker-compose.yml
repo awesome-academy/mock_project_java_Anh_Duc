@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   mysql:
@@ -18,7 +18,17 @@ services:
     networks:
       - booking-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root123}"]
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${DB_ROOT_PASSWORD:-root123}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
