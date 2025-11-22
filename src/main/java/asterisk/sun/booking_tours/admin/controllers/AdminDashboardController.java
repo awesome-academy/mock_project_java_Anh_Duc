@@ -6,11 +6,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("admin/dashboard")
-public class AdminDashboardController {
+public class AdminDashboardController extends BaseAdminController {
 
     @GetMapping
     public String showDashboard() {
         return "pages/dashboard";
     }
 
+    @Override
+    protected String getDefaultRedirectPath() {
+        return "redirect:/admin/dashboard";
+    }
 }

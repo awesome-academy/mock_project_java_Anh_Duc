@@ -1,5 +1,7 @@
 package asterisk.sun.booking_tours.admin.controllers;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +27,7 @@ import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/users")
-public class AdminUserController {
+public class AdminUserController extends BaseAdminController {
     private static final String ADMIN_USER_VIEW_PATH = "pages/user/";
     private final AdminUserService adminUserService;
     private final FormCreateUserValidator formCreateUserValidator;
@@ -52,6 +54,17 @@ public class AdminUserController {
         binder.addValidators(formUpdateUserValidator);
     }
 
+    @Override
+    protected String getDefaultRedirectPath() {
+        return "redirect:/admin/users";
+    }
+
+    @Override
+    protected void addCommonAttributes(ModelAndView mav) {
+        mav.addObject("roles", Role.values());
+        mav.addObject("statuses", UserStatus.values());
+    }
+
     @GetMapping
     public ModelAndView index(Model model) {
         ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "index");
@@ -64,7 +77,7 @@ public class AdminUserController {
     public ModelAndView showCreateForm(Model model) {
         ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "create");
         mav.addObject("formCreateUserDTO", new FormCreateUserDTO());
-        addFormAttributesToMav(mav);
+        addCommonAttributes(mav);
 
         return mav;
     }
@@ -90,7 +103,7 @@ public class AdminUserController {
 
         ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "edit");
         mav.addObject("formUpdateUserDTO", formUpdateUserDTO);
-        addFormAttributesToMav(mav);
+        addCommonAttributes(mav);
 
         return mav;
     }
@@ -112,16 +125,5 @@ public class AdminUserController {
         } catch (Exception e) {
             return userFormErrorHandler.handleServiceException(e, redirectAttributes, model, "edit");
         }
-    }
-
-    // Helper methods
-    private void addFormAttributesToMav(ModelAndView mav) {
-        mav.addObject("roles", Role.values());
-        mav.addObject("statuses", UserStatus.values());
-    }
-
-    private String handleSuccess(RedirectAttributes redirectAttributes, String message) {
-        redirectAttributes.addFlashAttribute("success", message);
-        return "redirect:/admin/users";
     }
 }
