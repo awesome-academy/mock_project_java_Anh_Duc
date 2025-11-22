@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.admin.validators;
+package asterisk.sun.booking_tours.admin.validator.user;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

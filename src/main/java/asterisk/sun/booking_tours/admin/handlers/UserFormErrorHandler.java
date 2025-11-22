@@ -14,11 +14,12 @@ public class UserFormErrorHandler {
     /**
      * Handle validation errors by adding necessary attributes to model
      * @param model Model to add attributes
-     * @return View path for create form
+     * @param viewName View name (e.g., "create" or "edit")
+     * @return View path for the specified form
      */
-    public String handleValidationErrors(Model model) {
+    public String handleValidationErrors(Model model, String viewName) {
         addFormAttributes(model);
-        return ADMIN_USER_VIEW_PATH + "create";
+        return ADMIN_USER_VIEW_PATH + viewName;
     }
 
     /**
@@ -26,17 +27,18 @@ public class UserFormErrorHandler {
      * @param e Exception thrown
      * @param redirectAttributes RedirectAttributes for flash messages
      * @param model Model to add attributes
-     * @return View path for create form
+     * @param viewName View name (e.g., "create" or "edit")
+     * @return View path for the specified form
      */
-    public String handleServiceException(Exception e, RedirectAttributes redirectAttributes, Model model) {
+    public String handleServiceException(Exception e, RedirectAttributes redirectAttributes, Model model, String viewName) {
         // Log the exception for debugging (in production, use proper logging)
-        System.err.println("Error creating user: " + e.getMessage());
+        System.err.println("Error processing user: " + e.getMessage());
         e.printStackTrace();
 
-        // Set generic error message for user
-        redirectAttributes.addFlashAttribute("error", "An error occurred while creating the user. Please try again.");
+        // Set error message for user
+        model.addAttribute("error", "An error occurred while processing the user. Please try again.");
         addFormAttributes(model);
-        return ADMIN_USER_VIEW_PATH + "create";
+        return ADMIN_USER_VIEW_PATH + viewName;
     }
 
     /**

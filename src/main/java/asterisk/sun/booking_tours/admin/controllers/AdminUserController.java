@@ -17,8 +17,8 @@ import asterisk.sun.booking_tours.admin.dto.user.FormCreateUserDTO;
 import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
 import asterisk.sun.booking_tours.admin.handlers.UserFormErrorHandler;
 import asterisk.sun.booking_tours.admin.services.AdminUserService;
-import asterisk.sun.booking_tours.admin.validators.FormCreateUserValidator;
-import asterisk.sun.booking_tours.admin.validators.FormUpdateUserValidator;
+import asterisk.sun.booking_tours.admin.validator.user.FormCreateUserValidator;
+import asterisk.sun.booking_tours.admin.validator.user.FormUpdateUserValidator;
 import asterisk.sun.booking_tours.module.user.Role;
 import asterisk.sun.booking_tours.module.user.UserStatus;
 import jakarta.validation.Valid;
@@ -73,14 +73,14 @@ public class AdminUserController {
     public String store(@Valid @ModelAttribute("formCreateUserDTO") FormCreateUserDTO formCreateUserDTO,
             BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
-            return userFormErrorHandler.handleValidationErrors(model);
+            return userFormErrorHandler.handleValidationErrors(model, "create");
         }
 
         try {
             adminUserService.createUser(formCreateUserDTO);
             return handleSuccess(redirectAttributes, "User created successfully!");
         } catch (Exception e) {
-            return userFormErrorHandler.handleServiceException(e, redirectAttributes, model);
+            return userFormErrorHandler.handleServiceException(e, redirectAttributes, model, "create");
         }
     }
 
@@ -103,24 +103,18 @@ public class AdminUserController {
         formUpdateUserDTO.setId(id);
 
         if (bindingResult.hasErrors()) {
-            addFormAttributes(model);
-            return ADMIN_USER_VIEW_PATH + "edit";
+            return userFormErrorHandler.handleValidationErrors(model, "edit");
         }
 
         try {
             adminUserService.updateUser(formUpdateUserDTO);
             return handleSuccess(redirectAttributes, "User updated successfully!");
         } catch (Exception e) {
-            return handleError(model, e, "edit");
+            return userFormErrorHandler.handleServiceException(e, redirectAttributes, model, "edit");
         }
     }
 
     // Helper methods
-    private void addFormAttributes(Model model) {
-        model.addAttribute("roles", Role.values());
-        model.addAttribute("statuses", UserStatus.values());
-    }
-
     private void addFormAttributesToMav(ModelAndView mav) {
         mav.addObject("roles", Role.values());
         mav.addObject("statuses", UserStatus.values());
@@ -129,11 +123,5 @@ public class AdminUserController {
     private String handleSuccess(RedirectAttributes redirectAttributes, String message) {
         redirectAttributes.addFlashAttribute("success", message);
         return "redirect:/admin/users";
-    }
-
-    private String handleError(Model model, Exception e, String viewName) {
-        model.addAttribute("error", "Error: " + e.getMessage());
-        addFormAttributes(model);
-        return ADMIN_USER_VIEW_PATH + viewName;
     }
 }
