@@ -6,6 +6,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.WebDataBinder;
@@ -13,9 +14,11 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import asterisk.sun.booking_tours.admin.dto.user.FormCreateUserDTO;
+import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
 import asterisk.sun.booking_tours.admin.handlers.UserFormErrorHandler;
 import asterisk.sun.booking_tours.admin.services.AdminUserService;
 import asterisk.sun.booking_tours.admin.validators.FormCreateUserValidator;
+import asterisk.sun.booking_tours.admin.validators.FormUpdateUserValidator;
 import asterisk.sun.booking_tours.module.user.Role;
 import asterisk.sun.booking_tours.module.user.UserStatus;
 import jakarta.validation.Valid;
@@ -26,19 +29,27 @@ public class AdminUserController {
     private static final String ADMIN_USER_VIEW_PATH = "pages/user/";
     private final AdminUserService adminUserService;
     private final FormCreateUserValidator formCreateUserValidator;
+    private final FormUpdateUserValidator formUpdateUserValidator;
     private final UserFormErrorHandler userFormErrorHandler;
 
     public AdminUserController(AdminUserService adminUserService,
             FormCreateUserValidator formCreateUserValidator,
+            FormUpdateUserValidator formUpdateUserValidator,
             UserFormErrorHandler userFormErrorHandler) {
         this.adminUserService = adminUserService;
         this.formCreateUserValidator = formCreateUserValidator;
+        this.formUpdateUserValidator = formUpdateUserValidator;
         this.userFormErrorHandler = userFormErrorHandler;
     }
 
     @InitBinder("formCreateUserDTO")
-    protected void initBinder(WebDataBinder binder) {
+    protected void initCreateBinder(WebDataBinder binder) {
         binder.addValidators(formCreateUserValidator);
+    }
+
+    @InitBinder("formUpdateUserDTO")
+    protected void initUpdateBinder(WebDataBinder binder) {
+        binder.addValidators(formUpdateUserValidator);
     }
 
     @GetMapping
@@ -53,8 +64,7 @@ public class AdminUserController {
     public ModelAndView showCreateForm(Model model) {
         ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "create");
         mav.addObject("formCreateUserDTO", new FormCreateUserDTO());
-        mav.addObject("roles", Role.values());
-        mav.addObject("statuses", UserStatus.values());
+        addFormAttributesToMav(mav);
 
         return mav;
     }
@@ -68,10 +78,62 @@ public class AdminUserController {
 
         try {
             adminUserService.createUser(formCreateUserDTO);
-            redirectAttributes.addFlashAttribute("success", "User created successfully!");
-            return "redirect:/admin/users";
+            return handleSuccess(redirectAttributes, "User created successfully!");
         } catch (Exception e) {
             return userFormErrorHandler.handleServiceException(e, redirectAttributes, model);
         }
+    }
+
+    @GetMapping("/edit/{id}")
+    public ModelAndView showEditForm(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        FormUpdateUserDTO formUpdateUserDTO = adminUserService.getUserById(id);
+
+        ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "edit");
+        mav.addObject("formUpdateUserDTO", formUpdateUserDTO);
+        addFormAttributesToMav(mav);
+
+        return mav;
+    }
+
+    @PostMapping("/update/{id}")
+    public String update(@PathVariable("id") Long id,
+            @Valid @ModelAttribute("formUpdateUserDTO") FormUpdateUserDTO formUpdateUserDTO,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+
+        formUpdateUserDTO.setId(id);
+
+        if (bindingResult.hasErrors()) {
+            addFormAttributes(model);
+            return ADMIN_USER_VIEW_PATH + "edit";
+        }
+
+        try {
+            adminUserService.updateUser(formUpdateUserDTO);
+            return handleSuccess(redirectAttributes, "User updated successfully!");
+        } catch (Exception e) {
+            return handleError(model, e, "edit");
+        }
+    }
+
+    // Helper methods
+    private void addFormAttributes(Model model) {
+        model.addAttribute("roles", Role.values());
+        model.addAttribute("statuses", UserStatus.values());
+    }
+
+    private void addFormAttributesToMav(ModelAndView mav) {
+        mav.addObject("roles", Role.values());
+        mav.addObject("statuses", UserStatus.values());
+    }
+
+    private String handleSuccess(RedirectAttributes redirectAttributes, String message) {
+        redirectAttributes.addFlashAttribute("success", message);
+        return "redirect:/admin/users";
+    }
+
+    private String handleError(Model model, Exception e, String viewName) {
+        model.addAttribute("error", "Error: " + e.getMessage());
+        addFormAttributes(model);
+        return ADMIN_USER_VIEW_PATH + viewName;
     }
 }

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Edit User"></title>
+  <th:block layout:fragment="custom-css">
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Edit User</h1>
+      <a th:href="@{/admin/users}" class="btn btn-secondary btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Back to List</span>
+      </a>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span th:text="${errorMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
+          </div>
+          <div class="card-body">
+            <form th:action="@{/admin/users/update/{id}(id=${formUpdateUserDTO.id})}" th:object="${formUpdateUserDTO}" method="post">
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="firstName" class="font-weight-bold">
+                      First Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}"
+                      placeholder="Enter first name">
+                    <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
+                      class="invalid-feedback d-block">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="lastName" class="font-weight-bold">
+                      Last Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}"
+                      placeholder="Enter last name">
+                    <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
+                      class="invalid-feedback d-block">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="username" class="font-weight-bold">
+                      Username <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="username" th:field="*{username}"
+                      placeholder="Enter username">
+                    <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Please enter a username (3-50 characters)
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="email" class="font-weight-bold">
+                      Email Address <span class="text-danger">*</span>
+                    </label>
+                    <input type="email" class="form-control" id="email" th:field="*{email}"
+                      placeholder="Enter email address">
+                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Please enter a valid email address
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="phone" class="font-weight-bold">
+                      Phone Number <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" class="form-control" id="phone" th:field="*{phone}" placeholder="Enter phone number">
+                    <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Please enter a 10-11 digit phone number
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="avatarUrl" class="font-weight-bold">
+                      Avatar URL
+                    </label>
+                    <input type="text" class="form-control" id="avatarUrl" th:field="*{avatarUrl}"
+                      placeholder="Enter avatar URL (optional)">
+                    <div th:if="${#fields.hasErrors('avatarUrl')}" th:errors="*{avatarUrl}"
+                      class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Enter URL for user avatar (optional)
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="role" class="font-weight-bold">
+                      Role <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-control" id="role" th:field="*{role}">
+                      <option value="">-- Select Role --</option>
+                      <option th:each="r : ${roles}" th:value="${r}" th:text="${r.name()}">
+                      </option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Select the user role (ADMIN or USER)
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="status" class="font-weight-bold">
+                      Status <span class="text-danger">*</span>
+                    </label>
+                    <select class="form-control" id="status" th:field="*{status}">
+                      <option value="">-- Select Status --</option>
+                      <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name()}">
+                      </option>
+                    </select>
+                    <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Select the user status
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="my-4">
+
+              <div class="form-group mb-0">
+                <button type="submit" class="btn btn-primary btn-icon-split">
+                  <span class="icon text-white-50">
+                    <i class="fas fa-save"></i>
+                  </span>
+                  <span class="text">Update User</span>
+                </button>
+                <a th:href="@{/admin/users}" class="btn btn-secondary ml-2">
+                  <i class="fas fa-times"></i> Cancel
+                </a>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </th:block>
+
+  <th:block layout:fragment="custom-scripts">
+
+  </th:block>
+
+</body>
+
+</html>

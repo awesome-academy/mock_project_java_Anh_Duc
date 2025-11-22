@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
- layout:decorate="~{layout/base}">
+  layout:decorate="~{layout/base}">
 
 <head>
- <title layout:title-append=" | Employee List"></title>
- <th:block layout:fragment="custom-css">
- </th:block>
+  <title layout:title-append=" | Page 404"></title>
+  <th:block layout:fragment="custom-css">
+  </th:block>
 </head>
 
 <body>
 
- <th:block layout:fragment="content">
-  <div class="row justify-content-center">
-   <div class="col-lg-6">
-    <div class="text-center mt-5">
-     <div class="error mx-auto" data-text="404">404</div>
-     <p class="lead text-gray-800 mb-5" th:text="${message}">Page Not Found</p>
-     <p class="text-gray-500 mb-0" th:if="${details}" th:text="${details}"></p>
-     <a href="/employees">&larr; Back to Dashboard</a>
+  <th:block layout:fragment="content">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="text-center mt-5">
+          <div class="error mx-auto" data-text="404">404</div>
+          <p class="lead text-gray-800 mb-5" th:text="${message}">Page Not Found</p>
+          <p class="text-gray-500 mb-0" th:if="${details}" th:text="${details}"></p>
+          <a th:href="@{/admin/dashboard}">&larr; Back to Dashboard</a>
+        </div>
+      </div>
     </div>
-   </div>
-  </div>
 
- </th:block>
+  </th:block>
 
- <th:block layout:fragment="custom-scripts">
- </th:block>
+  <th:block layout:fragment="custom-scripts">
+  </th:block>
 
 </body>
 
