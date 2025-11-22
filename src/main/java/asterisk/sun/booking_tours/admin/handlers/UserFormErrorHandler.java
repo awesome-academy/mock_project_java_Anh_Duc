@@ -42,6 +42,23 @@ public class UserFormErrorHandler {
     }
 
     /**
+     * Handle delete operation exceptions
+     * @param e Exception thrown
+     * @param redirectAttributes RedirectAttributes for flash messages
+     * @param redirectPath Redirect path
+     * @return Redirect path
+     */
+    public String handleDeleteException(Exception e, RedirectAttributes redirectAttributes, String redirectPath) {
+        // Log the exception for debugging (in production, use proper logging)
+        System.err.println("Error deleting user: " + e.getMessage());
+        e.printStackTrace();
+
+        // Set error message for user
+        redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete user: " + e.getMessage());
+        return redirectPath;
+    }
+
+    /**
      * Add common form attributes needed for the create user form
      * @param model Model to add attributes
      */

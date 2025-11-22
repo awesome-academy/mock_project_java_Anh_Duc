@@ -1,7 +1,5 @@
 package asterisk.sun.booking_tours.admin.controllers;
 
-import java.util.Map;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -124,6 +122,16 @@ public class AdminUserController extends BaseAdminController {
             return handleSuccess(redirectAttributes, "User updated successfully!");
         } catch (Exception e) {
             return userFormErrorHandler.handleServiceException(e, redirectAttributes, model, "edit");
+        }
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            adminUserService.deleteUser(id);
+            return handleSuccess(redirectAttributes, "User deleted successfully!");
+        } catch (Exception e) {
+            return userFormErrorHandler.handleDeleteException(e, redirectAttributes, getDefaultRedirectPath());
         }
     }
 }

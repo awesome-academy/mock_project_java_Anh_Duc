@@ -10,6 +10,11 @@ public abstract class BaseAdminController {
         return getDefaultRedirectPath();
     }
 
+    protected String handleError(RedirectAttributes redirectAttributes, String message) {
+        redirectAttributes.addFlashAttribute("errorMessage", message);
+        return getDefaultRedirectPath();
+    }
+
     protected abstract String getDefaultRedirectPath();
 
     protected abstract void addCommonAttributes(ModelAndView mav);

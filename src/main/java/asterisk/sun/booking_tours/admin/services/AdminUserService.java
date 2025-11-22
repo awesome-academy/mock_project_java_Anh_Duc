@@ -2,7 +2,6 @@ package asterisk.sun.booking_tours.admin.services;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException.NotFound;
 
 import asterisk.sun.booking_tours.admin.dto.user.FormCreateUserDTO;
 import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
@@ -50,5 +49,13 @@ public class AdminUserService {
             user.setAvatarUrl(formUpdateUserDTO.getAvatarUrl());
             userService.save(user);
         }
+    }
+
+    public void deleteUser(Long id) {
+        User user = userService.findById(id);
+        if (user == null) {
+            throw new NotFoundException("User with ID " + id + " not found");
+        }
+        userService.deleteById(id);
     }
 }
