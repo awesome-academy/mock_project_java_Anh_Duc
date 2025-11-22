@@ -47,6 +47,12 @@ public class AdminUserService {
             user.setRole(formUpdateUserDTO.getRole());
             user.setStatus(formUpdateUserDTO.getStatus());
             user.setAvatarUrl(formUpdateUserDTO.getAvatarUrl());
+
+            // Update password only if provided
+            if (formUpdateUserDTO.getPassword() != null && !formUpdateUserDTO.getPassword().isEmpty()) {
+                user.setPassword(formUpdateUserDTO.getPassword());
+            }
+
             userService.save(user);
         }
     }

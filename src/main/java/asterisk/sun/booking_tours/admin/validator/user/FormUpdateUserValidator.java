@@ -40,5 +40,16 @@ public class FormUpdateUserValidator implements Validator {
                 errors.rejectValue("email", "error.user", "Email is already in use");
             }
         }
+
+        // Validate password confirmation (only if password is provided)
+        if (formUpdateUserDTO.getPassword() != null && !formUpdateUserDTO.getPassword().isEmpty()) {
+            if (formUpdateUserDTO.getConfirmPassword() == null || formUpdateUserDTO.getConfirmPassword().isEmpty()) {
+                errors.rejectValue("confirmPassword", "password.required",
+                    "Confirm password is required when changing password");
+            } else if (!formUpdateUserDTO.getPassword().equals(formUpdateUserDTO.getConfirmPassword())) {
+                errors.rejectValue("confirmPassword", "password.mismatch",
+                    "Password and confirm password do not match");
+            }
+        }
     }
 }

@@ -39,6 +39,11 @@ public class FormUpdateUserDTO {
 
     private String avatarUrl;
 
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    private String password;
+
+    private String confirmPassword;
+
     public FormUpdateUserDTO() {
     }
 
@@ -112,5 +117,21 @@ public class FormUpdateUserDTO {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }
