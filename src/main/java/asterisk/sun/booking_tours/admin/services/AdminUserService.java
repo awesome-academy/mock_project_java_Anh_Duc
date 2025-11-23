@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import asterisk.sun.booking_tours.admin.dto.user.FormCreateUserDTO;
 import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
 import asterisk.sun.booking_tours.admin.dto.user.ListUserDTO;
-import asterisk.sun.booking_tours.admin.exceptions.NotFoundException;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.module.user.User;
 import asterisk.sun.booking_tours.module.user.UserService;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AdminUserService {
@@ -29,15 +29,16 @@ public class AdminUserService {
     }
 
     public FormUpdateUserDTO getUserById(Long id) {
-        User user = userService.findById(id);
-        if (user == null) {
-            throw new NotFoundException("User with ID " + id + " not found");
-        }
+        User user = userService.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
         return MapperHelper.map(user, FormUpdateUserDTO.class);
     }
 
     public void updateUser(FormUpdateUserDTO formUpdateUserDTO) {
-        User user = userService.findById(formUpdateUserDTO.getId());
+        User user = userService.findById(formUpdateUserDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + formUpdateUserDTO.getId()));
+
         if (user != null) {
             user.setUsername(formUpdateUserDTO.getUsername());
             user.setFirstName(formUpdateUserDTO.getFirstName());
@@ -58,10 +59,8 @@ public class AdminUserService {
     }
 
     public void deleteUser(Long id) {
-        User user = userService.findById(id);
-        if (user == null) {
-            throw new NotFoundException("User with ID " + id + " not found");
-        }
-        userService.deleteById(id);
+        User user = userService.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+
+        userService.delete(user);
     }
 }

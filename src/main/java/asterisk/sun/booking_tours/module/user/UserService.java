@@ -4,48 +4,36 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import asterisk.sun.booking_tours.module.user.projection.UserBasicProjection;
+import asterisk.sun.booking_tours.module.common.abtracts.BaseService;
 
 @Service
-public class UserService {
-    private final UserRepository userRepository;
+public class UserService extends BaseService<User, Long, UserRepository> {
 
     public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+        super(userRepository);
     }
 
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null);
+        return repository.findByUsername(username).orElse(null);
     }
 
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+        return repository.findByEmail(email).orElse(null);
     }
 
     public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        return repository.existsByUsername(username);
     }
 
     public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+        return repository.existsByEmail(email);
     }
 
     public List<UserBasicProjection> findAllBasic() {
-        return userRepository.findAllBy();
+        return repository.findAllBy();
     }
 
     public <T> List<T> findAllProjected(Class<T> type) {
-        return userRepository.findAllProjectedBy(type);
-    }
-
-    public User save(User user) {
-        return userRepository.save(user);
-    }
-
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
+        return repository.findAllProjectedBy(type);
     }
 }
