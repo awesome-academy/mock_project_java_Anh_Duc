@@ -18,6 +18,8 @@ import asterisk.sun.booking_tours.admin.services.AdminCategoryService;
 import asterisk.sun.booking_tours.admin.validator.category.FormCreateCategoryValidator;
 import asterisk.sun.booking_tours.admin.validator.category.FormEditCategoryValidator;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 @RequestMapping("/admin/categories")
@@ -99,5 +101,11 @@ public class AdminCategoryController extends BaseAdminController<AdminCategorySe
 
         service.updateCategory(formEditCategoryDTO);
         return handleSuccess(redirectAttributes, "Category updated successfully!");
+    }
+
+    @PostMapping("/delete/{id}")
+    public String postMethodName(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        service.deleteCategory(id);
+        return handleSuccess(redirectAttributes, "Category deleted successfully!");
     }
 }

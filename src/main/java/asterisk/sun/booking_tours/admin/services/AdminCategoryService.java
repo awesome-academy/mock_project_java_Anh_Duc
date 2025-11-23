@@ -51,4 +51,11 @@ public class AdminCategoryService {
 
         categoryService.save(category);
     }
+
+    public void deleteCategory(Long id) {
+        Category category = categoryService.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Category not found with id: " + id));
+
+        categoryService.delete(category);
+    }
 }
