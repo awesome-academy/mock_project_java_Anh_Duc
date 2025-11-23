@@ -57,7 +57,6 @@ public class AdminUserController extends BaseAdminController {
         return "redirect:/admin/users";
     }
 
-    @Override
     protected void addCommonAttributes(ModelAndView mav) {
         mav.addObject("roles", Role.values());
         mav.addObject("statuses", UserStatus.values());

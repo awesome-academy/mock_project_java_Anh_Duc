@@ -18,9 +18,4 @@ public class AdminDashboardController extends BaseAdminController {
     protected String getDefaultRedirectPath() {
         return "redirect:/admin/dashboard";
     }
-
-    @Override
-    protected void addCommonAttributes(ModelAndView mav) {
-        throw new UnsupportedOperationException("Unimplemented method 'addCommonAttributes'");
-    }
 }
