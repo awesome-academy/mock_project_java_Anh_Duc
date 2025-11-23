@@ -19,14 +19,12 @@ import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/categories")
-public class AdminCategoryController extends BaseAdminController {
-    private static final String ADMIN_CATEGORY_VIEW_PATH = "pages/category/";
-    private final AdminCategoryService adminCategoryService;
+public class AdminCategoryController extends BaseAdminController<AdminCategoryService> {
     private final FormCreateCategoryValidator formCreateCategoryValidator;
 
     public AdminCategoryController(AdminCategoryService adminCategoryService,
             FormCreateCategoryValidator formCreateCategoryValidator) {
-        this.adminCategoryService = adminCategoryService;
+        super(adminCategoryService, "pages/category/");
         this.formCreateCategoryValidator = formCreateCategoryValidator;
     }
 
@@ -36,11 +34,11 @@ public class AdminCategoryController extends BaseAdminController {
     }
 
     @GetMapping
-    public ModelAndView index(Model model) {
-        ModelAndView mav = new ModelAndView(ADMIN_CATEGORY_VIEW_PATH + "index");
-        mav.addObject("categories", adminCategoryService.getAllCategoriesForListing());
+    public String index(Model model) {
 
-        return mav;
+        model.addAttribute("categories", service.getAllCategoriesForListing());
+
+        return view("index");
     }
 
     @Override
@@ -49,10 +47,9 @@ public class AdminCategoryController extends BaseAdminController {
     }
 
     @GetMapping("/create")
-    public ModelAndView showCreateForm() {
-        ModelAndView mav = new ModelAndView(ADMIN_CATEGORY_VIEW_PATH + "create");
-        mav.addObject("formCreateCategoryDTO", new FormCreateCategoryDTO());
-        return mav;
+    public String showCreateForm(Model model) {
+        model.addAttribute("formCreateCategoryDTO", new FormCreateCategoryDTO());
+        return view("create");
     }
 
     @PostMapping("/create")
@@ -62,14 +59,10 @@ public class AdminCategoryController extends BaseAdminController {
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            return ADMIN_CATEGORY_VIEW_PATH + "create";
+            return getDefaultRedirectPath();
         }
 
-        try {
-            adminCategoryService.createCategory(formCreateCategoryDTO);
-            return handleSuccess(redirectAttributes, "Category created successfully!");
-        } catch (IllegalArgumentException e) {
-            return handleError(redirectAttributes, e.getMessage());
-        }
+        service.createCategory(formCreateCategoryDTO);
+        return handleSuccess(redirectAttributes, "Category created successfully!");
     }
 }

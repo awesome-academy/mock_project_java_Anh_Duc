@@ -1,5 +1,6 @@
 package asterisk.sun.booking_tours.admin.dto.user;
 
+import asterisk.sun.booking_tours.admin.validator.user.OptionalPassword;
 import asterisk.sun.booking_tours.module.user.Role;
 import asterisk.sun.booking_tours.module.user.UserStatus;
 import jakarta.validation.constraints.Email;
@@ -39,7 +40,8 @@ public class FormUpdateUserDTO {
 
     private String avatarUrl;
 
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    // Password is optional for updates - only validated if provided
+    @OptionalPassword(min = 6, max = 100, message = "Password must be between 6 and 100 characters when provided")
     private String password;
 
     private String confirmPassword;

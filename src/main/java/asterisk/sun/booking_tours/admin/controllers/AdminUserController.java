@@ -10,12 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import asterisk.sun.booking_tours.admin.dto.user.FormCreateUserDTO;
 import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
-import asterisk.sun.booking_tours.admin.handlers.UserFormErrorHandler;
 import asterisk.sun.booking_tours.admin.services.AdminUserService;
 import asterisk.sun.booking_tours.admin.validator.user.FormCreateUserValidator;
 import asterisk.sun.booking_tours.admin.validator.user.FormUpdateUserValidator;
@@ -25,21 +23,16 @@ import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/users")
-public class AdminUserController extends BaseAdminController {
-    private static final String ADMIN_USER_VIEW_PATH = "pages/user/";
-    private final AdminUserService adminUserService;
+public class AdminUserController extends BaseAdminController<AdminUserService> {
     private final FormCreateUserValidator formCreateUserValidator;
     private final FormUpdateUserValidator formUpdateUserValidator;
-    private final UserFormErrorHandler userFormErrorHandler;
 
     public AdminUserController(AdminUserService adminUserService,
             FormCreateUserValidator formCreateUserValidator,
-            FormUpdateUserValidator formUpdateUserValidator,
-            UserFormErrorHandler userFormErrorHandler) {
-        this.adminUserService = adminUserService;
+            FormUpdateUserValidator formUpdateUserValidator) {
+        super(adminUserService, "pages/user/");
         this.formCreateUserValidator = formCreateUserValidator;
         this.formUpdateUserValidator = formUpdateUserValidator;
-        this.userFormErrorHandler = userFormErrorHandler;
     }
 
     @InitBinder("formCreateUserDTO")
@@ -57,52 +50,45 @@ public class AdminUserController extends BaseAdminController {
         return "redirect:/admin/users";
     }
 
-    protected void addCommonAttributes(ModelAndView mav) {
-        mav.addObject("roles", Role.values());
-        mav.addObject("statuses", UserStatus.values());
+    protected void addCommonAttributes(Model model) {
+        model.addAttribute("roles", Role.values());
+        model.addAttribute("statuses", UserStatus.values());
     }
 
     @GetMapping
-    public ModelAndView index(Model model) {
-        ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "index");
-        mav.addObject("users", adminUserService.getAllUsersForListing());
-
-        return mav;
+    public String index(Model model) {
+        model.addAttribute("users", service.getAllUsersForListing());
+        return view("index");
     }
 
     @GetMapping("/create")
-    public ModelAndView showCreateForm(Model model) {
-        ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "create");
-        mav.addObject("formCreateUserDTO", new FormCreateUserDTO());
-        addCommonAttributes(mav);
+    public String showCreateForm(Model model) {
+        model.addAttribute("formCreateUserDTO", new FormCreateUserDTO());
+        addCommonAttributes(model);
 
-        return mav;
+        return view("create");
     }
 
-    @PostMapping("/store")
-    public String store(@Valid @ModelAttribute("formCreateUserDTO") FormCreateUserDTO formCreateUserDTO,
+    @PostMapping("/create")
+    public String create(@Valid @ModelAttribute("formCreateUserDTO") FormCreateUserDTO formCreateUserDTO,
             BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
-            return userFormErrorHandler.handleValidationErrors(model, "create");
+            addCommonAttributes(model);
+            return handleValidationErrors("create", bindingResult.getFieldError().getDefaultMessage());
         }
 
-        try {
-            adminUserService.createUser(formCreateUserDTO);
-            return handleSuccess(redirectAttributes, "User created successfully!");
-        } catch (Exception e) {
-            return userFormErrorHandler.handleServiceException(e, redirectAttributes, model, "create");
-        }
+        service.createUser(formCreateUserDTO);
+        return handleSuccess(redirectAttributes, "User created successfully!");
     }
 
     @GetMapping("/edit/{id}")
-    public ModelAndView showEditForm(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        FormUpdateUserDTO formUpdateUserDTO = adminUserService.getUserById(id);
+    public String showEditForm(@PathVariable("id") Long id, Model model) {
+        FormUpdateUserDTO formUpdateUserDTO = service.getUserById(id);
 
-        ModelAndView mav = new ModelAndView(ADMIN_USER_VIEW_PATH + "edit");
-        mav.addObject("formUpdateUserDTO", formUpdateUserDTO);
-        addCommonAttributes(mav);
+        model.addAttribute("formUpdateUserDTO", formUpdateUserDTO);
+        addCommonAttributes(model);
 
-        return mav;
+        return view("edit");
     }
 
     @PostMapping("/update/{id}")
@@ -113,24 +99,17 @@ public class AdminUserController extends BaseAdminController {
         formUpdateUserDTO.setId(id);
 
         if (bindingResult.hasErrors()) {
-            return userFormErrorHandler.handleValidationErrors(model, "edit");
+            addCommonAttributes(model);
+            return handleValidationErrors( "edit", bindingResult.getFieldError().getDefaultMessage());
         }
 
-        try {
-            adminUserService.updateUser(formUpdateUserDTO);
-            return handleSuccess(redirectAttributes, "User updated successfully!");
-        } catch (Exception e) {
-            return userFormErrorHandler.handleServiceException(e, redirectAttributes, model, "edit");
-        }
+        service.updateUser(formUpdateUserDTO);
+        return handleSuccess(redirectAttributes, "User updated successfully!");
     }
 
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
-        try {
-            adminUserService.deleteUser(id);
-            return handleSuccess(redirectAttributes, "User deleted successfully!");
-        } catch (Exception e) {
-            return userFormErrorHandler.handleDeleteException(e, redirectAttributes, getDefaultRedirectPath());
-        }
+        service.deleteUser(id);
+        return handleSuccess(redirectAttributes, "User deleted successfully!");
     }
 }

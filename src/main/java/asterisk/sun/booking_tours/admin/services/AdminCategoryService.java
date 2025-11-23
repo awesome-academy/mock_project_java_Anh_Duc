@@ -8,17 +8,14 @@ import asterisk.sun.booking_tours.admin.dto.category.FormCreateCategoryDTO;
 import asterisk.sun.booking_tours.admin.dto.category.ListCategoryDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.module.category.Category;
-import asterisk.sun.booking_tours.module.category.CategoryRepository;
 import asterisk.sun.booking_tours.module.category.CategoryService;
 
 @Service
 public class AdminCategoryService {
     private final CategoryService categoryService;
-    private final CategoryRepository categoryRepository;
 
-    public AdminCategoryService(CategoryService categoryService, CategoryRepository categoryRepository) {
+    public AdminCategoryService(CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.categoryRepository = categoryRepository;
     }
 
     public List<ListCategoryDTO> getAllCategoriesForListing() {
