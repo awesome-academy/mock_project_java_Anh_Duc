@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.module.common.abtracts.BaseService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,5 +27,9 @@ public class CategoryService extends BaseService<Category, Long, CategoryReposit
 
     public Optional<Category> findBySlug(String slug) {
         return repository.findBySlug(slug);
+    }
+
+    public List<Category> searchByKeyword(String keyword) {
+        return repository.searchByKeyword(keyword);
     }
 }

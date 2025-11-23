@@ -32,6 +32,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     List<UserBasicProjection> findAllBy();
 
-    @Query("SELECT u FROM User u WHERE CONCAT(u.username, ' ', u.email) LIKE %:keyword%")
+    @Query("SELECT u FROM User u WHERE CONCAT(u.username, ' ', u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<User> searchByKeyword(String keyword);
 }

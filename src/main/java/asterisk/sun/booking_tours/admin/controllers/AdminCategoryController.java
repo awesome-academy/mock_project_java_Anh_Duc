@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import asterisk.sun.booking_tours.admin.dto.category.FormCreateCategoryDTO;
@@ -18,7 +19,6 @@ import asterisk.sun.booking_tours.admin.services.AdminCategoryService;
 import asterisk.sun.booking_tours.admin.validator.category.FormCreateCategoryValidator;
 import asterisk.sun.booking_tours.admin.validator.category.FormEditCategoryValidator;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @Controller
@@ -46,9 +46,10 @@ public class AdminCategoryController extends BaseAdminController<AdminCategorySe
     }
 
     @GetMapping
-    public String index(Model model) {
+    public String index(Model model, @RequestParam(required = false) String keyword) {
 
-        model.addAttribute("categories", service.getAllCategoriesForListing());
+        model.addAttribute("categories", service.queryCategoriesByKeyword(keyword));
+        model.addAttribute("keyword", keyword);
 
         return view("index");
     }
