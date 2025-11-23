@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.module.common.entities;
+package asterisk.sun.booking_tours.module.common.abtracts;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
