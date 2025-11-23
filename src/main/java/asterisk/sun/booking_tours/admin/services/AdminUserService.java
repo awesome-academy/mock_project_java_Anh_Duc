@@ -19,8 +19,12 @@ public class AdminUserService {
         this.userService = userService;
     }
 
-    public List<ListUserDTO> getAllUsersForListing() {
-        return MapperHelper.mapList(userService.findAllBasic(), ListUserDTO.class);
+    public List<ListUserDTO> queryListUserByKeyword(String keyword) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return MapperHelper.mapList(userService.searchByKeyword(keyword), ListUserDTO.class);
+        }
+
+        return MapperHelper.mapList(userService.findAll(), ListUserDTO.class);
     }
 
     public void createUser(FormCreateUserDTO formCreateUserDTO) {

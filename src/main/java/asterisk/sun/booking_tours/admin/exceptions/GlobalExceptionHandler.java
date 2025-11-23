@@ -21,21 +21,6 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * Handle NotFoundException - when a requested resource is not found.
-     * Returns a custom 404 error page.
-     */
-    @ExceptionHandler(NotFoundException.class)
-    public ModelAndView handleNotFoundException(NotFoundException ex) {
-        logger.error("Resource not found: {}", ex.getMessage(), ex);
-
-        ModelAndView modelAndView = new ModelAndView("pages/404");
-        modelAndView.addObject("message", "Resource Not Found");
-        modelAndView.addObject("details", ex.getMessage());
-        modelAndView.setStatus(HttpStatus.NOT_FOUND);
-        return modelAndView;
-    }
-
-    /**
      * Handle EntityNotFoundException - JPA entity not found.
      * Returns a custom 404 error page.
      */

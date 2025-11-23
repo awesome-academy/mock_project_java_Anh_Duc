@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import asterisk.sun.booking_tours.module.user.projection.UserBasicProjection;
 
@@ -30,4 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Returns only: id, username, email, role, status
      */
     List<UserBasicProjection> findAllBy();
+
+    @Query("SELECT u FROM User u WHERE CONCAT(u.username, ' ', u.email) LIKE %:keyword%")
+    List<User> searchByKeyword(String keyword);
 }

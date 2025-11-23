@@ -36,4 +36,8 @@ public class UserService extends BaseService<User, Long, UserRepository> {
     public <T> List<T> findAllProjected(Class<T> type) {
         return repository.findAllProjectedBy(type);
     }
+
+    public List<User> searchByKeyword(String keyword) {
+        return repository.searchByKeyword(keyword);
+    }
 }
