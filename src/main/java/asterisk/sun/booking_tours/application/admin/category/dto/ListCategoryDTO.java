@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.admin.dto.category;
+package asterisk.sun.booking_tours.application.admin.category.dto;
 
 public class ListCategoryDTO {
     private Long id;

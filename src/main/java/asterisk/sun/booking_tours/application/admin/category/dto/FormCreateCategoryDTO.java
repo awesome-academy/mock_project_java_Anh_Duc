@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.admin.dto.category;
+package asterisk.sun.booking_tours.application.admin.category.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
