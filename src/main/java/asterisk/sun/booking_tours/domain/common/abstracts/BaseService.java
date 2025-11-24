@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.domain.common.abtracts;
+package asterisk.sun.booking_tours.domain.common.abstracts;
 
 import java.util.List;
 import java.util.Optional;

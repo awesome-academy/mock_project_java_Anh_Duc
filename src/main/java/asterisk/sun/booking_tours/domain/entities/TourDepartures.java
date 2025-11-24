@@ -2,7 +2,7 @@ package asterisk.sun.booking_tours.domain.entities;
 
 import java.time.LocalDate;
 
-import asterisk.sun.booking_tours.domain.common.abtracts.BaseEntity;
+import asterisk.sun.booking_tours.domain.common.abstracts.BaseEntity;
 import asterisk.sun.booking_tours.domain.enums.TourDepartureStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

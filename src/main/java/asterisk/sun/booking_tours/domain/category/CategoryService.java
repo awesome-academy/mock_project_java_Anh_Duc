@@ -1,35 +1,35 @@
-package asterisk.sun.booking_tours.domain.category;
+// package asterisk.sun.booking_tours.domain.category;
 
-import org.springframework.stereotype.Service;
+// import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.domain.common.abtracts.BaseService;
+// import asterisk.sun.booking_tours.domain.common.abtracts.BaseService;
 
-import java.util.List;
-import java.util.Optional;
+// import java.util.List;
+// import java.util.Optional;
 
-@Service
-public class CategoryService extends BaseService<Category, Long, CategoryRepository> {
-    public CategoryService(CategoryRepository categoryRepository) {
-        super(categoryRepository);
-    }
+// @Service
+// public class CategoryService extends BaseService<Category, Long, CategoryRepository> {
+//     public CategoryService(CategoryRepository categoryRepository) {
+//         super(categoryRepository);
+//     }
 
-    public boolean existsByName(String name) {
-        return repository.existsByName(name);
-    }
+//     public boolean existsByName(String name) {
+//         return repository.existsByName(name);
+//     }
 
-    public boolean existsBySlug(String slug) {
-        return repository.existsBySlug(slug);
-    }
+//     public boolean existsBySlug(String slug) {
+//         return repository.existsBySlug(slug);
+//     }
 
-    public Optional<Category> findByName(String name) {
-        return repository.findByName(name);
-    }
+//     public Optional<Category> findByName(String name) {
+//         return repository.findByName(name);
+//     }
 
-    public Optional<Category> findBySlug(String slug) {
-        return repository.findBySlug(slug);
-    }
+//     public Optional<Category> findBySlug(String slug) {
+//         return repository.findBySlug(slug);
+//     }
 
-    public List<Category> searchByKeyword(String keyword) {
-        return repository.searchByKeyword(keyword);
-    }
-}
+//     public List<Category> searchByKeyword(String keyword) {
+//         return repository.searchByKeyword(keyword);
+//     }
+// }

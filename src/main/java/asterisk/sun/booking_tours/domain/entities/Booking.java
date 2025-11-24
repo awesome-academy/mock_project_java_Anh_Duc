@@ -2,7 +2,7 @@ package asterisk.sun.booking_tours.domain.entities;
 
 import java.math.BigDecimal;
 
-import asterisk.sun.booking_tours.domain.common.abtracts.BaseEntity;
+import asterisk.sun.booking_tours.domain.common.abstracts.BaseEntity;
 import asterisk.sun.booking_tours.domain.enums.BookingStatus;
 import asterisk.sun.booking_tours.domain.user.User;
 import jakarta.persistence.Column;

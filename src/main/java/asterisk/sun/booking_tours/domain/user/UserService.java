@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.domain.common.abtracts.BaseService;
+import asterisk.sun.booking_tours.domain.common.abstracts.BaseService;
 import asterisk.sun.booking_tours.domain.user.projection.UserBasicProjection;
 
 @Service

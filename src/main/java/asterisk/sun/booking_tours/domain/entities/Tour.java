@@ -1,7 +1,7 @@
 package asterisk.sun.booking_tours.domain.entities;
 
 import asterisk.sun.booking_tours.domain.category.Category;
-import asterisk.sun.booking_tours.domain.common.abtracts.BaseEntity;
+import asterisk.sun.booking_tours.domain.common.abstracts.BaseEntity;
 import asterisk.sun.booking_tours.domain.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

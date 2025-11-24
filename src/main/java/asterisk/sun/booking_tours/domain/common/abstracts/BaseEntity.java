@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.domain.common.abtracts;
+package asterisk.sun.booking_tours.domain.common.abstracts;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
