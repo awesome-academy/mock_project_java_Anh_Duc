@@ -2,7 +2,7 @@ package asterisk.sun.booking_tours.admin.validator.category;
 
 import asterisk.sun.booking_tours.admin.dto.category.FormEditCategoryDTO;
 import asterisk.sun.booking_tours.module.category.Category;
-import asterisk.sun.booking_tours.module.category.CategoryService;
+import asterisk.sun.booking_tours.module.category.CategoryQueryService;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -12,10 +12,10 @@ import java.util.Optional;
 
 @Component
 public class FormEditCategoryValidator implements Validator {
-    private final CategoryService categoryService;
+    private final CategoryQueryService queryService;
 
-    public FormEditCategoryValidator(CategoryService categoryService) {
-        this.categoryService = categoryService;
+    public FormEditCategoryValidator(CategoryQueryService queryService) {
+        this.queryService = queryService;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class FormEditCategoryValidator implements Validator {
 
         // Validate name uniqueness (excluding current category)
         if (formEditCategoryDTO.getName() != null && !formEditCategoryDTO.getName().isEmpty()) {
-            Optional<Category> existingCategoryByName = categoryService.findByName(formEditCategoryDTO.getName());
+            Optional<Category> existingCategoryByName = queryService.findByName(formEditCategoryDTO.getName());
             if (existingCategoryByName.isPresent() &&
                 !existingCategoryByName.get().getId().equals(formEditCategoryDTO.getId())) {
                 errors.rejectValue("name", "error.category", "Category name already exists");
@@ -38,7 +38,7 @@ public class FormEditCategoryValidator implements Validator {
 
         // Validate slug uniqueness (excluding current category)
         if (formEditCategoryDTO.getSlug() != null && !formEditCategoryDTO.getSlug().isEmpty()) {
-            Optional<Category> existingCategoryBySlug = categoryService.findBySlug(formEditCategoryDTO.getSlug());
+            Optional<Category> existingCategoryBySlug = queryService.findBySlug(formEditCategoryDTO.getSlug());
             if (existingCategoryBySlug.isPresent() &&
                 !existingCategoryBySlug.get().getId().equals(formEditCategoryDTO.getId())) {
                 errors.rejectValue("slug", "error.category", "Category slug already exists");
