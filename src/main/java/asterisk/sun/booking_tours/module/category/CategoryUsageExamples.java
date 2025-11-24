@@ -163,24 +163,40 @@ public class CategoryUsageExamples {
     }
     */
 
-    // ========== Example 8: Domain Events ==========
+    // ========== Example 8: Domain Events ❌ NOT IMPLEMENTED ==========
 
-    public void example8_DomainEvents(CategoryCommandService commandService) {
-        // When you create a category:
-        Category category = commandService.createCategory(
-            "Event Example",
-            "This will trigger an event",
-            "event-example"
-        );
+    /**
+     * Domain Events CHƯA được implement trong dự án này
+     *
+     * Lý do:
+     * - Dự án còn đơn giản
+     * - Chưa có nhiều side effects cần xử lý
+     * - Ưu tiên code đơn giản, dễ hiểu
+     *
+     * Khi nào cần implement?
+     * - Khi cần gửi email/SMS sau action
+     * - Khi cần clear cache, update search index
+     * - Khi có nhiều listeners quan tâm
+     *
+     * Tham khảo:
+     * - DOMAIN_EVENTS_EXPLAINED.md - Giải thích chi tiết
+     * - BEFORE_AFTER_EVENTS_COMPARISON.md - So sánh performance
+     */
+    public void example8_DomainEventsNotImplemented() {
+        // Domain Events would work like this (if implemented):
 
-        // CategoryCreatedEvent is automatically published
-        // Listeners can handle it:
-        // - Clear cache
-        // - Send notifications
-        // - Update search index
-        // - Log analytics
+        // Category category = commandService.createCategory(...);
+        // ↓
+        // CategoryCreatedEvent is published
+        // ↓
+        // Listeners automatically handle:
+        // - Cache clearing
+        // - Email notifications
+        // - Search indexing
+        // - Analytics tracking
 
-        // See: CategoryEventListener.java
+        // But for now: Keep it simple! ✅
+        System.out.println("Domain Events not implemented - and that's OK!");
     }
 
     // ========== Example 9: Backward Compatibility ==========

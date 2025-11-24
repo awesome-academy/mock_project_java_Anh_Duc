@@ -4,6 +4,21 @@
 
 Dự án đã được cải thiện từ **Anemic Domain Model** sang **Rich Domain Model** với các DDD principles, nhưng vẫn giữ tính đơn giản và thực tế.
 
+> **🎯 Chiến lược:** Áp dụng DDD một cách **pragmatic** - chỉ lấy những gì cần thiết!
+>
+> ✅ **ĐÃ IMPLEMENT:**
+> - Rich Domain Model (Category entity với business logic)
+> - CQRS Pattern (Command/Query services)
+> - Value Objects (Slug, CategoryName)
+> - Application Layer improvements
+>
+> ⏳ **CHƯA IMPLEMENT (giữ lại cho sau):**
+> - ❌ Domain Events (quá phức tạp cho dự án hiện tại)
+> - ❌ Event Sourcing (không cần thiết)
+> - ❌ Aggregate boundaries nghiêm ngặt (giữ đơn giản)
+>
+> **Lý do:** Ưu tiên code đơn giản, dễ hiểu, dễ maintain hơn là "chuẩn DDD"!
+
 ---
 
 ## ✅ Các cải tiến đã hoàn thành
@@ -165,9 +180,24 @@ public class AdminCategoryService {
 
 ---
 
-### 5️⃣ **Domain Events**
+### 5️⃣ **Domain Events** ⚠️ KHÔNG IMPLEMENT
 
-Thêm event-driven architecture:
+> **📝 Quyết định:** Domain Events CHƯA được implement vì:
+> - Dự án còn đơn giản, chưa có nhiều side effects
+> - Ưu tiên code dễ hiểu hơn là "theo chuẩn"
+> - Có thể thêm sau khi cần thiết
+
+**Khi nào sẽ implement?**
+- Khi cần gửi email/SMS sau khi tạo category
+- Khi cần clear cache, update search index
+- Khi có nhiều listeners quan tâm đến một event
+- Khi cần async processing
+
+**Tài liệu tham khảo (để học tập sau):**
+- `DOMAIN_EVENTS_EXPLAINED.md` - Giải thích chi tiết
+- `BEFORE_AFTER_EVENTS_COMPARISON.md` - So sánh trước/sau
+
+**Ví dụ (nếu implement sau này):**
 
 ```java
 // Event
@@ -182,26 +212,28 @@ public Category createCategory(...) {
     Category category = Category.create(...);
     Category saved = repository.save(category);
 
-    // Publish event
-    eventPublisher.publishEvent(
-        new CategoryCreatedEvent(saved.getId(), saved.getName())
-    );
+    // Publish event (CHƯA CÓ)
+    // eventPublisher.publishEvent(
+    //     new CategoryCreatedEvent(saved.getId(), saved.getName())
+    // );
 
     return saved;
 }
 
-// Listener
-@EventListener
-public void handleCategoryCreated(CategoryCreatedEvent event) {
-    // Clear cache, send notification, update search index...
-}
+// Listener (CHƯA CÓ)
+// @EventListener
+// public void handleCategoryCreated(CategoryCreatedEvent event) {
+//     // Clear cache, send notification, update search index...
+// }
 ```
 
-**Lợi ích:**
+**Lợi ích (khi implement):**
 - ✅ Decoupling: Services không phụ thuộc trực tiếp
 - ✅ Extensibility: Dễ thêm side effects
 - ✅ Async Processing: Có thể xử lý bất đồng bộ
 - ✅ Event Sourcing: Foundation cho event sourcing
+
+**Nhưng hiện tại:** Chưa cần thiết! ✅
 
 ---
 

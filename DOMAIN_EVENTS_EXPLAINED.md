@@ -1,5 +1,19 @@
 # 🎯 Domain Events - Giải thích chi tiết
 
+> **⚠️ LƯU Ý:** File này chỉ dùng để **THAM KHẢO** và **HỌC TẬP**.
+>
+> Domain Events **CHƯA** được implement trong dự án vì:
+> - ✅ Dự án còn đơn giản, chưa cần phức tạp hóa
+> - ✅ Ưu tiên code đơn giản, dễ hiểu trước
+> - ✅ Có thể thêm sau khi dự án lớn hơn
+>
+> **Khi nào nên implement?**
+> - Khi có nhiều side effects sau một action
+> - Khi cần async processing (email, notifications...)
+> - Khi hệ thống trở nên phức tạp hơn
+>
+> ---
+
 ## 📚 Domain Event là gì?
 
 **Domain Event** là một **sự kiện quan trọng** đã xảy ra trong domain (nghiệp vụ) của bạn mà các phần khác của hệ thống có thể quan tâm.

@@ -1,5 +1,18 @@
 # 🔄 So sánh: Trước và Sau khi dùng Domain Events
 
+> **⚠️ LƯU Ý:** File này chỉ dùng để **THAM KHẢO** và **SO SÁNH**.
+>
+> Domain Events **CHƯA** được implement trong dự án hiện tại.
+>
+> File này giúp bạn hiểu:
+> - ✅ Lợi ích của Domain Events
+> - ✅ Khi nào nên dùng
+> - ✅ So sánh performance và code quality
+>
+> **Quyết định:** Giữ code đơn giản cho đến khi thực sự cần thiết!
+>
+> ---
+
 ## 📊 Kịch bản: Admin tạo Category "Technology Tours"
 
 ---

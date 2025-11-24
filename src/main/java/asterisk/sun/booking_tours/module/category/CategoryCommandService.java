@@ -1,10 +1,7 @@
 package asterisk.sun.booking_tours.module.category;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import asterisk.sun.booking_tours.module.category.event.CategoryCreatedEvent;
 
 /**
  * Category Command Service - Handles WRITE operations
@@ -16,15 +13,12 @@ public class CategoryCommandService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryQueryService queryService;
-    private final ApplicationEventPublisher eventPublisher;
 
     public CategoryCommandService(
             CategoryRepository categoryRepository,
-            CategoryQueryService queryService,
-            ApplicationEventPublisher eventPublisher) {
+            CategoryQueryService queryService) {
         this.categoryRepository = categoryRepository;
         this.queryService = queryService;
-        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -43,16 +37,8 @@ public class CategoryCommandService {
 
         // Use factory method with built-in validation
         Category category = Category.create(name, description, slug);
-        Category savedCategory = categoryRepository.save(category);
 
-        // Publish domain event
-        eventPublisher.publishEvent(new CategoryCreatedEvent(
-            savedCategory.getId(),
-            savedCategory.getName(),
-            savedCategory.getSlug()
-        ));
-
-        return savedCategory;
+        return categoryRepository.save(category);
     }
 
     /**

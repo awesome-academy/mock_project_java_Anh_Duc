@@ -1,20 +1,40 @@
 # ✅ Checklist - Cải tiến DDD cho Category Module
 
+> **🎯 UPDATE:** Domain Events đã được XÓA để giữ code đơn giản!
+>
+> **Lý do:**
+> - Dự án còn đơn giản, chưa cần events
+> - Ưu tiên code dễ hiểu, dễ maintain
+> - Có thể thêm sau khi thực sự cần thiết
+>
+> **Giữ lại documentation về Events** để tham khảo và học tập!
+
+---
+
 ## 📋 Files đã tạo mới
 
+### ✅ Implemented (Active)
 - [x] `CategoryCommandService.java` - Write operations service
 - [x] `CategoryQueryService.java` - Read operations service
 - [x] `CategoryUsageExamples.java` - Code examples
 - [x] `valueobject/CategoryName.java` - Value object
 - [x] `valueobject/Slug.java` - Value object with auto-generation
-- [x] `event/CategoryCreatedEvent.java` - Domain event
-- [x] `event/CategoryEventListener.java` - Event handler example
 - [x] `DDD_IMPROVEMENTS.md` - Comprehensive documentation
 - [x] `SUMMARY.md` - Quick overview
 - [x] `ARCHITECTURE.md` - Visual architecture guide
 - [x] `CHECKLIST.md` - This file
 
-**Total new files:** 11
+### 📚 Documentation Only (For Reference)
+- [x] `DOMAIN_EVENTS_EXPLAINED.md` - Giải thích Domain Events (tham khảo)
+- [x] `BEFORE_AFTER_EVENTS_COMPARISON.md` - So sánh Events (tham khảo)
+
+### ❌ Removed (Over-engineering)
+- ~~`event/CategoryCreatedEvent.java`~~ - Đã xóa
+- ~~`event/CategoryEventListener.java`~~ - Đã xóa
+- ~~`event/CategoryEventListenerDemo.java`~~ - Đã xóa
+- ~~`config/AsyncEventConfig.java`~~ - Đã xóa
+
+**Total active files:** 9 (giảm từ 13)
 
 ---
 
@@ -53,11 +73,13 @@
 - [x] Self-validation
 - [x] Auto-generation (Slug.fromText())
 
-### 4. Domain Events
-- [x] CategoryCreatedEvent
-- [x] Event publishing trong CommandService
-- [x] Example event listener
-- [x] Spring ApplicationEventPublisher integration
+### 4. Domain Events ❌ NOT IMPLEMENTED
+> **Quyết định:** Không implement vì chưa cần thiết
+- [ ] ~~CategoryCreatedEvent~~ - Đã xóa
+- [ ] ~~Event publishing trong CommandService~~ - Đã xóa
+- [ ] ~~Example event listener~~ - Đã xóa
+- [ ] ~~Spring ApplicationEventPublisher integration~~ - Đã xóa
+- [x] Documentation về Events (giữ lại để tham khảo)
 
 ### 5. Application Layer
 - [x] AdminCategoryService refactored
