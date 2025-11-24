@@ -3,7 +3,7 @@
   layout:decorate="~{layout/base}">
 
 <head>
-  <title layout:title-append=" | User List"></title>
+  <title layout:title-append=" | Category List"></title>
   <th:block layout:fragment="custom-css">
   </th:block>
 </head>
@@ -13,28 +13,28 @@
   <th:block layout:fragment="content">
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">User Management</h1>
-      <a th:href="@{/admin/users/create}" class="btn btn-primary btn-icon-split">
+      <h1 class="h3 mb-0 text-gray-800">Category Management</h1>
+      <a th:href="@{/admin/categories/create}" class="btn btn-primary btn-icon-split">
         <span class="icon text-white-50">
           <i class="fas fa-plus"></i>
         </span>
-        <span class="text">Add User</span>
+        <span class="text">Add Category</span>
       </a>
     </div>
 
     <!-- Search Form -->
     <div class="card shadow mb-4">
       <div class="card-body">
-        <form th:action="@{/admin/users}" method="get" class="form-inline">
+        <form th:action="@{/admin/categories}" method="get" class="form-inline">
           <div class="form-group mr-3 mb-2">
             <label for="keyword" class="mr-2">Search:</label>
             <input type="text" class="form-control" id="keyword" name="keyword" th:value="${keyword}"
-              placeholder="Search by name and email" style="min-width: 300px;">
+              placeholder="Search by name or description..." style="min-width: 300px;">
           </div>
           <button type="submit" class="btn btn-primary mb-2 mr-2">
             <i class="fas fa-search"></i> Search
           </button>
-          <a th:href="@{/admin/users}" class="btn btn-secondary mb-2">
+          <a th:href="@{/admin/categories}" class="btn btn-secondary mb-2">
             <i class="fas fa-undo"></i> Reset
           </a>
         </form>
@@ -62,42 +62,32 @@
       <div class="col-12">
         <div class="card shadow mb-4">
           <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">List Users</h6>
+            <h6 class="m-0 font-weight-bold text-primary">List Categories</h6>
           </div>
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-bordered table-hover" id="userTable" width="100%" cellspacing="0">
+              <table class="table table-bordered table-hover" id="categoryTable" width="100%" cellspacing="0">
                 <thead>
                   <tr class="bg-light">
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
+                    <th>Slug</th>
+                    <th>Description</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-
-                  <tr th:each="user : ${users}">
-
-                    <td th:text="${user.id}"></td>
-                    <td th:text="${user.username}"></td>
-                    <td th:text="${user.email}"></td>
+                  <tr th:each="category : ${categories}">
+                    <td th:text="${category.id}"></td>
+                    <td th:text="${category.name}"></td>
+                    <td th:text="${category.slug}"></td>
+                    <td th:text="${category.description}"></td>
                     <td>
-                      <span th:if="${user.role.name() == 'ADMIN'}" class="badge badge-danger">Admin</span>
-                      <span th:if="${user.role.name() == 'USER'}" class="badge badge-primary">User</span>
-                    </td>
-                    <td>
-                      <span th:if="${user.status.name() == 'ACTIVE'}" class="badge badge-success">Active</span>
-                      <span th:if="${user.status.name() == 'INACTIVE'}" class="badge badge-secondary">Inactive</span>
-                    </td>
-                    <td>
-                      <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-info">Edit</a>
+                      <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-sm btn-info">Edit</a>
 
                       <div class="d-inline">
-                        <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" class="d-inline"
-                          onsubmit="return confirm('Do you want to delete this user?');">
+                        <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post" class="d-inline"
+                          onsubmit="return confirm('Do you want to delete this category?');">
                           <button type="submit" class="btn btn-sm btn-danger">
                             Delete
                           </button>

@@ -3,7 +3,7 @@
   layout:decorate="~{layout/base}">
 
 <head>
-  <title layout:title-append=" | Create User"></title>
+  <title layout:title-append=" | Edit User"></title>
   <th:block layout:fragment="custom-css">
   </th:block>
 </head>
@@ -13,7 +13,7 @@
   <th:block layout:fragment="content">
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Create New User</h1>
+      <h1 class="h3 mb-0 text-gray-800">Edit User</h1>
       <a th:href="@{/admin/users}" class="btn btn-secondary btn-icon-split">
         <span class="icon text-white-50">
           <i class="fas fa-arrow-left"></i>
@@ -46,7 +46,7 @@
             <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
           </div>
           <div class="card-body">
-            <form th:action="@{/admin/users/create}" th:object="${formCreateUserDTO}" method="post">
+            <form th:action="@{/admin/users/update/{id}(id=${formUpdateUserDTO.id})}" th:object="${formUpdateUserDTO}" method="post">
 
               <div class="row">
                 <div class="col-md-6">
@@ -140,39 +140,6 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="password" class="font-weight-bold">
-                      Password <span class="text-danger">*</span>
-                    </label>
-                    <input type="password" class="form-control" id="password" th:field="*{password}"
-                      placeholder="Enter password">
-                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                      class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Password must be at least 6 characters
-                    </small>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="confirmPassword" class="font-weight-bold">
-                      Confirm Password <span class="text-danger">*</span>
-                    </label>
-                    <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}"
-                      placeholder="Confirm password">
-                    <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
-                      class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Please re-enter your password
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
                     <label for="role" class="font-weight-bold">
                       Role <span class="text-danger">*</span>
                     </label>
@@ -209,12 +176,59 @@
 
               <hr class="my-4">
 
+              <!-- Password Section -->
+              <div class="row">
+                <div class="col-12">
+                  <h6 class="font-weight-bold text-primary mb-3">
+                    <i class="fas fa-key"></i> Change Password (Optional)
+                  </h6>
+                  <small class="text-muted d-block mb-3">
+                    Leave password fields empty if you don't want to change the password
+                  </small>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="password" class="font-weight-bold">
+                      New Password
+                    </label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}"
+                      placeholder="Enter new password (optional)">
+                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                      class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Password must be at least 6 characters
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="confirmPassword" class="font-weight-bold">
+                      Confirm New Password
+                    </label>
+                    <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}"
+                      placeholder="Confirm new password">
+                    <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                      class="invalid-feedback d-block">
+                    </div>
+                    <small class="form-text text-muted">
+                      Re-enter the new password
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="my-4">
+
               <div class="form-group mb-0">
                 <button type="submit" class="btn btn-primary btn-icon-split">
                   <span class="icon text-white-50">
                     <i class="fas fa-save"></i>
                   </span>
-                  <span class="text">Save User</span>
+                  <span class="text">Update User</span>
                 </button>
                 <a th:href="@{/admin/users}" class="btn btn-secondary ml-2">
                   <i class="fas fa-times"></i> Cancel
