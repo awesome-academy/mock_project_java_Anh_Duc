@@ -5,8 +5,8 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
-import asterisk.sun.booking_tours.module.user.User;
-import asterisk.sun.booking_tours.module.user.UserService;
+import asterisk.sun.booking_tours.domain.user.User;
+import asterisk.sun.booking_tours.domain.user.UserService;
 
 @Component
 public class FormUpdateUserValidator implements Validator {

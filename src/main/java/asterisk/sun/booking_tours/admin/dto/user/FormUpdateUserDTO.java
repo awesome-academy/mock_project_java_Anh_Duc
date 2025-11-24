@@ -1,8 +1,8 @@
 package asterisk.sun.booking_tours.admin.dto.user;
 
 import asterisk.sun.booking_tours.admin.validator.user.OptionalPassword;
-import asterisk.sun.booking_tours.module.user.Role;
-import asterisk.sun.booking_tours.module.user.UserStatus;
+import asterisk.sun.booking_tours.domain.user.Role;
+import asterisk.sun.booking_tours.domain.user.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

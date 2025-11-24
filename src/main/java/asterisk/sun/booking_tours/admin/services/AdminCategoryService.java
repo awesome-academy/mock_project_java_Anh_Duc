@@ -8,8 +8,8 @@ import asterisk.sun.booking_tours.admin.dto.category.FormCreateCategoryDTO;
 import asterisk.sun.booking_tours.admin.dto.category.FormEditCategoryDTO;
 import asterisk.sun.booking_tours.admin.dto.category.ListCategoryDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
-import asterisk.sun.booking_tours.module.category.Category;
-import asterisk.sun.booking_tours.module.category.CategoryService;
+import asterisk.sun.booking_tours.domain.category.Category;
+import asterisk.sun.booking_tours.domain.category.CategoryService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service

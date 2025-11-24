@@ -9,8 +9,8 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
-import asterisk.sun.booking_tours.module.user.Role;
-import asterisk.sun.booking_tours.module.user.UserStatus;
+import asterisk.sun.booking_tours.domain.user.Role;
+import asterisk.sun.booking_tours.domain.user.UserStatus;
 
 import java.util.Set;
 

@@ -1,7 +1,7 @@
 package asterisk.sun.booking_tours.admin.validator.category;
 
 import asterisk.sun.booking_tours.admin.dto.category.FormCreateCategoryDTO;
-import asterisk.sun.booking_tours.module.category.CategoryService;
+import asterisk.sun.booking_tours.domain.category.CategoryService;
 
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

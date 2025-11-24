@@ -1,9 +1,9 @@
-package asterisk.sun.booking_tours.admin.dto.user;
+package asterisk.sun.booking_tours.domain.user.projection;
 
 import asterisk.sun.booking_tours.domain.user.Role;
 import asterisk.sun.booking_tours.domain.user.UserStatus;
 
-public interface UserListProjection {
+public interface UserBasicProjection {
     Long getId();
     String getUsername();
     String getEmail();

@@ -5,7 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import asterisk.sun.booking_tours.admin.dto.user.FormCreateUserDTO;
-import asterisk.sun.booking_tours.module.user.UserService;
+import asterisk.sun.booking_tours.domain.user.UserService;
 
 @Component
 public class FormCreateUserValidator implements Validator {

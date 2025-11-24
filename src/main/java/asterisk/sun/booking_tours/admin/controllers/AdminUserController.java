@@ -18,8 +18,8 @@ import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
 import asterisk.sun.booking_tours.admin.services.AdminUserService;
 import asterisk.sun.booking_tours.admin.validator.user.FormCreateUserValidator;
 import asterisk.sun.booking_tours.admin.validator.user.FormUpdateUserValidator;
-import asterisk.sun.booking_tours.module.user.Role;
-import asterisk.sun.booking_tours.module.user.UserStatus;
+import asterisk.sun.booking_tours.domain.user.Role;
+import asterisk.sun.booking_tours.domain.user.UserStatus;
 import jakarta.validation.Valid;
 
 @Controller

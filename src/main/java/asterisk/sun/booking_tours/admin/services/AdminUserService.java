@@ -7,8 +7,8 @@ import asterisk.sun.booking_tours.admin.dto.user.FormCreateUserDTO;
 import asterisk.sun.booking_tours.admin.dto.user.FormUpdateUserDTO;
 import asterisk.sun.booking_tours.admin.dto.user.ListUserDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
-import asterisk.sun.booking_tours.module.user.User;
-import asterisk.sun.booking_tours.module.user.UserService;
+import asterisk.sun.booking_tours.domain.user.User;
+import asterisk.sun.booking_tours.domain.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
