@@ -1,5 +1,7 @@
 package asterisk.sun.booking_tours.module.category;
 
+import asterisk.sun.booking_tours.common.constants.ValidationConstants;
+import asterisk.sun.booking_tours.common.helper.SlugifyHelper;
 import asterisk.sun.booking_tours.module.common.abtracts.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -85,34 +87,41 @@ public class Category extends BaseEntity {
 
     // ========== Domain Validation (Business Rules) ==========
 
+    /**
+     * Validate category name
+     * Uses centralized validation constants
+     */
     private static void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Category name cannot be empty");
         }
-        if (name.length() < 3 || name.length() > 100) {
-            throw new IllegalArgumentException("Category name must be between 3 and 100 characters");
+        if (name.length() < ValidationConstants.NAME_MIN_LENGTH
+            || name.length() > ValidationConstants.NAME_MAX_LENGTH) {
+            throw new IllegalArgumentException(ValidationConstants.NAME_LENGTH_MESSAGE);
         }
     }
 
+    /**
+     * Validate category description
+     * Uses centralized validation constants
+     */
     private static void validateDescription(String description) {
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("Description cannot be empty");
         }
-        if (description.length() < 10 || description.length() > 500) {
-            throw new IllegalArgumentException("Description must be between 10 and 500 characters");
+        if (description.length() < ValidationConstants.DESCRIPTION_MIN_LENGTH
+            || description.length() > ValidationConstants.DESCRIPTION_MAX_LENGTH) {
+            throw new IllegalArgumentException(ValidationConstants.DESCRIPTION_LENGTH_MESSAGE);
         }
     }
 
+    /**
+     * Validate category slug
+     * Delegates to SlugifyHelper for reusability
+     */
     private static void validateSlug(String slug) {
-        if (slug == null || slug.isBlank()) {
-            throw new IllegalArgumentException("Slug cannot be empty");
-        }
-        if (!slug.matches("^[a-z0-9]+(?:-[a-z0-9]+)*$")) {
-            throw new IllegalArgumentException("Slug must be lowercase with hyphens only (e.g., 'my-category')");
-        }
-        if (slug.length() < 3 || slug.length() > 100) {
-            throw new IllegalArgumentException("Slug must be between 3 and 100 characters");
-        }
+        // Delegate to SlugifyHelper which uses ValidationConstants
+        SlugifyHelper.validateSlug(slug);
     }
 
     // ========== Getters (No Setters - Immutability) ==========

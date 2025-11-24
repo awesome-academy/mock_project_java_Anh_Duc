@@ -1,19 +1,37 @@
 package asterisk.sun.booking_tours.admin.dto.category;
 
+import asterisk.sun.booking_tours.common.constants.ValidationConstants;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class FormCreateCategoryDTO {
     @NotBlank(message = "Category name is required")
-    @Size(min = 3, max = 100, message = "Category name must be between 3 and 100 characters")
+    @Size(
+        min = ValidationConstants.NAME_MIN_LENGTH,
+        max = ValidationConstants.NAME_MAX_LENGTH,
+        message = ValidationConstants.NAME_LENGTH_MESSAGE
+    )
     private String name;
 
     @NotBlank(message = "Description is required")
-    @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters")
+    @Size(
+        min = ValidationConstants.DESCRIPTION_MIN_LENGTH,
+        max = ValidationConstants.DESCRIPTION_MAX_LENGTH,
+        message = ValidationConstants.DESCRIPTION_LENGTH_MESSAGE
+    )
     private String description;
 
     @NotBlank(message = "Slug is required")
-    @Size(min = 3, max = 100, message = "Slug must be between 3 and 100 characters")
+    @Size(
+        min = ValidationConstants.SLUG_MIN_LENGTH,
+        max = ValidationConstants.SLUG_MAX_LENGTH,
+        message = ValidationConstants.SLUG_LENGTH_MESSAGE
+    )
+    @Pattern(
+        regexp = ValidationConstants.SLUG_PATTERN,
+        message = ValidationConstants.SLUG_FORMAT_MESSAGE
+    )
     private String slug;
 
     public FormCreateCategoryDTO() {

@@ -1,7 +1,6 @@
 package asterisk.sun.booking_tours.module.category;
 
-import asterisk.sun.booking_tours.module.category.valueobject.CategoryName;
-import asterisk.sun.booking_tours.module.category.valueobject.Slug;
+import asterisk.sun.booking_tours.common.helper.SlugifyHelper;
 
 /**
  * Examples demonstrating how to use the improved Category module
@@ -9,7 +8,7 @@ import asterisk.sun.booking_tours.module.category.valueobject.Slug;
  * This class shows best practices for working with:
  * - Rich Domain Model (Category)
  * - Command/Query Separation
- * - Value Objects
+ * - Validation with SlugifyHelper
  * - Domain Events
  */
 public class CategoryUsageExamples {
@@ -35,19 +34,20 @@ public class CategoryUsageExamples {
         // category.setName("Tech");            // Setters are deprecated!
     }
 
-    // ========== Example 2: Using Value Objects ==========
+    // ========== Example 2: Using SlugifyHelper ==========
 
-    public void example2_ValueObjects() {
-        // ✅ GOOD: Using Value Objects for type safety
-        CategoryName name = CategoryName.of("Technology");
-        Slug slug = Slug.fromText("My Category Name");  // Auto: "my-category-name"
+    public void example2_SlugHelper() {
+        // ✅ GOOD: Using SlugifyHelper for slug generation
+        String slug = SlugifyHelper.toSlug("My Category Name");  // Auto: "my-category-name"
+        System.out.println("Generated Slug: " + slug);
 
-        System.out.println("Name: " + name.getValue());
-        System.out.println("Slug: " + slug.getValue());
+        // Validate slug format
+        boolean isValid = SlugifyHelper.isValidSlug("my-slug");
+        System.out.println("Is valid: " + isValid);
 
-        // Value objects validate themselves
+        // Validate and throw exception if invalid
         try {
-            Slug invalid = Slug.of("Invalid Slug!");  // Throws exception
+            SlugifyHelper.validateSlug("Invalid Slug!");  // Throws exception
         } catch (IllegalArgumentException e) {
             System.out.println("Validation failed: " + e.getMessage());
         }
