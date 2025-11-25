@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
 import asterisk.sun.booking_tours.core.enums.BookingStatus;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDepartures;
 import asterisk.sun.booking_tours.core.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

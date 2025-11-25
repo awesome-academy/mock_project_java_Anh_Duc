@@ -79,7 +79,7 @@ public abstract class BaseAdminController<S> {
     }
 
     protected String handleValidationErrors(String viewName, BindingResult bindingResult) {
-        logger.warn("Validation Errors found: {}", bindingResult.getFieldError().getDefaultMessage());
+        logger.warn("Validation Errors found: {}", bindingResult.getAllErrors());
 
         return viewPath + viewName;
     }

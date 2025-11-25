@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Edit Tour Departure"></title>
+  <th:block layout:fragment="custom-css">
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Edit Tour Departure</h1>
+      <a th:href="@{/admin/tour-departures}" class="btn btn-secondary btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Back to List</span>
+      </a>
+    </div>
+
+    <form th:action="@{/admin/tour-departures/edit/{id}(id=${formEditTourDeparturesDTO.id})}"
+          th:object="${formEditTourDeparturesDTO}" method="post">
+
+      <!-- Section 1: Basic Information -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-primary">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-info-circle"></i> Basic Information
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Tour Selection -->
+              <div class="form-group">
+                <label for="tourId" class="font-weight-bold">
+                  <i class="fas fa-route text-primary"></i> Tour <span class="text-danger">*</span>
+                </label>
+                <select class="form-control" id="tourId" th:field="*{tourId}"
+                  th:classappend="${#fields.hasErrors('tourId')} ? 'is-invalid' : ''">
+                  <option value="">-- Select Tour --</option>
+                  <option th:each="tour : ${tours}" th:value="${tour.id}"
+                    th:text="${tour.name + ' - ' + tour.title}"></option>
+                </select>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('tourId')}"
+                  th:errors="*{tourId}"></div>
+                <small class="form-text text-muted">Select the tour for this departure</small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Status -->
+              <div class="form-group">
+                <label for="status" class="font-weight-bold">
+                  <i class="fas fa-flag text-primary"></i> Status <span class="text-danger">*</span>
+                </label>
+                <select class="form-control" id="status" th:field="*{status}"
+                  th:classappend="${#fields.hasErrors('status')} ? 'is-invalid' : ''">
+                  <option value="">-- Select Status --</option>
+                  <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
+                </select>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}"
+                  th:errors="*{status}"></div>
+                <small class="form-text text-muted">Current status of the departure</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Schedule Information -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-success">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-calendar-alt"></i> Schedule Information
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Departure Date -->
+              <div class="form-group">
+                <label for="departureDate" class="font-weight-bold">
+                  <i class="fas fa-plane-departure text-success"></i> Departure Date <span class="text-danger">*</span>
+                </label>
+                <input type="date" class="form-control" id="departureDate" th:field="*{departureDate}"
+                  th:classappend="${#fields.hasErrors('departureDate')} ? 'is-invalid' : ''">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('departureDate')}"
+                  th:errors="*{departureDate}"></div>
+                <small class="form-text text-muted">Date when the tour starts</small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Return Date -->
+              <div class="form-group">
+                <label for="returnDate" class="font-weight-bold">
+                  <i class="fas fa-plane-arrival text-success"></i> Return Date <span class="text-danger">*</span>
+                </label>
+                <input type="date" class="form-control" id="returnDate" th:field="*{returnDate}"
+                  th:classappend="${#fields.hasErrors('returnDate')} ? 'is-invalid' : ''">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('returnDate')}"
+                  th:errors="*{returnDate}"></div>
+                <small class="form-text text-muted">Date when the tour ends</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info mt-2">
+            <i class="fas fa-info-circle"></i> <strong>Note:</strong> Return date must be after the departure date.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Capacity Information -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-warning">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-users"></i> Capacity Information
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Total Slots -->
+              <div class="form-group">
+                <label for="totalSlots" class="font-weight-bold">
+                  <i class="fas fa-user-friends text-warning"></i> Total Slots <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="totalSlots" th:field="*{totalSlots}"
+                    placeholder="30" min="1"
+                    th:classappend="${#fields.hasErrors('totalSlots')} ? 'is-invalid' : ''">
+                  <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-users"></i> People</span>
+                  </div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('totalSlots')}"
+                    th:errors="*{totalSlots}"></div>
+                </div>
+                <small class="form-text text-muted">Maximum number of participants</small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Available Slots -->
+              <div class="form-group">
+                <label for="availableSlots" class="font-weight-bold">
+                  <i class="fas fa-user-check text-warning"></i> Available Slots <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="availableSlots" th:field="*{availableSlots}"
+                    placeholder="30" min="0"
+                    th:classappend="${#fields.hasErrors('availableSlots')} ? 'is-invalid' : ''">
+                  <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-user-plus"></i> Available</span>
+                  </div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('availableSlots')}"
+                    th:errors="*{availableSlots}"></div>
+                </div>
+                <small class="form-text text-muted">Number of available slots (cannot exceed total)</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-warning mt-2">
+            <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> Available slots should not exceed total slots. The system will auto-adjust if needed.
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="card shadow mb-4">
+        <div class="card-body bg-light">
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg btn-icon-split px-5">
+              <span class="icon text-white-50">
+                <i class="fas fa-save"></i>
+              </span>
+              <span class="text">Update Tour Departure</span>
+            </button>
+            <a th:href="@{/admin/tour-departures}" class="btn btn-secondary btn-lg ml-3 px-5">
+              <i class="fas fa-times"></i> Cancel
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+  </th:block>
+
+  <th:block layout:fragment="custom-scripts">
+    <script>
+      // Validate available slots doesn't exceed total slots
+      document.getElementById('totalSlots').addEventListener('change', function() {
+        const totalSlots = parseInt(this.value);
+        const availableSlotsInput = document.getElementById('availableSlots');
+        const availableSlots = parseInt(availableSlotsInput.value);
+
+        if (availableSlots > totalSlots) {
+          availableSlotsInput.value = totalSlots;
+        }
+      });
+
+      document.getElementById('availableSlots').addEventListener('change', function() {
+        const totalSlots = parseInt(document.getElementById('totalSlots').value);
+        const availableSlots = parseInt(this.value);
+
+        if (availableSlots > totalSlots) {
+          alert('Available slots cannot exceed total slots!');
+          this.value = totalSlots;
+        }
+      });
+    </script>
+  </th:block>
+
+</body>
+
+</html>

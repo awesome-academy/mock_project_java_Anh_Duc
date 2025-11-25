@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Tour Departures List"></title>
+  <th:block layout:fragment="custom-css">
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Tour Departures Management</h1>
+      <a th:href="@{/admin/tour-departures/create}" class="btn btn-primary btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-plus"></i>
+        </span>
+        <span class="text">Add Tour Departure</span>
+      </a>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <form th:action="@{/admin/tour-departures}" method="get" class="form-inline">
+          <div class="form-group mr-3 mb-2">
+            <label for="keyword" class="mr-2">Search:</label>
+            <input type="text" class="form-control" id="keyword" name="keyword" th:value="${keyword}"
+              placeholder="Search by tour name or title..." style="min-width: 350px;">
+          </div>
+          <button type="submit" class="btn btn-primary mb-2 mr-2">
+            <i class="fas fa-search"></i> Search
+          </button>
+          <a th:href="@{/admin/tour-departures}" class="btn btn-secondary mb-2">
+            <i class="fas fa-undo"></i> Reset
+          </a>
+        </form>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span th:text="${errorMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">List Tour Departures</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover" id="tourDeparturesTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr class="bg-light">
+                    <th>ID</th>
+                    <th>Tour Name</th>
+                    <th>Category</th>
+                    <th>Departure Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                    <th>Slots</th>
+                    <th>Available</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="departure : ${tourDepartures}">
+                    <td th:text="${departure.id}"></td>
+                    <td th:text="${departure.tourName}"></td>
+                    <td th:text="${departure.categoryName}"></td>
+                    <td th:text="${#temporals.format(departure.departureDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#temporals.format(departure.returnDate, 'dd/MM/yyyy')}"></td>
+                    <td>
+                      <span th:class="'badge badge-' +
+                        ${departure.status == 'SCHEDULED' ? 'info' :
+                         (departure.status == 'CONFIRMED' ? 'success' :
+                         (departure.status == 'CANCELLED' ? 'danger' :
+                         (departure.status == 'COMPLETED' ? 'secondary' : 'warning')))}"
+                        th:text="${departure.status}">
+                      </span>
+                    </td>
+                    <td th:text="${departure.totalSlots}"></td>
+                    <td>
+                      <span th:class="${departure.availableSlots == 0 ? 'text-danger font-weight-bold' : ''}"
+                        th:text="${departure.availableSlots}">
+                      </span>
+                    </td>
+                    <td>
+                      <a th:href="@{/admin/tour-departures/edit/{id}(id=${departure.id})}" class="btn btn-sm btn-info">
+                        <i class="fas fa-edit"></i> Edit
+                      </a>
+                      <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                        th:data-target="'#deleteModal' + ${departure.id}">
+                        <i class="fas fa-trash"></i> Delete
+                      </button>
+
+                      <!-- Delete Modal -->
+                      <div class="modal fade" th:id="'deleteModal' + ${departure.id}" tabindex="-1" role="dialog"
+                        aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              Are you sure you want to delete this tour departure for <strong
+                                th:text="${departure.tourName}"></strong> on <strong
+                                th:text="${#temporals.format(departure.departureDate, 'dd/MM/yyyy')}"></strong>?
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                              <form th:action="@{/admin/tour-departures/delete/{id}(id=${departure.id})}" method="post"
+                                style="display: inline;">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </th:block>
+
+</body>
+
+</html>
