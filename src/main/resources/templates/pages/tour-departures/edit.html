@@ -133,7 +133,7 @@
                 </label>
                 <div class="input-group">
                   <input type="number" class="form-control" id="totalSlots" th:field="*{totalSlots}"
-                    placeholder="30" min="1"
+                    placeholder="0" min="1"
                     th:classappend="${#fields.hasErrors('totalSlots')} ? 'is-invalid' : ''">
                   <div class="input-group-append">
                     <span class="input-group-text"><i class="fas fa-users"></i> People</span>
@@ -153,7 +153,7 @@
                 </label>
                 <div class="input-group">
                   <input type="number" class="form-control" id="availableSlots" th:field="*{availableSlots}"
-                    placeholder="30" min="0"
+                    placeholder="0" min="0"
                     th:classappend="${#fields.hasErrors('availableSlots')} ? 'is-invalid' : ''">
                   <div class="input-group-append">
                     <span class="input-group-text"><i class="fas fa-user-plus"></i> Available</span>
