@@ -259,7 +259,7 @@
                   <i class="fas fa-tag text-warning"></i> Base Price <span class="text-danger">*</span>
                 </label>
                 <input type="number" class="form-control" id="price" th:field="*{price}"
-                  th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''" placeholder="1000000"
+                  th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''" placeholder="0"
                   step="0.01" min="0.01">
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
               </div>
@@ -273,7 +273,7 @@
                 </label>
                 <input type="number" class="form-control" id="priceAdult" th:field="*{priceAdult}"
                   th:classappend="${#fields.hasErrors('priceAdult')} ? 'is-invalid' : ''"
-                  placeholder="1500000" step="0.01" min="0.01">
+                  placeholder="0" step="0.01" min="0.01">
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('priceAdult')}" th:errors="*{priceAdult}">
                 </div>
               </div>
@@ -287,7 +287,7 @@
                 </label>
                 <input type="number" class="form-control" id="priceChild" th:field="*{priceChild}"
                   th:classappend="${#fields.hasErrors('priceChild')} ? 'is-invalid' : ''"
-                  placeholder="750000" step="0.01" min="0.01">
+                  placeholder="0" step="0.01" min="0.01">
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('priceChild')}" th:errors="*{priceChild}">
                 </div>
               </div>
@@ -299,9 +299,8 @@
                 <label for="currency" class="font-weight-bold">
                   <i class="fas fa-money-bill text-warning"></i> Currency <span class="text-danger">*</span>
                 </label>
-                <input type="text" class="form-control" id="currency" th:field="*{currency}"
-                  th:classappend="${#fields.hasErrors('currency')} ? 'is-invalid' : ''"
-                  placeholder="VND" maxlength="10">
+                <input type="hidden" id="currency" th:field="*{currency}" value="VND">
+                <input type="text" class="form-control" value="VND" readonly disabled>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}">
                 </div>
               </div>
@@ -310,6 +309,39 @@
 
           <div class="alert alert-info mt-2">
             <i class="fas fa-info-circle"></i> <strong>Note:</strong> All prices should be in the specified currency. Child price is typically 50-75% of adult price.
+          </div>
+
+          <!-- Price Preview Section -->
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="card bg-light border-warning">
+                <div class="card-body">
+                  <h6 class="font-weight-bold text-warning mb-3">
+                    <i class="fas fa-eye"></i> Price Preview
+                  </h6>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="text-center p-2 bg-white rounded shadow-sm">
+                        <small class="text-muted d-block">Base Price</small>
+                        <h5 class="mb-0 text-primary" id="previewPrice">-</h5>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-center p-2 bg-white rounded shadow-sm">
+                        <small class="text-muted d-block">Adult Price</small>
+                        <h5 class="mb-0 text-success" id="previewPriceAdult">-</h5>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-center p-2 bg-white rounded shadow-sm">
+                        <small class="text-muted d-block">Child Price</small>
+                        <h5 class="mb-0 text-info" id="previewPriceChild">-</h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -374,6 +406,57 @@
   </th:block>
 
   <th:block layout:fragment="custom-scripts">
+    <!-- Currency Formatter Helper -->
+    <script th:src="@{/js/helpers/currency-formatter.js}"></script>
+
+    <script>
+      // Update price preview when user types
+      function updatePricePreviews() {
+        const price = document.getElementById('price').value;
+        const priceAdult = document.getElementById('priceAdult').value;
+        const priceChild = document.getElementById('priceChild').value;
+        const currency = document.getElementById('currency').value || 'VND';
+
+        // Update base price preview
+        if (price && !isNaN(price) && price > 0) {
+          document.getElementById('previewPrice').textContent = formatCurrency(parseFloat(price), currency);
+        } else {
+          document.getElementById('previewPrice').textContent = '-';
+        }
+
+        // Update adult price preview
+        if (priceAdult && !isNaN(priceAdult) && priceAdult > 0) {
+          document.getElementById('previewPriceAdult').textContent = formatCurrency(parseFloat(priceAdult), currency);
+        } else {
+          document.getElementById('previewPriceAdult').textContent = '-';
+        }
+
+        // Update child price preview
+        if (priceChild && !isNaN(priceChild) && priceChild > 0) {
+          document.getElementById('previewPriceChild').textContent = formatCurrency(parseFloat(priceChild), currency);
+        } else {
+          document.getElementById('previewPriceChild').textContent = '-';
+        }
+      }
+
+      // Add event listeners when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        // Get all price inputs and currency input
+        const priceInput = document.getElementById('price');
+        const priceAdultInput = document.getElementById('priceAdult');
+        const priceChildInput = document.getElementById('priceChild');
+        const currencyInput = document.getElementById('currency');
+
+        // Add event listeners
+        if (priceInput) priceInput.addEventListener('input', updatePricePreviews);
+        if (priceAdultInput) priceAdultInput.addEventListener('input', updatePricePreviews);
+        if (priceChildInput) priceChildInput.addEventListener('input', updatePricePreviews);
+        if (currencyInput) currencyInput.addEventListener('input', updatePricePreviews);
+
+        // Initial update
+        updatePricePreviews();
+      });
+    </script>
   </th:block>
 
 </body>
