@@ -18,6 +18,7 @@ public class GlobalBindingInitializer {
         breadcrumbs.add(new Breadcrumb("Categories", "/admin/categories", "fas fa-list"));
         breadcrumbs.add(new Breadcrumb("Tours", "/admin/tours", "fas fa-plane"));
         breadcrumbs.add(new Breadcrumb("Tour Departures", "/admin/tour-departures", "fas fa-plane-departure"));
+        breadcrumbs.add(new Breadcrumb("Booking", "/admin/bookings", "fas fa-book"));
 
         return breadcrumbs;
     }

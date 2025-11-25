@@ -1,70 +1,77 @@
-package asterisk.sun.booking_tours.core.entities;
+package asterisk.sun.booking_tours.application.admin.booking.dto;
 
 import java.math.BigDecimal;
 
-import asterisk.sun.booking_tours.core.BaseEntity;
-import asterisk.sun.booking_tours.core.enums.BookingStatus;
-import asterisk.sun.booking_tours.core.tourdepartures.TourDepartures;
-import asterisk.sun.booking_tours.core.user.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import asterisk.sun.booking_tours.core.booking.BookingStatus;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "bookings")
-public class Booking extends BaseEntity {
+/**
+ * DTO for editing an existing booking in admin panel
+ */
+public class FormEditBookingDTO {
 
-    @Column(name = "code", unique = true)
+    @NotNull(message = "ID is required")
+    private Long id;
+
+    @NotBlank(message = "Code is required")
     private String code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @NotNull(message = "User is required")
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tour_departure_id", referencedColumnName = "id")
-    private TourDepartures tourDeparture;
+    @NotNull(message = "Tour departure is required")
+    private Long tourDepartureId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @NotNull(message = "Status is required")
     private BookingStatus status;
 
-    @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
-    @Column(name = "num_adults", nullable = false)
+    @NotNull(message = "Number of adults is required")
+    @Min(value = 1, message = "Number of adults must be at least 1")
     private Integer numAdults;
 
-    @Column(name = "num_child", nullable = false)
+    @NotNull(message = "Number of children is required")
+    @Min(value = 0, message = "Number of children must be at least 0")
     private Integer numChild;
 
-    @Column(name = "sub_total", precision = 15, scale = 2)
+    @NotNull(message = "Sub total is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Sub total must be greater than 0")
     private BigDecimal subTotal;
 
-    @Column(name = "discount", precision = 15, scale = 2)
+    @DecimalMin(value = "0.0", message = "Discount must be at least 0")
     private BigDecimal discount;
 
-    @Column(name = "final_total", precision = 15, scale = 2)
+    @NotNull(message = "Final total is required")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Final total must be greater than 0")
     private BigDecimal finalTotal;
 
-    @Column(name = "contact_name", length = 255, nullable = false)
+    @NotBlank(message = "Contact name is required")
     private String contactName;
 
-    @Column(name = "contact_phone", nullable = false)
+    @NotBlank(message = "Contact phone is required")
     private String contactPhone;
 
-    @Column(name = "contact_email", nullable = false)
+    @NotBlank(message = "Contact email is required")
+    @Email(message = "Invalid email format")
     private String contactEmail;
 
     // Constructors
-    public Booking() {}
+    public FormEditBookingDTO() {}
 
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getCode() {
         return code;
     }
@@ -73,20 +80,20 @@ public class Booking extends BaseEntity {
         this.code = code;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public TourDepartures getTourDeparture() {
-        return tourDeparture;
+    public Long getTourDepartureId() {
+        return tourDepartureId;
     }
 
-    public void setTourDeparture(TourDepartures tourDeparture) {
-        this.tourDeparture = tourDeparture;
+    public void setTourDepartureId(Long tourDepartureId) {
+        this.tourDepartureId = tourDepartureId;
     }
 
     public BookingStatus getStatus() {
