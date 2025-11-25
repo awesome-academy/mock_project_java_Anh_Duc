@@ -3,6 +3,7 @@ package asterisk.sun.booking_tours.application.admin.tourdepartures.dto;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -18,9 +19,11 @@ public class FormCreateTourDeparturesDTO {
 
     @NotNull(message = "Departure date is required")
     @Future(message = "Departure date must be in the future")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate departureDate;
 
     @NotNull(message = "Return date is required")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate returnDate;
 
     @NotNull(message = "Total slots is required")
