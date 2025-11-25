@@ -1,52 +1,43 @@
-package asterisk.sun.booking_tours.core.entities;
+package asterisk.sun.booking_tours.application.admin.tourdepartures.dto;
+
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-import asterisk.sun.booking_tours.core.BaseEntity;
-import asterisk.sun.booking_tours.core.enums.TourDepartureStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDepartureStatus;
 
-@Entity
-@Table(name = "tour_departures")
-public class TourDepartures extends BaseEntity {
+public class FormCreateTourDeparturesDTO {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tour_id", referencedColumnName = "id", nullable = false)
-    private Tour tour;
+    @NotNull(message = "Tour is required")
+    private Long tourId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @NotNull(message = "Status is required")
     private TourDepartureStatus status;
 
-    @Column(name = "departure_date")
+    @NotNull(message = "Departure date is required")
+    @Future(message = "Departure date must be in the future")
     private LocalDate departureDate;
 
-    @Column(name = "return_date")
+    @NotNull(message = "Return date is required")
     private LocalDate returnDate;
 
-    @Column(name = "total_slots")
+    @NotNull(message = "Total slots is required")
+    @Min(value = 1, message = "Total slots must be at least 1")
     private Integer totalSlots;
 
-    @Column(name = "available_slots")
+    @NotNull(message = "Available slots is required")
+    @Min(value = 0, message = "Available slots must be at least 0")
     private Integer availableSlots;
 
-    // Constructors
-    public TourDepartures() {}
-
     // Getters and Setters
-    public Tour getTour() {
-        return tour;
+    public Long getTourId() {
+        return tourId;
     }
 
-    public void setTour(Tour tour) {
-        this.tour = tour;
+    public void setTourId(Long tourId) {
+        this.tourId = tourId;
     }
 
     public TourDepartureStatus getStatus() {

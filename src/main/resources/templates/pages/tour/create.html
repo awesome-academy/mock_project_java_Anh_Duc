@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Create Tour"></title>
+  <th:block layout:fragment="custom-css">
+    <!-- Custom styles are now loaded globally from custom-styles.css -->
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Create New Tour</h1>
+      <a th:href="@{/admin/tours}" class="btn btn-secondary btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Back to List</span>
+      </a>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span th:text="${errorMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <!-- Create Tour Form -->
+    <form th:action="@{/admin/tours/create}" th:object="${formCreateTourDTO}" method="post">
+
+      <!-- Section 1: Basic Information -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-primary">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-info-circle"></i> Basic Information
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Tour Name -->
+              <div class="form-group">
+                <label for="name" class="font-weight-bold">
+                  <i class="fas fa-tag text-primary"></i> Tour Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="name" th:field="*{name}"
+                  th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                  placeholder="e.g., Ha Long Bay Discovery Tour">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                <small class="form-text text-muted">Unique name for the tour (3-255 characters)</small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Title -->
+              <div class="form-group">
+                <label for="title" class="font-weight-bold">
+                  <i class="fas fa-heading text-primary"></i> Display Title <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="title" th:field="*{title}"
+                  th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''"
+                  placeholder="e.g., Explore the Wonders of Ha Long Bay">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                <small class="form-text text-muted">Public display title (3-255 characters)</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Slug -->
+              <div class="form-group">
+                <label for="slug" class="font-weight-bold">
+                  <i class="fas fa-link text-primary"></i> URL Slug <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="slug" th:field="*{slug}"
+                  th:classappend="${#fields.hasErrors('slug')} ? 'is-invalid' : ''"
+                  placeholder="ha-long-bay-discovery-tour">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('slug')}" th:errors="*{slug}"></div>
+                <small class="form-text text-muted">URL-friendly version (lowercase, hyphens only)</small>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Thumbnail URL -->
+              <div class="form-group">
+                <label for="thumbnailUrl" class="font-weight-bold">
+                  <i class="fas fa-image text-primary"></i> Thumbnail URL
+                </label>
+                <input type="text" class="form-control" id="thumbnailUrl" th:field="*{thumbnailUrl}"
+                  placeholder="https://example.com/images/tour-thumbnail.jpg">
+                <small class="form-text text-muted">Optional image URL for tour thumbnail</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <!-- Description -->
+              <div class="form-group">
+                <label for="description" class="font-weight-bold">
+                  <i class="fas fa-align-left text-primary"></i> Description <span class="text-danger">*</span>
+                </label>
+                <textarea class="form-control" id="description" th:field="*{description}"
+                  th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''" rows="4"
+                  placeholder="Provide a compelling description of the tour..."></textarea>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}"
+                  th:errors="*{description}"></div>
+                <small class="form-text text-muted">Detailed description (minimum 10 characters)</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Category -->
+              <div class="form-group">
+                <label for="categoryId" class="font-weight-bold">
+                  <i class="fas fa-folder text-primary"></i> Category <span class="text-danger">*</span>
+                </label>
+                <select class="form-control" id="categoryId" th:field="*{categoryId}"
+                  th:classappend="${#fields.hasErrors('categoryId')} ? 'is-invalid' : ''">
+                  <option value="">-- Select Category --</option>
+                  <option th:each="category : ${categories}" th:value="${category.id}"
+                    th:text="${category.name}"></option>
+                </select>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('categoryId')}"
+                  th:errors="*{categoryId}"></div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Creator -->
+              <div class="form-group">
+                <label for="creatorId" class="font-weight-bold">
+                  <i class="fas fa-user text-primary"></i> Creator <span class="text-danger">*</span>
+                </label>
+                <select class="form-control" id="creatorId" th:field="*{creatorId}"
+                  th:classappend="${#fields.hasErrors('creatorId')} ? 'is-invalid' : ''">
+                  <option value="">-- Select Creator --</option>
+                  <option th:each="user : ${users}" th:value="${user.id}" th:text="${user.username}"></option>
+                </select>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('creatorId')}" th:errors="*{creatorId}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Location & Duration -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-success">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-map-marker-alt"></i> Location & Duration
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Departure Location -->
+              <div class="form-group">
+                <label for="departureLocation" class="font-weight-bold">
+                  <i class="fas fa-plane-departure text-success"></i> Departure Location <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="departureLocation" th:field="*{departureLocation}"
+                  th:classappend="${#fields.hasErrors('departureLocation')} ? 'is-invalid' : ''"
+                  placeholder="e.g., Hanoi">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('departureLocation')}"
+                  th:errors="*{departureLocation}"></div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Main Destination -->
+              <div class="form-group">
+                <label for="mainDestination" class="font-weight-bold">
+                  <i class="fas fa-map-pin text-success"></i> Main Destination <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="mainDestination" th:field="*{mainDestination}"
+                  th:classappend="${#fields.hasErrors('mainDestination')} ? 'is-invalid' : ''"
+                  placeholder="e.g., Ha Long Bay">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('mainDestination')}"
+                  th:errors="*{mainDestination}"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <!-- Duration Days -->
+              <div class="form-group">
+                <label for="durationDays" class="font-weight-bold">
+                  <i class="fas fa-calendar-day text-success"></i> Duration Days <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="durationDays" th:field="*{durationDays}"
+                    th:classappend="${#fields.hasErrors('durationDays')} ? 'is-invalid' : ''"
+                    placeholder="3" min="1">
+                  <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-sun"></i> Days</span>
+                  </div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('durationDays')}"
+                    th:errors="*{durationDays}"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <!-- Duration Nights -->
+              <div class="form-group">
+                <label for="durationNights" class="font-weight-bold">
+                  <i class="fas fa-moon text-success"></i> Duration Nights <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <input type="number" class="form-control" id="durationNights" th:field="*{durationNights}"
+                    th:classappend="${#fields.hasErrors('durationNights')} ? 'is-invalid' : ''"
+                    placeholder="2" min="0">
+                  <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-moon"></i> Nights</span>
+                  </div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('durationNights')}"
+                    th:errors="*{durationNights}"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Pricing Information -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-warning">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-dollar-sign"></i> Pricing Information
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <!-- Base Price -->
+              <div class="form-group">
+                <label for="price" class="font-weight-bold">
+                  <i class="fas fa-tag text-warning"></i> Base Price <span class="text-danger">*</span>
+                </label>
+                <input type="number" class="form-control" id="price" th:field="*{price}"
+                  th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''" placeholder="1000000"
+                  step="0.01" min="0.01">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <!-- Price Adult -->
+              <div class="form-group">
+                <label for="priceAdult" class="font-weight-bold">
+                  <i class="fas fa-user text-warning"></i> Adult Price <span class="text-danger">*</span>
+                </label>
+                <input type="number" class="form-control" id="priceAdult" th:field="*{priceAdult}"
+                  th:classappend="${#fields.hasErrors('priceAdult')} ? 'is-invalid' : ''"
+                  placeholder="1500000" step="0.01" min="0.01">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('priceAdult')}" th:errors="*{priceAdult}">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <!-- Price Child -->
+              <div class="form-group">
+                <label for="priceChild" class="font-weight-bold">
+                  <i class="fas fa-child text-warning"></i> Child Price <span class="text-danger">*</span>
+                </label>
+                <input type="number" class="form-control" id="priceChild" th:field="*{priceChild}"
+                  th:classappend="${#fields.hasErrors('priceChild')} ? 'is-invalid' : ''"
+                  placeholder="750000" step="0.01" min="0.01">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('priceChild')}" th:errors="*{priceChild}">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <!-- Currency -->
+              <div class="form-group">
+                <label for="currency" class="font-weight-bold">
+                  <i class="fas fa-money-bill text-warning"></i> Currency <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="currency" th:field="*{currency}"
+                  th:classappend="${#fields.hasErrors('currency')} ? 'is-invalid' : ''"
+                  placeholder="VND" maxlength="10">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info mt-2">
+            <i class="fas fa-info-circle"></i> <strong>Note:</strong> All prices should be in the specified currency. Child price is typically 50-75% of adult price.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Additional Details -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-info">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-clipboard-list"></i> Additional Details
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12">
+              <!-- Itinerary -->
+              <div class="form-group">
+                <label for="itinerary" class="font-weight-bold">
+                  <i class="fas fa-route text-info"></i> Itinerary
+                </label>
+                <textarea class="form-control" id="itinerary" th:field="*{itinerary}" rows="6"
+                  placeholder="Day 1: Arrival and check-in...&#10;Day 2: Morning cruise and island visit...&#10;Day 3: Departure"></textarea>
+                <small class="form-text text-muted">Optional detailed day-by-day itinerary</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <!-- Terms and Conditions -->
+              <div class="form-group">
+                <label for="termsAndConditions" class="font-weight-bold">
+                  <i class="fas fa-file-contract text-info"></i> Terms and Conditions
+                </label>
+                <textarea class="form-control" id="termsAndConditions" th:field="*{termsAndConditions}" rows="6"
+                  placeholder="1. Cancellation policy...&#10;2. Payment terms...&#10;3. Refund policy..."></textarea>
+                <small class="form-text text-muted">Optional terms and conditions for booking</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="card shadow mb-4">
+        <div class="card-body bg-light">
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg btn-icon-split px-5">
+              <span class="icon text-white-50">
+                <i class="fas fa-save"></i>
+              </span>
+              <span class="text">Create Tour</span>
+            </button>
+            <a th:href="@{/admin/tours}" class="btn btn-secondary btn-lg ml-3 px-5">
+              <i class="fas fa-times"></i> Cancel
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+  </th:block>
+
+  <th:block layout:fragment="custom-scripts">
+  </th:block>
+
+</body>
+
+</html>

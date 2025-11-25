@@ -3,6 +3,7 @@ package asterisk.sun.booking_tours.core.entities;
 import java.math.BigDecimal;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
+import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.enums.PaymentMethod;
 import asterisk.sun.booking_tours.core.enums.PaymentStatus;
 import asterisk.sun.booking_tours.core.user.User;

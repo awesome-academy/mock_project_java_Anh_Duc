@@ -39,207 +39,208 @@
       </button>
     </div>
 
-    <div class="row">
-      <div class="col-lg-8 offset-lg-2">
-        <div class="card shadow mb-4">
-          <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
+    <form th:action="@{/admin/users/edit/{id}(id=${formUpdateUserDTO.id})}" th:object="${formUpdateUserDTO}" method="post">
+
+      <!-- Section 1: Personal Information -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-primary">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-user-circle"></i> Personal Information
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="firstName" class="font-weight-bold">
+                  <i class="fas fa-id-card text-primary"></i> First Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="firstName" th:field="*{firstName}"
+                  placeholder="Enter first name">
+                <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
+                  class="invalid-feedback d-block">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="lastName" class="font-weight-bold">
+                  <i class="fas fa-id-card text-primary"></i> Last Name <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="lastName" th:field="*{lastName}"
+                  placeholder="Enter last name">
+                <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
+                  class="invalid-feedback d-block">
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <form th:action="@{/admin/users/edit/{id}(id=${formUpdateUserDTO.id})}" th:object="${formUpdateUserDTO}" method="post">
 
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="firstName" class="font-weight-bold">
-                      First Name <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="firstName" th:field="*{firstName}"
-                      placeholder="Enter first name">
-                    <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
-                      class="invalid-feedback d-block">
-                    </div>
-                  </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="phone" class="font-weight-bold">
+                  <i class="fas fa-phone text-primary"></i> Phone Number <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="phone" th:field="*{phone}"
+                  placeholder="e.g., 0123456789">
+                <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="invalid-feedback d-block">
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="lastName" class="font-weight-bold">
-                      Last Name <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="lastName" th:field="*{lastName}"
-                      placeholder="Enter last name">
-                    <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
-                      class="invalid-feedback d-block">
-                    </div>
-                  </div>
-                </div>
+                <small class="form-text text-muted">Enter a 10-11 digit phone number</small>
               </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="username" class="font-weight-bold">
-                      Username <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="username" th:field="*{username}"
-                      placeholder="Enter username">
-                    <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Please enter a username (3-50 characters)
-                    </small>
-                  </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="avatarUrl" class="font-weight-bold">
+                  <i class="fas fa-image text-primary"></i> Avatar URL
+                </label>
+                <input type="text" class="form-control" id="avatarUrl" th:field="*{avatarUrl}"
+                  placeholder="https://example.com/avatar.jpg">
+                <div th:if="${#fields.hasErrors('avatarUrl')}" th:errors="*{avatarUrl}"
+                  class="invalid-feedback d-block">
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="email" class="font-weight-bold">
-                      Email Address <span class="text-danger">*</span>
-                    </label>
-                    <input type="email" class="form-control" id="email" th:field="*{email}"
-                      placeholder="Enter email address">
-                    <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Please enter a valid email address
-                    </small>
-                  </div>
-                </div>
+                <small class="form-text text-muted">Optional URL for user avatar</small>
               </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="phone" class="font-weight-bold">
-                      Phone Number <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" class="form-control" id="phone" th:field="*{phone}" placeholder="Enter phone number">
-                    <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Please enter a 10-11 digit phone number
-                    </small>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="avatarUrl" class="font-weight-bold">
-                      Avatar URL
-                    </label>
-                    <input type="text" class="form-control" id="avatarUrl" th:field="*{avatarUrl}"
-                      placeholder="Enter avatar URL (optional)">
-                    <div th:if="${#fields.hasErrors('avatarUrl')}" th:errors="*{avatarUrl}"
-                      class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Enter URL for user avatar (optional)
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="role" class="font-weight-bold">
-                      Role <span class="text-danger">*</span>
-                    </label>
-                    <select class="form-control" id="role" th:field="*{role}">
-                      <option value="">-- Select Role --</option>
-                      <option th:each="r : ${roles}" th:value="${r}" th:text="${r.name()}">
-                      </option>
-                    </select>
-                    <div th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Select the user role (ADMIN or USER)
-                    </small>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="status" class="font-weight-bold">
-                      Status <span class="text-danger">*</span>
-                    </label>
-                    <select class="form-control" id="status" th:field="*{status}">
-                      <option value="">-- Select Status --</option>
-                      <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name()}">
-                      </option>
-                    </select>
-                    <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Select the user status
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <hr class="my-4">
-
-              <!-- Password Section -->
-              <div class="row">
-                <div class="col-12">
-                  <h6 class="font-weight-bold text-primary mb-3">
-                    <i class="fas fa-key"></i> Change Password (Optional)
-                  </h6>
-                  <small class="text-muted d-block mb-3">
-                    Leave password fields empty if you don't want to change the password
-                  </small>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="password" class="font-weight-bold">
-                      New Password
-                    </label>
-                    <input type="password" class="form-control" id="password" th:field="*{password}"
-                      placeholder="Enter new password (optional)">
-                    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                      class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Password must be at least 6 characters
-                    </small>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="confirmPassword" class="font-weight-bold">
-                      Confirm New Password
-                    </label>
-                    <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}"
-                      placeholder="Confirm new password">
-                    <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
-                      class="invalid-feedback d-block">
-                    </div>
-                    <small class="form-text text-muted">
-                      Re-enter the new password
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <hr class="my-4">
-
-              <div class="form-group mb-0">
-                <button type="submit" class="btn btn-primary btn-icon-split">
-                  <span class="icon text-white-50">
-                    <i class="fas fa-save"></i>
-                  </span>
-                  <span class="text">Update User</span>
-                </button>
-                <a th:href="@{/admin/users}" class="btn btn-secondary ml-2">
-                  <i class="fas fa-times"></i> Cancel
-                </a>
-              </div>
-
-            </form>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <!-- Section 2: Account Information -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-success">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-user-lock"></i> Account Information
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="username" class="font-weight-bold">
+                  <i class="fas fa-user text-success"></i> Username <span class="text-danger">*</span>
+                </label>
+                <input type="text" class="form-control" id="username" th:field="*{username}"
+                  placeholder="Enter username">
+                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="invalid-feedback d-block">
+                </div>
+                <small class="form-text text-muted">Unique username (3-50 characters)</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="email" class="font-weight-bold">
+                  <i class="fas fa-envelope text-success"></i> Email Address <span class="text-danger">*</span>
+                </label>
+                <input type="email" class="form-control" id="email" th:field="*{email}"
+                  placeholder="user@example.com">
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback d-block">
+                </div>
+                <small class="form-text text-muted">Valid email address</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-warning mt-2">
+            <i class="fas fa-exclamation-triangle"></i> <strong>Password Update:</strong> Leave password fields empty if you don't want to change the password.
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="password" class="font-weight-bold">
+                  <i class="fas fa-key text-success"></i> New Password
+                </label>
+                <input type="password" class="form-control" id="password" th:field="*{password}"
+                  placeholder="Enter new password (optional)">
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                  class="invalid-feedback d-block">
+                </div>
+                <small class="form-text text-muted">Minimum 6 characters (optional)</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="confirmPassword" class="font-weight-bold">
+                  <i class="fas fa-lock text-success"></i> Confirm New Password
+                </label>
+                <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}"
+                  placeholder="Re-enter new password">
+                <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                  class="invalid-feedback d-block">
+                </div>
+                <small class="form-text text-muted">Must match new password</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Role & Status -->
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-gradient-warning">
+          <h6 class="m-0 font-weight-bold text-white">
+            <i class="fas fa-user-tag"></i> Role & Status
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="role" class="font-weight-bold">
+                  <i class="fas fa-user-shield text-warning"></i> Role <span class="text-danger">*</span>
+                </label>
+                <select class="form-control" id="role" th:field="*{role}">
+                  <option value="">-- Select Role --</option>
+                  <option th:each="r : ${roles}" th:value="${r}" th:text="${r.name()}">
+                  </option>
+                </select>
+                <div th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="invalid-feedback d-block">
+                </div>
+                <small class="form-text text-muted">User access level (ADMIN or USER)</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="status" class="font-weight-bold">
+                  <i class="fas fa-toggle-on text-warning"></i> Status <span class="text-danger">*</span>
+                </label>
+                <select class="form-control" id="status" th:field="*{status}">
+                  <option value="">-- Select Status --</option>
+                  <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.name()}">
+                  </option>
+                </select>
+                <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="invalid-feedback d-block">
+                </div>
+                <small class="form-text text-muted">Account activation status</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info mt-2">
+            <i class="fas fa-info-circle"></i> <strong>Note:</strong> ADMIN users have full system access. USER role has limited permissions.
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Buttons -->
+      <div class="card shadow mb-4">
+        <div class="card-body bg-light">
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg btn-icon-split px-5">
+              <span class="icon text-white-50">
+                <i class="fas fa-save"></i>
+              </span>
+              <span class="text">Update User</span>
+            </button>
+            <a th:href="@{/admin/users}" class="btn btn-secondary btn-lg ml-3 px-5">
+              <i class="fas fa-times"></i> Cancel
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </form>
 
   </th:block>
 

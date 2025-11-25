@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.core.entities;
+package asterisk.sun.booking_tours.core.tour;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
 import asterisk.sun.booking_tours.core.category.Category;

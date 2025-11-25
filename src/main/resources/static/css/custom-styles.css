@@ -1,0 +1,143 @@
+/* Custom Styles for Booking Tours Application */
+
+/* Scrollable Form Body - For long forms with fixed action buttons */
+.scrollable-form-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+}
+
+/* Custom scrollbar styling */
+.scrollable-form-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-form-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.scrollable-form-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.scrollable-form-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar support */
+.scrollable-form-body {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Gradient Card Headers */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+}
+
+.bg-gradient-warning {
+  background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+}
+
+.bg-gradient-info {
+  background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);
+}
+
+/* Card Enhancements */
+.card {
+  border: none;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header h6 i {
+  margin-right: 8px;
+}
+
+/* Form Enhancements */
+.form-control:focus {
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+label.font-weight-bold i {
+  margin-right: 6px;
+  font-size: 0.9em;
+}
+
+/* Input Group Styling */
+.input-group-text {
+  background-color: #f8f9fc;
+  border: 1px solid #d1d3e2;
+  font-weight: 600;
+  color: #5a5c69;
+}
+
+/* Alert Info Custom Styling */
+.alert-info {
+  background-color: #d1ecf1;
+  border-color: #bee5eb;
+  color: #0c5460;
+  border-left: 4px solid #17a2b8;
+}
+
+/* Button Enhancements */
+.btn-lg {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.35rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-lg:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.3rem 0.8rem rgba(0, 0, 0, 0.2);
+}
+
+.btn-icon-split {
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-icon-split:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.15);
+}
+
+/* Form Group Spacing */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Card Body Padding */
+.card-body {
+  padding: 2rem;
+}
+
+/* Textarea Styling */
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Required Field Indicator */
+.text-danger {
+  font-weight: bold;
+}
+
+/* Small Text Styling */
+.form-text {
+  font-style: italic;
+}
+
