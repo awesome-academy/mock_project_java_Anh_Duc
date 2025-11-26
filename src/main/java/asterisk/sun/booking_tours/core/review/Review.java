@@ -1,8 +1,6 @@
-package asterisk.sun.booking_tours.core.entities;
+package asterisk.sun.booking_tours.core.review;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
-import asterisk.sun.booking_tours.core.enums.ReviewStatus;
-import asterisk.sun.booking_tours.core.enums.ReviewableType;
 import asterisk.sun.booking_tours.core.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

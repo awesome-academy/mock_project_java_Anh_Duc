@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Edit Review"></title>
+  <th:block layout:fragment="custom-css">
+    <style>
+      .rating-stars {
+        color: #f39c12;
+        font-size: 1.5rem;
+      }
+    </style>
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Edit Review</h1>
+      <a th:href="@{/admin/reviews}" class="btn btn-secondary btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Back to List</span>
+      </a>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span th:text="${errorMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Review Details</h6>
+          </div>
+          <div class="card-body">
+
+            <!-- Review Information (Read-only) -->
+            <div class="mb-4 p-3 bg-light rounded">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <strong>User:</strong>
+                  <span th:text="${formUpdateReviewDTO.userName}"></span>
+                </div>
+                <div class="col-md-6">
+                  <strong>Email:</strong>
+                  <span th:text="${formUpdateReviewDTO.userEmail}"></span>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <strong>Review Type:</strong>
+                  <span th:if="${formUpdateReviewDTO.reviewableType.name() == 'TOUR'}" class="badge badge-info">Tour</span>
+                  <span th:if="${formUpdateReviewDTO.reviewableType.name() == 'BOOKING'}" class="badge badge-primary">Booking</span>
+                  <span th:if="${formUpdateReviewDTO.reviewableType.name() == 'ARTICLE'}" class="badge badge-secondary">Article</span>
+                </div>
+                <div class="col-md-6">
+                  <strong>Item ID:</strong>
+                  <span th:text="${formUpdateReviewDTO.reviewableId}"></span>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-12">
+                  <strong>Rating:</strong>
+                  <div class="rating-stars">
+                    <span th:each="i : ${#numbers.sequence(1, formUpdateReviewDTO.rating)}">★</span>
+                    <span th:each="i : ${#numbers.sequence(formUpdateReviewDTO.rating + 1, 5)}">☆</span>
+                    <span class="ml-2 text-muted" style="font-size: 1rem;"
+                          th:text="${formUpdateReviewDTO.rating} + ' / 5'"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <strong>Content:</strong>
+                  <p class="mt-2 p-3 bg-white border rounded" th:text="${formUpdateReviewDTO.content}"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Edit Form -->
+            <form th:action="@{/admin/reviews/edit/{id}(id=${formUpdateReviewDTO.id})}"
+                  method="post"
+                  th:object="${formUpdateReviewDTO}">
+
+              <div class="form-group">
+                <label for="status">Review Status <span class="text-danger">*</span></label>
+                <select class="form-control" id="status" th:field="*{status}" required>
+                  <option value="">-- Select Status --</option>
+                  <option th:each="status : ${reviewStatuses}"
+                          th:value="${status}"
+                          th:text="${status.name()}"></option>
+                </select>
+                <small class="form-text text-muted">
+                  <strong>PENDING:</strong> Awaiting review |
+                  <strong>APPROVED:</strong> Visible to public |
+                  <strong>REJECTED:</strong> Not approved |
+                  <strong>HIDDEN:</strong> Temporarily hidden
+                </small>
+                <div th:if="${#fields.hasErrors('status')}" class="text-danger">
+                  <small th:errors="*{status}"></small>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Update Status
+                </button>
+                <a th:href="@{/admin/reviews}" class="btn btn-secondary">
+                  <i class="fas fa-times"></i> Cancel
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Sidebar -->
+      <div class="col-lg-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+          </div>
+          <div class="card-body">
+            <div class="d-grid gap-2">
+              <form th:if="${formUpdateReviewDTO.status.name() != 'APPROVED'}"
+                    th:action="@{/admin/reviews/approve/{id}(id=${formUpdateReviewDTO.id})}"
+                    method="post" class="mb-2">
+                <button type="submit" class="btn btn-success btn-block">
+                  <i class="fas fa-check"></i> Approve Review
+                </button>
+              </form>
+
+              <form th:if="${formUpdateReviewDTO.status.name() != 'REJECTED'}"
+                    th:action="@{/admin/reviews/reject/{id}(id=${formUpdateReviewDTO.id})}"
+                    method="post" class="mb-2">
+                <button type="submit" class="btn btn-warning btn-block">
+                  <i class="fas fa-times"></i> Reject Review
+                </button>
+              </form>
+
+              <form th:if="${formUpdateReviewDTO.status.name() != 'HIDDEN'}"
+                    th:action="@{/admin/reviews/hide/{id}(id=${formUpdateReviewDTO.id})}"
+                    method="post" class="mb-2">
+                <button type="submit" class="btn btn-secondary btn-block">
+                  <i class="fas fa-eye-slash"></i> Hide Review
+                </button>
+              </form>
+
+              <hr>
+
+              <form th:action="@{/admin/reviews/delete/{id}(id=${formUpdateReviewDTO.id})}"
+                    method="post"
+                    onsubmit="return confirm('Are you sure you want to delete this review? This action cannot be undone.');">
+                <button type="submit" class="btn btn-danger btn-block">
+                  <i class="fas fa-trash"></i> Delete Review
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Status Guide</h6>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <span class="badge badge-warning">PENDING</span>
+              <p class="small mt-1 mb-0">Review is awaiting moderation</p>
+            </div>
+            <div class="mb-3">
+              <span class="badge badge-success">APPROVED</span>
+              <p class="small mt-1 mb-0">Review is approved and visible to public</p>
+            </div>
+            <div class="mb-3">
+              <span class="badge badge-danger">REJECTED</span>
+              <p class="small mt-1 mb-0">Review is rejected and not visible</p>
+            </div>
+            <div>
+              <span class="badge badge-secondary">HIDDEN</span>
+              <p class="small mt-1 mb-0">Review is temporarily hidden from public</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </th:block>
+
+  <th:block layout:fragment="custom-scripts">
+  </th:block>
+
+</body>
+
+</html>

@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.core.enums;
+package asterisk.sun.booking_tours.core.review;
 
 public enum ReviewStatus {
     PENDING,
