@@ -60,6 +60,9 @@ public class Booking extends BaseEntity {
     @Column(name = "contact_email", nullable = false)
     private String contactEmail;
 
+    @Column(name = "cancellation_reason", columnDefinition = "TEXT")
+    private String cancellationReason;
+
     // Constructors
     public Booking() {}
 
@@ -166,5 +169,13 @@ public class Booking extends BaseEntity {
 
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
     }
 }

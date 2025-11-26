@@ -22,11 +22,11 @@ public class LoggingAspect {
     public void loggableMethodPointcut() {
     }
 
-    @Pointcut("execution(* asterisk.sun.booking_tours.admin.controllers..*.*(..))")
+    @Pointcut("execution(* asterisk.sun.booking_tours.application.client..*.*(..))")
     public void controllerMethodPointcut() {
     }
 
-    @Pointcut("execution(* asterisk.sun.booking_tours.admin.services..*.*(..))")
+    @Pointcut("execution(* asterisk.sun.booking_tours.application.client..*.*(..))")
     public void serviceMethodPointcut() {
     }
 

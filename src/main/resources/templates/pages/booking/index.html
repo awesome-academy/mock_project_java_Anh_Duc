@@ -111,14 +111,8 @@
                       <strong th:text="${#numbers.formatDecimal(booking.finalTotal, 0, 'COMMA', 0, 'POINT')}"></strong> VND
                     </td>
                     <td>
-                      <span th:switch="${booking.status}" class="badge">
-                        <span th:case="'PENDING'" class="badge badge-warning">PENDING</span>
-                        <span th:case="'CONFIRMED'" class="badge badge-info">CONFIRMED</span>
-                        <span th:case="'PAID'" class="badge badge-success">PAID</span>
-                        <span th:case="'CANCELLED'" class="badge badge-danger">CANCELLED</span>
-                        <span th:case="'COMPLETED'" class="badge badge-primary">COMPLETED</span>
-                        <span th:case="'REFUNDED'" class="badge badge-secondary">REFUNDED</span>
-                      </span>
+                      <span th:class="${BookingStatusHelper.getFullBadgeClass(booking.status)}"
+                            th:text="${BookingStatusHelper.getDisplayName(booking.status)}"></span>
                     </td>
                     <td>
                       <div>
@@ -146,25 +140,13 @@
                         </button>
                         <div class="dropdown-menu" th:aria-labelledby="'statusDropdown' + ${booking.id}">
                           <form th:action="@{/admin/bookings/update-status/{id}(id=${booking.id})}" method="post">
-                            <button type="submit" name="status" value="PENDING" class="dropdown-item">
-                              <span class="badge badge-warning">PENDING</span>
-                            </button>
-                            <button type="submit" name="status" value="CONFIRMED" class="dropdown-item">
-                              <span class="badge badge-info">CONFIRMED</span>
-                            </button>
-                            <button type="submit" name="status" value="PAID" class="dropdown-item">
-                              <span class="badge badge-success">PAID</span>
-                            </button>
-                            <button type="submit" name="status" value="COMPLETED" class="dropdown-item">
-                              <span class="badge badge-primary">COMPLETED</span>
-                            </button>
-                            <div class="dropdown-divider"></div>
-                            <button type="submit" name="status" value="CANCELLED" class="dropdown-item">
-                              <span class="badge badge-danger">CANCELLED</span>
-                            </button>
-                            <button type="submit" name="status" value="REFUNDED" class="dropdown-item">
-                              <span class="badge badge-secondary">REFUNDED</span>
-                            </button>
+                            <th:block th:each="bookingStatus, iterStat : ${bookingStatuses}">
+                              <div th:if="${iterStat.index == 4}" class="dropdown-divider"></div>
+                              <button type="submit" name="status" th:value="${bookingStatus}" class="dropdown-item">
+                                <span th:class="${BookingStatusHelper.getFullBadgeClass(bookingStatus)}"
+                                      th:text="${BookingStatusHelper.getDisplayName(bookingStatus)}"></span>
+                              </button>
+                            </th:block>
                           </form>
                         </div>
                       </div>

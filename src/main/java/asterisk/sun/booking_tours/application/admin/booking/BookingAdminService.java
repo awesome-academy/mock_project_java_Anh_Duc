@@ -71,6 +71,9 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
                 .map(booking -> {
                     ListBookingDTO dto = MapperHelper.map(booking, ListBookingDTO.class);
 
+                    // Set status explicitly
+                    dto.setStatus(booking.getStatus());
+
                     if (booking.getUser() != null) {
                         dto.setUserId(booking.getUser().getId());
                         dto.setUsername(booking.getUser().getUsername());
