@@ -1,12 +1,12 @@
-package asterisk.sun.booking_tours.application.client.booking;
+package asterisk.sun.booking_tours.application.api.booking;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import asterisk.sun.booking_tours.application.client.booking.payload.RequestBookingDTO;
-import asterisk.sun.booking_tours.application.client.booking.payload.RequestCancelBookingDTO;
-import asterisk.sun.booking_tours.application.client.common.dto.SuccessResponse;
-import asterisk.sun.booking_tours.application.client.common.endpoint.ApiV1;
+import asterisk.sun.booking_tours.application.api.booking.payload.RequestBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.payload.RequestCancelBookingDTO;
+import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
+import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
 import asterisk.sun.booking_tours.common.aspect.Loggable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping(ApiV1.BOOKING_ENDPOINT)
@@ -25,6 +28,11 @@ public class ClientBookingController {
             ClientCancelBookingService clientCancelBookingService) {
         this.clientBookingService = clientBookingService;
         this.clientCancelBookingService = clientCancelBookingService;
+    }
+
+    @GetMapping("/demo")
+    public String getMethodName() {
+        return "Hello World!";
     }
 
     @Loggable

@@ -1,10 +1,10 @@
-package asterisk.sun.booking_tours.application.client.booking;
+package asterisk.sun.booking_tours.application.api.booking;
 
 import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.application.client.booking.payload.RequestBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.payload.RequestBookingDTO;
 import asterisk.sun.booking_tours.common.utils.CodeGenerator;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;

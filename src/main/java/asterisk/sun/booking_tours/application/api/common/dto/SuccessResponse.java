@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.client.common.dto;
+package asterisk.sun.booking_tours.application.api.common.dto;
 
 import java.time.LocalDateTime;
 

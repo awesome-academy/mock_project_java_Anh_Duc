@@ -1,8 +1,8 @@
-package asterisk.sun.booking_tours.application.client.booking;
+package asterisk.sun.booking_tours.application.api.booking;
 
 import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.application.client.booking.payload.RequestCancelBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.payload.RequestCancelBookingDTO;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;

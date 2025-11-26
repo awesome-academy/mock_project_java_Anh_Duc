@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.client.common.endpoint;
+package asterisk.sun.booking_tours.application.api.common.endpoint;
 
 public class ApiV1 {
     private ApiV1() {

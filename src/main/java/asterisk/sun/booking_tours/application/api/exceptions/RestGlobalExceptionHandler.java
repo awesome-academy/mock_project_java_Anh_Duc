@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.client.exceptions;
+package asterisk.sun.booking_tours.application.api.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import asterisk.sun.booking_tours.application.client.common.dto.ErrorResponse;
-import asterisk.sun.booking_tours.application.client.common.dto.ErrorResponse.ValidationError;
+import asterisk.sun.booking_tours.application.api.common.dto.ErrorResponse;
+import asterisk.sun.booking_tours.application.api.common.dto.ErrorResponse.ValidationError;
 import jakarta.persistence.EntityNotFoundException;
 
 /**

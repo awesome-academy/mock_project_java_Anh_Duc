@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.client.booking.payload;
+package asterisk.sun.booking_tours.application.api.booking.payload;
 
 import asterisk.sun.booking_tours.common.dto.BaseDTO;
 import jakarta.validation.constraints.Email;

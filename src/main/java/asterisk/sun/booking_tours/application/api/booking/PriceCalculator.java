@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.client.booking;
+package asterisk.sun.booking_tours.application.api.booking;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
