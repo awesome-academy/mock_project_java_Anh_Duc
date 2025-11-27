@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import asterisk.sun.booking_tours.application.api.tour.dto.ListToursResponseDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailResponseDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewTourDeparturesResponseDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
@@ -16,6 +17,11 @@ public class ApiTourService {
 
     public ApiTourService(TourRepository tourRepository) {
         this.tourRepository = tourRepository;
+    }
+
+    public List<ListToursResponseDTO> getListTours() {
+        List<Tour> tours = tourRepository.findAll();
+        return MapperHelper.mapList(tours, ListToursResponseDTO.class);
     }
 
     public ViewDetailResponseDTO getTourDetail(Long tourId) {

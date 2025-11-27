@@ -5,14 +5,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
+import asterisk.sun.booking_tours.application.api.tour.dto.ListToursResponseDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailRequestDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailResponseDTO;
-import asterisk.sun.booking_tours.common.aspect.Loggable;
+
+import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping(ApiV1.TOUR_ENDPOINT)
@@ -23,7 +24,17 @@ public class ApiTourController {
         this.apiTourService = apiTourService;
     }
 
-    @Loggable
+    @GetMapping
+    public ResponseEntity<SuccessResponse<List<ListToursResponseDTO>>> getListTours() {
+        List<ListToursResponseDTO> data = apiTourService.getListTours();
+
+        SuccessResponse<List<ListToursResponseDTO>> response = new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "Get List Tours Successfully", data);
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/detail")
     public ResponseEntity<SuccessResponse<ViewDetailResponseDTO>> viewDetail(ViewDetailRequestDTO param) {
         ViewDetailResponseDTO responseDTO = apiTourService.getTourDetail(param.getId());
