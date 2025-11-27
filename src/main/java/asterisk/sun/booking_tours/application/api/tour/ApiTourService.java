@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.api.tour.dto.ListToursResponseDTO;
+import asterisk.sun.booking_tours.application.api.tour.dto.SearchToursRequestDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailResponseDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewTourDeparturesResponseDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
@@ -19,7 +20,22 @@ public class ApiTourService {
         this.tourRepository = tourRepository;
     }
 
-    public List<ListToursResponseDTO> getListTours() {
+    public List<ListToursResponseDTO> getListTours(SearchToursRequestDTO param) {
+        if (param.getKeyword() != null) {
+            List<Tour> tours = tourRepository.searchByKeyword(param.getKeyword());
+            return MapperHelper.mapList(tours, ListToursResponseDTO.class);
+        }
+
+        if (param.getMainDestination() != null) {
+            List<Tour> tours = tourRepository.searchByLocation(param.getMainDestination());
+            return MapperHelper.mapList(tours, ListToursResponseDTO.class);
+        }
+
+        if (param.getDate() != null) {
+            List<Tour> tours = tourRepository.searchByDate(param.getDate());
+            return MapperHelper.mapList(tours, ListToursResponseDTO.class);
+        }
+
         List<Tour> tours = tourRepository.findAll();
         return MapperHelper.mapList(tours, ListToursResponseDTO.class);
     }

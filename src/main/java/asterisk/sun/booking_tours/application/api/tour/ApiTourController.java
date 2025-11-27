@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.RestController;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
 import asterisk.sun.booking_tours.application.api.tour.dto.ListToursResponseDTO;
+import asterisk.sun.booking_tours.application.api.tour.dto.SearchToursRequestDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailRequestDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailResponseDTO;
 
 import java.util.List;
 
+import org.springframework.core.annotation.MergedAnnotations.Search;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +27,8 @@ public class ApiTourController {
     }
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<List<ListToursResponseDTO>>> getListTours() {
-        List<ListToursResponseDTO> data = apiTourService.getListTours();
+    public ResponseEntity<SuccessResponse<List<ListToursResponseDTO>>> getListTours(SearchToursRequestDTO param) {
+        List<ListToursResponseDTO> data = apiTourService.getListTours(param);
 
         SuccessResponse<List<ListToursResponseDTO>> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
