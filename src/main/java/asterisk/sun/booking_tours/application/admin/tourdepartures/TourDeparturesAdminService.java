@@ -7,7 +7,7 @@ import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.ListTourD
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.tour.Tour;
 import asterisk.sun.booking_tours.core.tour.TourRepository;
-import asterisk.sun.booking_tours.core.tourdepartures.TourDepartures;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class TourDeparturesAdminService extends BaseServiceController<TourDepart
     }
 
     public List<ListTourDeparturesDTO> queryTourDeparturesByKeyword(String keyword) {
-        List<TourDepartures> tourDepartures = repository.searchByKeyword(keyword);
+        List<TourDeparture> tourDepartures = repository.searchByKeyword(keyword);
 
         return tourDepartures.stream()
                 .map(td -> {
@@ -47,7 +47,7 @@ public class TourDeparturesAdminService extends BaseServiceController<TourDepart
     }
 
     public void createTourDeparture(FormCreateTourDeparturesDTO formCreateTourDeparturesDTO) {
-        TourDepartures tourDeparture = new TourDepartures();
+        TourDeparture tourDeparture = new TourDeparture();
         tourDeparture.setStatus(formCreateTourDeparturesDTO.getStatus());
         tourDeparture.setDepartureDate(formCreateTourDeparturesDTO.getDepartureDate());
         tourDeparture.setReturnDate(formCreateTourDeparturesDTO.getReturnDate());
@@ -64,7 +64,7 @@ public class TourDeparturesAdminService extends BaseServiceController<TourDepart
     }
 
     public FormEditTourDeparturesDTO getTourDepartureById(Long id) {
-        TourDepartures tourDeparture = repository.findById(id)
+        TourDeparture tourDeparture = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tour Departure not found with id: " + id));
 
         FormEditTourDeparturesDTO dto = MapperHelper.map(tourDeparture, FormEditTourDeparturesDTO.class);
@@ -75,7 +75,7 @@ public class TourDeparturesAdminService extends BaseServiceController<TourDepart
     }
 
     public void updateTourDeparture(FormEditTourDeparturesDTO formEditTourDeparturesDTO) {
-        TourDepartures tourDeparture = repository.findById(formEditTourDeparturesDTO.getId())
+        TourDeparture tourDeparture = repository.findById(formEditTourDeparturesDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Tour Departure not found with id: " + formEditTourDeparturesDTO.getId()));
 
@@ -95,7 +95,7 @@ public class TourDeparturesAdminService extends BaseServiceController<TourDepart
     }
 
     public void deleteTourDeparture(Long id) {
-        TourDepartures tourDeparture = repository.findById(id)
+        TourDeparture tourDeparture = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Tour Departure not found with id: " + id));
 
         repository.delete(tourDeparture);

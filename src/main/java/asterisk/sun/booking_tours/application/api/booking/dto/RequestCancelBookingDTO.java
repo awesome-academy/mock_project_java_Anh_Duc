@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.api.booking.payload;
+package asterisk.sun.booking_tours.application.api.booking.dto;
 
 import jakarta.validation.constraints.NotNull;
 public class RequestCancelBookingDTO {

@@ -58,12 +58,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf
                         // Disable CSRF for API endpoints
-                        .ignoringRequestMatchers("/api/**")
-                )
+                        .ignoringRequestMatchers("/api/**"))
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authz -> authz
                         // Public endpoints
-                        .requestMatchers("/admin/auth/login", "/admin/auth/register", "/css/**", "/js/**", "/img/**", "/vendor/**",
+                        .requestMatchers("/admin/auth/login", "/admin/auth/register", "/css/**", "/js/**", "/img/**",
+                                "/vendor/**",
                                 "/scss/**", "/favicon.ico", "/favicon.svg", "/error", "/access-denied")
                         .permitAll()
                         // API authentication endpoints - public
@@ -78,8 +78,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         // Use stateless session for API endpoints
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                )
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .usernameParameter("email")
@@ -99,8 +98,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(restAuthenticationEntryPoint)
-                        .accessDeniedHandler(restAccessDeniedHandler)
-                )
+                        .accessDeniedHandler(restAccessDeniedHandler))
                 // Add JWT filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -3,7 +3,7 @@ package asterisk.sun.booking_tours.core.booking;
 import java.math.BigDecimal;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
-import asterisk.sun.booking_tours.core.tourdepartures.TourDepartures;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +27,7 @@ public class Booking extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_departure_id", referencedColumnName = "id")
-    private TourDepartures tourDeparture;
+    private TourDeparture tourDeparture;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -83,11 +83,11 @@ public class Booking extends BaseEntity {
         this.user = user;
     }
 
-    public TourDepartures getTourDeparture() {
+    public TourDeparture getTourDeparture() {
         return tourDeparture;
     }
 
-    public void setTourDeparture(TourDepartures tourDeparture) {
+    public void setTourDeparture(TourDeparture tourDeparture) {
         this.tourDeparture = tourDeparture;
     }
 

@@ -27,7 +27,7 @@ public class FormCreateTourDTO {
 
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
-    private Double price;
+    private BigDecimal price;
 
     private String thumbnailUrl;
 
@@ -102,11 +102,11 @@ public class FormCreateTourDTO {
         this.slug = slug;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

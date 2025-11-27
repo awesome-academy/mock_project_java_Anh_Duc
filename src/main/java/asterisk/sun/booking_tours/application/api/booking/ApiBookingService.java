@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.application.api.booking.payload.RequestBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
 import asterisk.sun.booking_tours.common.utils.CodeGenerator;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;
 import asterisk.sun.booking_tours.core.tour.Tour;
-import asterisk.sun.booking_tours.core.tourdepartures.TourDepartures;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
@@ -19,12 +19,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ClientBookingService {
+public class ApiBookingService {
     private final TourDeparturesRepository tourDeparturesRepository;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
 
-    public ClientBookingService(TourDeparturesRepository tourDeparturesRepository, BookingRepository bookingRepository,
+    public ApiBookingService(TourDeparturesRepository tourDeparturesRepository, BookingRepository bookingRepository,
             UserRepository userRepository) {
         this.tourDeparturesRepository = tourDeparturesRepository;
         this.bookingRepository = bookingRepository;
@@ -34,7 +34,7 @@ public class ClientBookingService {
     @Transactional
     public void bookTour(RequestBookingDTO requestBookingDTO) {
         // Validate tour departure
-        TourDepartures tourDeparture = validateTourDeparture(requestBookingDTO.getTourDepartureId());
+        TourDeparture tourDeparture = validateTourDeparture(requestBookingDTO.getTourDepartureId());
         Tour tour = tourDeparture.getTour();
         User user = userRepository.findById(requestBookingDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User with the given ID does not exist."));
@@ -67,7 +67,7 @@ public class ClientBookingService {
         bookingRepository.save(booking);
     }
 
-    private void updateAvailableSlots(TourDepartures tourDeparture, int totalParticipants) {
+    private void updateAvailableSlots(TourDeparture tourDeparture, int totalParticipants) {
         int updatedAvailableSlots = tourDeparture.getAvailableSlots() - totalParticipants;
         if (updatedAvailableSlots < 0) {
             throw new IllegalArgumentException("Not enough available slots for the selected tour departure.");
@@ -77,8 +77,8 @@ public class ClientBookingService {
         tourDeparturesRepository.save(tourDeparture);
     }
 
-    private TourDepartures validateTourDeparture(Long tourDepartureId) {
-        TourDepartures tourDeparture = tourDeparturesRepository.findById(tourDepartureId)
+    private TourDeparture validateTourDeparture(Long tourDepartureId) {
+        TourDeparture tourDeparture = tourDeparturesRepository.findById(tourDepartureId)
                 .orElseThrow(() -> new EntityNotFoundException("Tour Departure with the given ID does not exist."));
 
         if (tourDeparture.getAvailableSlots() <= 0) {

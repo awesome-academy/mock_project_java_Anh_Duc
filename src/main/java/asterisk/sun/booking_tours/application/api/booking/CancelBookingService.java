@@ -2,20 +2,20 @@ package asterisk.sun.booking_tours.application.api.booking;
 
 import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.application.api.booking.payload.RequestCancelBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.dto.RequestCancelBookingDTO;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;
-import asterisk.sun.booking_tours.core.tourdepartures.TourDepartures;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class ClientCancelBookingService {
+public class CancelBookingService {
     private final BookingRepository bookingRepository;
     private final TourDeparturesRepository tourDeparturesRepository;
 
-    public ClientCancelBookingService(BookingRepository bookingRepository, TourDeparturesRepository tourDeparturesRepository) {
+    public CancelBookingService(BookingRepository bookingRepository, TourDeparturesRepository tourDeparturesRepository) {
         this.bookingRepository = bookingRepository;
         this.tourDeparturesRepository = tourDeparturesRepository;
     }
@@ -35,7 +35,7 @@ public class ClientCancelBookingService {
     }
 
     private void updateAvailableSlots(Booking booking) {
-        TourDepartures tourDeparture = booking.getTourDeparture();
+        TourDeparture tourDeparture = booking.getTourDeparture();
         int totalCancelledSlots = booking.getNumAdults() + booking.getNumChild();
         tourDeparture.incrementAvailableSlots(totalCancelledSlots);
         tourDeparturesRepository.save(tourDeparture);

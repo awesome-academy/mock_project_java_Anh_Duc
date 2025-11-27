@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tour_departures")
-public class TourDepartures extends BaseEntity {
+public class TourDeparture extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tour_id", referencedColumnName = "id", nullable = false)
@@ -38,7 +38,7 @@ public class TourDepartures extends BaseEntity {
     private Integer availableSlots;
 
     // Constructors
-    public TourDepartures() {}
+    public TourDeparture() {}
 
     // Getters and Setters
     public Tour getTour() {

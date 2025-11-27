@@ -6,19 +6,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import asterisk.sun.booking_tours.application.admin.booking.BookingAdminService;
 import asterisk.sun.booking_tours.application.admin.booking.dto.FormCreateBookingDTO;
 import asterisk.sun.booking_tours.application.admin.booking.dto.FormEditBookingDTO;
 
 @Component
 public class FormBookingValidator implements Validator {
-
-    private final BookingAdminService service;
-
-    public FormBookingValidator(BookingAdminService bookingAdminService) {
-        this.service = bookingAdminService;
-    }
-
     @Override
     public boolean supports(Class<?> clazz) {
         return FormCreateBookingDTO.class.equals(clazz) || FormEditBookingDTO.class.equals(clazz);

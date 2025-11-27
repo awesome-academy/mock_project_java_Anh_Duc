@@ -13,7 +13,7 @@ import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;
-import asterisk.sun.booking_tours.core.tourdepartures.TourDepartures;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
@@ -119,7 +119,7 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
         booking.setUser(user);
 
         // Set tour departure
-        TourDepartures tourDeparture = tourDeparturesRepository.findById(formCreateBookingDTO.getTourDepartureId())
+        TourDeparture tourDeparture = tourDeparturesRepository.findById(formCreateBookingDTO.getTourDepartureId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Tour Departure not found with id: " + formCreateBookingDTO.getTourDepartureId()));
         booking.setTourDeparture(tourDeparture);
@@ -176,7 +176,7 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
 
         // Update tour departure if changed
         if (!booking.getTourDeparture().getId().equals(formEditBookingDTO.getTourDepartureId())) {
-            TourDepartures tourDeparture = tourDeparturesRepository.findById(formEditBookingDTO.getTourDepartureId())
+            TourDeparture tourDeparture = tourDeparturesRepository.findById(formEditBookingDTO.getTourDepartureId())
                     .orElseThrow(() -> new EntityNotFoundException(
                             "Tour Departure not found with id: " + formEditBookingDTO.getTourDepartureId()));
             booking.setTourDeparture(tourDeparture);

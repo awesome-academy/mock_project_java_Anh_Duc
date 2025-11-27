@@ -3,8 +3,8 @@ package asterisk.sun.booking_tours.application.api.booking;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import asterisk.sun.booking_tours.application.api.booking.payload.RequestBookingDTO;
-import asterisk.sun.booking_tours.application.api.booking.payload.RequestCancelBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.dto.RequestCancelBookingDTO;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
 import asterisk.sun.booking_tours.common.aspect.Loggable;
@@ -15,17 +15,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
 @RequestMapping(ApiV1.BOOKING_ENDPOINT)
-public class ClientBookingController {
-    private final ClientBookingService clientBookingService;
-    private final ClientCancelBookingService clientCancelBookingService;
+public class ApiBookingController {
+    private final ApiBookingService clientBookingService;
+    private final CancelBookingService clientCancelBookingService;
 
-    public ClientBookingController(ClientBookingService clientBookingService,
-            ClientCancelBookingService clientCancelBookingService) {
+    public ApiBookingController(ApiBookingService clientBookingService,
+            CancelBookingService clientCancelBookingService) {
         this.clientBookingService = clientBookingService;
         this.clientCancelBookingService = clientCancelBookingService;
     }
