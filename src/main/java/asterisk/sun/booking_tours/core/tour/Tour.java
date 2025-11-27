@@ -1,5 +1,7 @@
 package asterisk.sun.booking_tours.core.tour;
 
+import java.math.BigDecimal;
+
 import asterisk.sun.booking_tours.core.BaseEntity;
 import asterisk.sun.booking_tours.core.category.Category;
 import asterisk.sun.booking_tours.core.user.User;
@@ -47,10 +49,10 @@ public class Tour extends BaseEntity {
     private Integer durationNights;
 
     @Column(name = "price_adult")
-    private Double priceAdult;
+    private BigDecimal priceAdult;
 
     @Column(name = "price_child")
-    private Double priceChild;
+    private BigDecimal priceChild;
 
     @Column(name = "currency", length = 10)
     private String currency;
@@ -157,19 +159,19 @@ public class Tour extends BaseEntity {
         this.durationNights = durationNights;
     }
 
-    public Double getPriceAdult() {
+    public BigDecimal getPriceAdult() {
         return priceAdult;
     }
 
-    public void setPriceAdult(Double priceAdult) {
+    public void setPriceAdult(BigDecimal priceAdult) {
         this.priceAdult = priceAdult;
     }
 
-    public Double getPriceChild() {
+    public BigDecimal getPriceChild() {
         return priceChild;
     }
 
-    public void setPriceChild(Double priceChild) {
+    public void setPriceChild(BigDecimal priceChild) {
         this.priceChild = priceChild;
     }
 

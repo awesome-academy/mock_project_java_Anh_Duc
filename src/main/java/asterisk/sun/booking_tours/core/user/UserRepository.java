@@ -22,6 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByPhoneAndIdNot(String phone, Long id);
 
+    Optional<User> findByEmail(String email);
     /**
      * Generic method to query users with any projection type.
      * Spring Data JPA will automatically generate the query based on the projection

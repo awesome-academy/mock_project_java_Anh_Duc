@@ -150,4 +150,8 @@ public class User extends BaseEntity {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public boolean isEnabled() {
+        return this.status == UserStatus.ACTIVE;
+    }
 }

@@ -1,5 +1,7 @@
 package asterisk.sun.booking_tours.application.admin.tour.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -49,11 +51,11 @@ public class FormEditTourDTO {
 
     @NotNull(message = "Adult price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Adult price must be greater than 0")
-    private Double priceAdult;
+    private BigDecimal priceAdult;
 
     @NotNull(message = "Child price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Child price must be greater than 0")
-    private Double priceChild;
+    private BigDecimal priceChild;
 
     @NotBlank(message = "Currency is required")
     @Size(max = 10, message = "Currency must not exceed 10 characters")
@@ -166,19 +168,19 @@ public class FormEditTourDTO {
         this.durationNights = durationNights;
     }
 
-    public Double getPriceAdult() {
+    public BigDecimal getPriceAdult() {
         return priceAdult;
     }
 
-    public void setPriceAdult(Double priceAdult) {
+    public void setPriceAdult(BigDecimal priceAdult) {
         this.priceAdult = priceAdult;
     }
 
-    public Double getPriceChild() {
+    public BigDecimal getPriceChild() {
         return priceChild;
     }
 
-    public void setPriceChild(Double priceChild) {
+    public void setPriceChild(BigDecimal priceChild) {
         this.priceChild = priceChild;
     }
 

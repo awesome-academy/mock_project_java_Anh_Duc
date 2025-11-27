@@ -1,8 +1,8 @@
 package asterisk.sun.booking_tours.application.admin.user;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.admin.common.BaseServiceController;
@@ -17,8 +17,10 @@ import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserAdminService extends BaseServiceController<UserRepository> {
+    private final PasswordEncoder passwordEncoder;
 
-    public UserAdminService(UserRepository userRepository) {
+    public UserAdminService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         super(userRepository);
     }
 
@@ -30,6 +32,9 @@ public class UserAdminService extends BaseServiceController<UserRepository> {
 
     public void createUser(FormCreateUserDTO formCreateUserDTO) {
         User user = MapperHelper.map(formCreateUserDTO, User.class);
+
+        user.setPassword(passwordEncoder.encode(formCreateUserDTO.getPassword()));
+
         repository.save(user);
     }
 
@@ -56,7 +61,7 @@ public class UserAdminService extends BaseServiceController<UserRepository> {
 
             // Update password only if provided
             if (formUpdateUserDTO.getPassword() != null && !formUpdateUserDTO.getPassword().isEmpty()) {
-                user.setPassword(formUpdateUserDTO.getPassword());
+                user.setPassword(passwordEncoder.encode(formUpdateUserDTO.getPassword()));
             }
 
             repository.save(user);

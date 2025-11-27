@@ -88,4 +88,20 @@ public class TourDepartures extends BaseEntity {
     public void setAvailableSlots(Integer availableSlots) {
         this.availableSlots = availableSlots;
     }
+
+    public void decrementAvailableSlots(int slots) {
+        if (this.availableSlots - slots < 0) {
+            throw new IllegalArgumentException("Available slots cannot be negative.");
+        }
+
+        this.availableSlots = this.availableSlots - slots;
+    }
+
+    public void incrementAvailableSlots(int slots) {
+        if (this.availableSlots + slots > this.totalSlots) {
+            throw new IllegalArgumentException("Available slots cannot exceed total slots.");
+        }
+
+        this.availableSlots += slots;
+    }
 }

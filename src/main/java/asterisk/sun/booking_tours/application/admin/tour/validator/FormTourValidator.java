@@ -55,7 +55,7 @@ public class FormTourValidator implements Validator {
 
         // Validate prices
         if (dto.getPriceAdult() != null && dto.getPriceChild() != null) {
-            if (dto.getPriceChild() > dto.getPriceAdult()) {
+            if (dto.getPriceChild().compareTo(dto.getPriceAdult()) > 0) {
                 errors.rejectValue("priceChild", "error.tour",
                     "Child price should not be greater than adult price");
             }
@@ -87,7 +87,7 @@ public class FormTourValidator implements Validator {
 
         // Validate prices
         if (dto.getPriceAdult() != null && dto.getPriceChild() != null) {
-            if (dto.getPriceChild() > dto.getPriceAdult()) {
+            if (dto.getPriceChild().compareTo(dto.getPriceAdult()) > 0) {
                 errors.rejectValue("priceChild", "error.tour",
                     "Child price should not be greater than adult price");
             }
