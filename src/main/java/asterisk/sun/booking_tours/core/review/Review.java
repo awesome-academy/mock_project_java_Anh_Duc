@@ -16,8 +16,8 @@ import jakarta.persistence.Table;
 public class Review extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "created_by", referencedColumnName = "id")
+    private User createdBy;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reviewable_type")
@@ -40,12 +40,12 @@ public class Review extends BaseEntity {
     public Review() {}
 
     // Getters and Setters
-    public User getUser() {
-        return user;
+    public User getCreatedBy() {
+        return createdBy;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
     }
 
     public ReviewableType getReviewableType() {
