@@ -1,7 +1,6 @@
-package asterisk.sun.booking_tours.core.entities;
+package asterisk.sun.booking_tours.core.comment;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
-import asterisk.sun.booking_tours.core.enums.CommentableType;
 import asterisk.sun.booking_tours.core.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,8 +19,9 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column(name = "parent_id")
-    private Long parentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    private Comment parentComment;
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
@@ -45,12 +45,12 @@ public class Comment extends BaseEntity {
         this.user = user;
     }
 
-    public Long getParentId() {
-        return parentId;
+    public Comment getParentComment() {
+        return parentComment;
     }
 
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
+    public void setParentComment(Comment parentComment) {
+        this.parentComment = parentComment;
     }
 
     public String getContent() {

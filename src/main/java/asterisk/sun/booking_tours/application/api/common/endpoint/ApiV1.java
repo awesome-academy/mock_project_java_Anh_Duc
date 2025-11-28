@@ -13,4 +13,6 @@ public class ApiV1 {
     public static final String REVIEW_ENDPOINT = API_V1_PREFIX + "/reviews";
 
     public static final String LIKE_ENDPOINT = API_V1_PREFIX + "/likes";
+
+    public static final String COMMENT_ENDPOINT = API_V1_PREFIX + "/comments";
 }
