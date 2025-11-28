@@ -1,8 +1,6 @@
 package asterisk.sun.booking_tours.application.api.review.dto;
 
 import asterisk.sun.booking_tours.core.review.ReviewableType;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
