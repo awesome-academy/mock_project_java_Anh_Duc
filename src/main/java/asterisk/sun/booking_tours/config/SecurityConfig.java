@@ -66,6 +66,8 @@ public class SecurityConfig {
                                 "/vendor/**",
                                 "/scss/**", "/favicon.ico", "/favicon.svg", "/error", "/access-denied")
                         .permitAll()
+                        // Swagger UI endpoints - public access
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // API authentication endpoints - public
                         .requestMatchers("/api/auth/**").permitAll()
                         // API endpoints - require authentication via JWT
@@ -74,6 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/employees").hasAnyRole("ADMIN", "USER")
                         // Admin endpoints - full CRUD
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+
                         // All other requests require authentication
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
