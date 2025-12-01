@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.api.Like.dto;
+package asterisk.sun.booking_tours.application.api.like.dto;
 
 import asterisk.sun.booking_tours.core.like.LikeableType;
 import jakarta.validation.constraints.NotNull;

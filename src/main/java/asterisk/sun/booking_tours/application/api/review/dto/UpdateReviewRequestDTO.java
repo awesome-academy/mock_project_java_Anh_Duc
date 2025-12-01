@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateReviewForTourRequestDTO {
-    @NotNull(message = "Tour ID is required")
-    private Long tourId;
+public class UpdateReviewRequestDTO {
+    @NotNull(message = "Review ID is required")
+    private Long reviewId;
 
     @NotNull(message = "Rating is required")
     @Min(value = 1, message = "Rating must be at least 1")

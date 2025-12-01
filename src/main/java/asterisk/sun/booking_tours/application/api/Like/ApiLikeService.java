@@ -1,10 +1,10 @@
-package asterisk.sun.booking_tours.application.api.Like;
+package asterisk.sun.booking_tours.application.api.like;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.application.api.Like.dto.CreateLikeRequestDTO;
-import asterisk.sun.booking_tours.application.api.Like.dto.LikeResponseDTO;
+import asterisk.sun.booking_tours.application.api.like.dto.CreateLikeRequestDTO;
+import asterisk.sun.booking_tours.application.api.like.dto.LikeResponseDTO;
 import asterisk.sun.booking_tours.core.like.Like;
 import asterisk.sun.booking_tours.core.like.LikeRepository;
 import asterisk.sun.booking_tours.core.user.User;

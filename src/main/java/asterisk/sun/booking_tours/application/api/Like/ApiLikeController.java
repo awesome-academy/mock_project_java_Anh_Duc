@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.api.Like;
+package asterisk.sun.booking_tours.application.api.like;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import asterisk.sun.booking_tours.application.api.Like.dto.CreateLikeRequestDTO;
-import asterisk.sun.booking_tours.application.api.Like.dto.LikeResponseDTO;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
+import asterisk.sun.booking_tours.application.api.like.dto.CreateLikeRequestDTO;
+import asterisk.sun.booking_tours.application.api.like.dto.LikeResponseDTO;
 import jakarta.validation.Valid;
 
 @RestController
