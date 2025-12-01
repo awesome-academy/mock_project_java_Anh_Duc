@@ -1,14 +1,11 @@
 
 package asterisk.sun.booking_tours.application.admin.user.validator;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import asterisk.sun.booking_tours.application.admin.user.dto.FormUpdateUserDTO;
-import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.application.admin.user.UserAdminService;
 
 @Component

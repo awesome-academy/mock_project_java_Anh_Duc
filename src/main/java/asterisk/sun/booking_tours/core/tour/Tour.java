@@ -1,15 +1,19 @@
 package asterisk.sun.booking_tours.core.tour;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
 import asterisk.sun.booking_tours.core.category.Category;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.user.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,7 +26,7 @@ public class Tour extends BaseEntity {
     private String description;
 
     @Column(name = "price", nullable = false)
-    private Double price;
+    private BigDecimal price;
 
     @Column(name = "slug", unique = true, nullable = false)
     private String slug;
@@ -68,6 +72,9 @@ public class Tour extends BaseEntity {
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
 
+    @OneToMany(mappedBy = "tour", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TourDeparture> departures;
+
     // Constructors
     public Tour() {}
 
@@ -87,11 +94,11 @@ public class Tour extends BaseEntity {
         this.description = description;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -205,5 +212,13 @@ public class Tour extends BaseEntity {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<TourDeparture> getDepartures() {
+        return departures;
+    }
+
+    public void setDepartures(List<TourDeparture> departures) {
+        this.departures = departures;
     }
 }

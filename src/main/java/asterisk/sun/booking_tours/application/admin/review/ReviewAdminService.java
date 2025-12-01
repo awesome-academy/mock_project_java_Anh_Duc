@@ -31,9 +31,9 @@ public class ReviewAdminService extends BaseServiceController<ReviewRepository> 
                 .orElseThrow(() -> new EntityNotFoundException("Review not found with id: " + id));
 
         FormUpdateReviewDTO dto = MapperHelper.map(review, FormUpdateReviewDTO.class);
-        if (review.getUser() != null) {
-            dto.setUserName(review.getUser().getUsername());
-            dto.setUserEmail(review.getUser().getEmail());
+        if (review.getCreatedBy() != null) {
+            dto.setUserName(review.getCreatedBy().getUsername());
+            dto.setUserEmail(review.getCreatedBy().getEmail());
         }
         return dto;
     }
@@ -75,9 +75,9 @@ public class ReviewAdminService extends BaseServiceController<ReviewRepository> 
 
     private ListReviewDTO convertToListDTO(Review review) {
         ListReviewDTO dto = MapperHelper.map(review, ListReviewDTO.class);
-        if (review.getUser() != null) {
-            dto.setUserName(review.getUser().getUsername());
-            dto.setUserEmail(review.getUser().getEmail());
+        if (review.getCreatedBy() != null) {
+            dto.setUserName(review.getCreatedBy().getUsername());
+            dto.setUserEmail(review.getCreatedBy().getEmail());
         }
         return dto;
     }
