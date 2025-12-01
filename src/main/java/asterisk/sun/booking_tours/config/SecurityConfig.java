@@ -66,6 +66,8 @@ public class SecurityConfig {
                                 "/vendor/**",
                                 "/scss/**", "/favicon.ico", "/favicon.svg", "/error", "/access-denied")
                         .permitAll()
+                        // User endpoints - register new users and email verification
+                        .requestMatchers("/api/v1/users/register", "/api/v1/users/verify-email", "/api/v1/users/resend-verification").permitAll()
                         // Swagger UI endpoints - public access
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // API authentication endpoints - public
@@ -76,7 +78,6 @@ public class SecurityConfig {
                         .requestMatchers("/admin/employees").hasAnyRole("ADMIN", "USER")
                         // Admin endpoints - full CRUD
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-
                         // All other requests require authentication
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session

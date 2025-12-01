@@ -22,7 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
  * Global exception handler for REST API endpoints
  * Handles exceptions and returns standardized JSON error responses
  */
-@RestControllerAdvice(basePackages = "asterisk.sun.booking_tours.application.client")
+@RestControllerAdvice(basePackages = {"asterisk.sun.booking_tours.application.api"})
 public class RestGlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RestGlobalExceptionHandler.class);
