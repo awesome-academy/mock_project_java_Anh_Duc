@@ -1,11 +1,16 @@
 
 package asterisk.sun.booking_tours.application.admin.category;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.admin.category.dto.FormEditCategoryDTO;
+import asterisk.sun.booking_tours.application.admin.category.dto.CategorySearchRequestDTO;
 import asterisk.sun.booking_tours.application.admin.category.dto.FormCreateCategoryDTO;
 import asterisk.sun.booking_tours.application.admin.category.dto.ListCategoryDTO;
 import asterisk.sun.booking_tours.application.admin.common.BaseServiceController;
@@ -13,6 +18,7 @@ import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.category.Category;
 import asterisk.sun.booking_tours.core.category.CategoryRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class CategoryAdminService extends BaseServiceController<CategoryRepository> {
@@ -21,8 +27,27 @@ public class CategoryAdminService extends BaseServiceController<CategoryReposito
         super(categoryRepository);
     }
 
-    public List<ListCategoryDTO> queryCategoriesByKeyword(String keyword) {
-        return MapperHelper.mapList(repository.searchByKeyword(keyword), ListCategoryDTO.class);
+    public Page<ListCategoryDTO> queryCategoriesByKeyword(CategorySearchRequestDTO request) {
+        Pageable pageable = request.getPageable();
+
+        // Tạo Specification (Bộ lọc động)
+        Specification<Category> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 1. Lọc theo Keyword (nếu có)
+            if (request.getKeyword() != null && !request.getKeyword().isEmpty()) {
+                String likeKey = "%" + request.getKeyword().toLowerCase() + "%";
+                predicates.add(cb.or(
+                        cb.like(cb.lower(root.get("name")), likeKey),
+                        cb.like(cb.lower(root.get("description")), likeKey)));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Category> pageResult = repository.findAll(spec, pageable);
+
+        return pageResult.map(category -> MapperHelper.map(category, ListCategoryDTO.class));
     }
 
     public void createCategory(FormCreateCategoryDTO formCreateCategoryDTO) {

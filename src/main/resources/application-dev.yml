@@ -2,7 +2,7 @@ spring:
   application:
     name: booking-tours-dev
   datasource:
-    url: ${DB_URL}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:booking_tours}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:
