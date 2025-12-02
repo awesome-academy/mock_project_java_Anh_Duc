@@ -75,7 +75,6 @@ public class BookingAdminController extends BaseAdminController<BookingAdminServ
         model.addAttribute("keyword", keyword);
         model.addAttribute("bookingStatuses", BookingStatus.values());
 
-        System.out.println("Booking statuses: " + service.queryBookingsByKeyword(keyword).get(0).getStatus());
         return view("index");
     }
 

@@ -43,4 +43,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<UserBasicProjection> searchByKeyword(@Param("keyword") String keyword);
 
     Optional<User> findByPhone(String phone);
+
+    List<User> findByRole(Role role);
 }

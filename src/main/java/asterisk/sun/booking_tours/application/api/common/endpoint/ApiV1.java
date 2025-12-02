@@ -17,4 +17,6 @@ public class ApiV1 {
     public static final String COMMENT_ENDPOINT = API_V1_PREFIX + "/comments";
 
     public static final String USER_ENDPOINT = API_V1_PREFIX + "/users";
+
+    public static final String PAYMENT_ENDPOINT = API_V1_PREFIX + "/payments";
 }

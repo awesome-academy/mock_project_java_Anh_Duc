@@ -1,5 +1,6 @@
 package asterisk.sun.booking_tours.application.admin.category;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -8,13 +9,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import asterisk.sun.booking_tours.application.admin.category.validator.FormCategoryValidator;
 import asterisk.sun.booking_tours.application.admin.common.BaseAdminController;
+import asterisk.sun.booking_tours.application.admin.category.dto.CategorySearchRequestDTO;
 import asterisk.sun.booking_tours.application.admin.category.dto.FormCreateCategoryDTO;
 import asterisk.sun.booking_tours.application.admin.category.dto.FormEditCategoryDTO;
+import asterisk.sun.booking_tours.application.admin.category.dto.ListCategoryDTO;
 import jakarta.validation.Valid;
 
 @Controller
@@ -33,10 +35,11 @@ public class CategoryAdminController extends BaseAdminController<CategoryAdminSe
     }
 
     @GetMapping
-    public String index(Model model, @RequestParam(required = false) String keyword) {
+    public String index(Model model, CategorySearchRequestDTO request) {
+        Page<ListCategoryDTO> categoryPage = service.queryCategoriesByKeyword(request);
+        model.addAttribute("categories", categoryPage);
 
-        model.addAttribute("categories", service.queryCategoriesByKeyword(keyword));
-        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchRequest", request);
 
         return view("index");
     }

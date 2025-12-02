@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <!--
+    No Data Fragment - Display when no data is available
+
+    Parameters:
+    - message: Custom message to display (optional, default: "No data available")
+    - icon: Font Awesome icon class (optional, default: "fa-inbox")
+
+    Usage example:
+    <div th:replace="~{fragments/no-data :: noData('No categories found', 'fa-folder-open')}"></div>
+    or
+    <div th:replace="~{fragments/no-data :: noData}"></div>
+  -->
+  <div th:fragment="noData(message, icon)" class="text-center py-5">
+    <i class="fas fa-3x text-gray-300 mb-3" th:classappend="${icon != null ? icon : 'fa-inbox'}"></i>
+    <p class="text-gray-500 mb-0" th:text="${message != null ? message : 'No data available'}"></p>
+  </div>
+
+  <!-- Simple version with default values -->
+  <div th:fragment="noDataSimple" class="text-center py-5">
+    <i class="fas fa-inbox fa-3x text-gray-300 mb-3"></i>
+    <p class="text-gray-500 mb-0">No data available</p>
+  </div>
+
+  <!-- No Data for Table -->
+  <tr th:fragment="noDataRow(colspan, message)">
+    <td th:colspan="${colspan}" class="text-center py-5">
+      <i class="fas fa-inbox fa-3x text-gray-300 mb-3 d-block"></i>
+      <p class="text-gray-500 mb-0" th:text="${message != null ? message : 'No data available'}"></p>
+    </td>
+  </tr>
+
+</body>
+
+</html>

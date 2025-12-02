@@ -28,7 +28,7 @@
         <form th:action="@{/admin/categories}" method="get" class="form-inline">
           <div class="form-group mr-3 mb-2">
             <label for="keyword" class="mr-2">Search:</label>
-            <input type="text" class="form-control" id="keyword" name="keyword" th:value="${keyword}"
+            <input type="text" class="form-control" id="keyword" name="keyword" th:value="${searchRequest.keyword}"
               placeholder="Search by name or description..." style="min-width: 300px;">
           </div>
           <button type="submit" class="btn btn-primary mb-2 mr-2">
@@ -83,11 +83,12 @@
                     <td th:text="${category.slug}"></td>
                     <td th:text="${category.description}"></td>
                     <td>
-                      <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}" class="btn btn-sm btn-info">Edit</a>
+                      <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
+                        class="btn btn-sm btn-info">Edit</a>
 
                       <div class="d-inline">
-                        <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post" class="d-inline"
-                          onsubmit="return confirm('Do you want to delete this category?');">
+                        <form th:action="@{/admin/categories/delete/{id}(id=${category.id})}" method="post"
+                          class="d-inline" onsubmit="return confirm('Do you want to delete this category?');">
                           <button type="submit" class="btn btn-sm btn-danger">
                             Delete
                           </button>
@@ -95,9 +96,27 @@
                       </div>
                     </td>
                   </tr>
+
+                  <tr th:if="${categories.empty}">
+                    <td colspan="5" class="text-center">No categories found.</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
+
+            <!-- Pagination -->
+            <div th:with="queryStr='&keyword=' + (${searchRequest.keyword} ?: '')">
+
+              <div th:replace="~{fragments/pagination :: pagination(
+                        ${categories},
+                        '/admin/categories',
+                        ${queryStr},
+                        'categories'
+              )}">
+              </div>
+
+            </div>
+
           </div>
         </div>
       </div>
