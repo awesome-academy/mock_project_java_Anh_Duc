@@ -14,10 +14,10 @@ import asterisk.sun.booking_tours.application.api.payment.dto.UpdatePaymentStatu
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;
-import asterisk.sun.booking_tours.core.entities.Payment;
-import asterisk.sun.booking_tours.core.enums.PaymentMethod;
-import asterisk.sun.booking_tours.core.enums.PaymentStatus;
+import asterisk.sun.booking_tours.core.payment.Payment;
+import asterisk.sun.booking_tours.core.payment.PaymentMethod;
 import asterisk.sun.booking_tours.core.payment.PaymentRepository;
+import asterisk.sun.booking_tours.core.payment.PaymentStatus;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -46,6 +46,10 @@ public class PaymentService {
         Booking booking = bookingRepository.findById(requestPaymentDTO.getBookingId())
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Booking not found with id: " + requestPaymentDTO.getBookingId()));
+
+        if (booking.getStatus() != BookingStatus.PENDING) {
+            throw new IllegalStateException("Payment can only be made for bookings in PENDING status");
+        }
 
         // Validate user exists
         User user = userRepository.findById(requestPaymentDTO.getUserId())
@@ -83,10 +87,6 @@ public class PaymentService {
         if (requestPaymentDTO.getPaymentMethod() == PaymentMethod.INTERNET_BANKING) {
             notes.append("Bank: ")
                     .append(requestPaymentDTO.getBankCode() != null ? requestPaymentDTO.getBankCode() : "N/A");
-            notes.append(", Account: ").append(
-                    requestPaymentDTO.getAccountNumber() != null ? requestPaymentDTO.getAccountNumber() : "N/A");
-            notes.append(", Account Name: ")
-                    .append(requestPaymentDTO.getAccountName() != null ? requestPaymentDTO.getAccountName() : "N/A");
         }
 
         payment.setNotes(notes.toString());
@@ -235,11 +235,7 @@ public class PaymentService {
         // Add banking details if available
         if (requestDTO != null && requestDTO.getPaymentMethod() == PaymentMethod.INTERNET_BANKING) {
             responseDTO.setBankCode(requestDTO.getBankCode());
-            responseDTO.setAccountNumber(maskAccountNumber(requestDTO.getAccountNumber()));
-            responseDTO.setAccountName(requestDTO.getAccountName());
 
-            // Generate mock payment URL (in real implementation, this would be from payment
-            // gateway)
             responseDTO.setPaymentUrl(generatePaymentUrl(payment.getTransactionId(), requestDTO.getBankCode()));
         }
 

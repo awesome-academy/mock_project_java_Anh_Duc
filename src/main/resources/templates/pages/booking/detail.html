@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Booking Detail"></title>
+  <th:block layout:fragment="custom-css">
+    <style>
+      .detail-label {
+        font-weight: 600;
+        color: #4e73df;
+        margin-bottom: 0.25rem;
+      }
+      .detail-value {
+        color: #5a5c69;
+        margin-bottom: 1rem;
+      }
+      .price-breakdown {
+        background: #f8f9fc;
+        border-left: 4px solid #4e73df;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      .total-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1cc88a;
+      }
+    </style>
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Booking Details</h1>
+      <div>
+        <a th:href="@{/admin/bookings/edit/{id}(id=${booking.id})}" class="btn btn-primary btn-icon-split mr-2">
+          <span class="icon text-white-50">
+            <i class="fas fa-edit"></i>
+          </span>
+          <span class="text">Edit Booking</span>
+        </a>
+        <a th:href="@{/admin/bookings}" class="btn btn-secondary btn-icon-split">
+          <span class="icon text-white-50">
+            <i class="fas fa-arrow-left"></i>
+          </span>
+          <span class="text">Back to List</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Basic Information -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 bg-gradient-primary">
+        <h6 class="m-0 font-weight-bold text-white">
+          <i class="fas fa-info-circle"></i> Basic Information
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-barcode"></i> Booking Code
+            </div>
+            <div class="detail-value">
+              <strong th:text="${booking.code}"></strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-flag"></i> Status
+            </div>
+            <div class="detail-value">
+              <span th:class="${BookingStatusHelper.getFullBadgeClass(booking.status)}"
+                    th:text="${BookingStatusHelper.getDisplayName(booking.status)}"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-user"></i> Customer
+            </div>
+            <div class="detail-value" th:text="${booking.username}"></div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-calendar"></i> Created At
+            </div>
+            <div class="detail-value" th:text="${#temporals.format(booking.createdAt, 'dd/MM/yyyy HH:mm')}"></div>
+          </div>
+        </div>
+        <div class="row" th:if="${booking.notes}">
+          <div class="col-md-12">
+            <div class="detail-label">
+              <i class="fas fa-sticky-note"></i> Notes
+            </div>
+            <div class="detail-value" th:text="${booking.notes}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tour Information -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 bg-gradient-success">
+        <h6 class="m-0 font-weight-bold text-white">
+          <i class="fas fa-plane-departure"></i> Tour Information
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-route"></i> Tour Name
+            </div>
+            <div class="detail-value">
+              <strong th:text="${booking.tourName}"></strong>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-calendar-alt"></i> Departure Date
+            </div>
+            <div class="detail-value" th:text="${#temporals.format(booking.departureDate, 'dd/MM/yyyy')}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Participants -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 bg-gradient-info">
+        <h6 class="m-0 font-weight-bold text-white">
+          <i class="fas fa-users"></i> Participants
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-user"></i> Number of Adults
+            </div>
+            <div class="detail-value">
+              <span class="badge badge-primary badge-lg" style="font-size: 1.1rem;">
+                <i class="fas fa-user"></i> <span th:text="${booking.numAdults}"></span> Adults
+              </span>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="detail-label">
+              <i class="fas fa-child"></i> Number of Children
+            </div>
+            <div class="detail-value">
+              <span class="badge badge-secondary badge-lg" style="font-size: 1.1rem;">
+                <i class="fas fa-child"></i> <span th:text="${booking.numChild}"></span> Children
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Information -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 bg-gradient-warning">
+        <h6 class="m-0 font-weight-bold text-white">
+          <i class="fas fa-dollar-sign"></i> Pricing Details
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="price-breakdown">
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <strong>Sub Total:</strong>
+            </div>
+            <div class="col-md-6 text-right">
+              <span th:text="${#numbers.formatDecimal(booking.subTotal, 0, 'COMMA', 0, 'POINT')}"></span> VND
+            </div>
+          </div>
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <strong>Discount:</strong>
+            </div>
+            <div class="col-md-6 text-right text-danger">
+              - <span th:text="${#numbers.formatDecimal(booking.discount, 0, 'COMMA', 0, 'POINT')}"></span> VND
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-md-6">
+              <strong>Final Total:</strong>
+            </div>
+            <div class="col-md-6 text-right">
+              <span class="total-price" th:text="${#numbers.formatDecimal(booking.finalTotal, 0, 'COMMA', 0, 'POINT')}"></span> VND
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3 bg-gradient-secondary">
+        <h6 class="m-0 font-weight-bold text-white">
+          <i class="fas fa-address-book"></i> Contact Information
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="detail-label">
+              <i class="fas fa-user"></i> Contact Name
+            </div>
+            <div class="detail-value" th:text="${booking.contactName}"></div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-label">
+              <i class="fas fa-phone"></i> Contact Phone
+            </div>
+            <div class="detail-value" th:text="${booking.contactPhone}"></div>
+          </div>
+          <div class="col-md-4">
+            <div class="detail-label">
+              <i class="fas fa-envelope"></i> Contact Email
+            </div>
+            <div class="detail-value" th:text="${booking.contactEmail}"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </th:block>
+
+  <th:block layout:fragment="custom-scripts">
+  </th:block>
+
+</body>
+
+</html>

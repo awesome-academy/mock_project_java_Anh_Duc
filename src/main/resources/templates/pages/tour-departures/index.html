@@ -28,7 +28,7 @@
         <form th:action="@{/admin/tour-departures}" method="get" class="form-inline">
           <div class="form-group mr-3 mb-2">
             <label for="keyword" class="mr-2">Search:</label>
-            <input type="text" class="form-control" id="keyword" name="keyword" th:value="${keyword}"
+            <input type="text" class="form-control" id="keyword" name="keyword" th:value="${searchRequest.keyword}"
               placeholder="Search by tour name or title..." style="min-width: 350px;">
           </div>
           <button type="submit" class="btn btn-primary mb-2 mr-2">
@@ -88,12 +88,7 @@
                     <td th:text="${#temporals.format(departure.departureDate, 'dd/MM/yyyy')}"></td>
                     <td th:text="${#temporals.format(departure.returnDate, 'dd/MM/yyyy')}"></td>
                     <td>
-                      <span th:class="'badge badge-' +
-                        ${departure.status == 'SCHEDULED' ? 'info' :
-                         (departure.status == 'CONFIRMED' ? 'success' :
-                         (departure.status == 'CANCELLED' ? 'danger' :
-                         (departure.status == 'COMPLETED' ? 'secondary' : 'warning')))}"
-                        th:text="${departure.status}">
+                      <span th:class="${departure.status.badgeClass}" th:text="${departure.status.label}">
                       </span>
                     </td>
                     <td th:text="${departure.totalSlots}"></td>
@@ -141,6 +136,19 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <!-- Pagination -->
+            <div th:with="queryStr='&keyword=' + (${searchRequest.keyword} ?: '')">
+
+              <div th:replace="~{fragments/pagination :: pagination(
+                        ${tourDepartures},
+                        '/admin/tour-departures',
+                        ${queryStr},
+                        'tourDepartures'
+              )}">
+              </div>
+
             </div>
           </div>
         </div>

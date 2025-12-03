@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import asterisk.sun.booking_tours.application.admin.booking.dto.DetailBookingDTO;
 import asterisk.sun.booking_tours.application.admin.booking.dto.FormCreateBookingDTO;
 import asterisk.sun.booking_tours.application.admin.booking.dto.FormEditBookingDTO;
 import asterisk.sun.booking_tours.application.admin.booking.dto.ListBookingDTO;
@@ -142,6 +143,33 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
 
         if (booking.getTourDeparture() != null) {
             dto.setTourDepartureId(booking.getTourDeparture().getId());
+        }
+
+        return dto;
+    }
+
+    /**
+     * Get booking details by ID
+     */
+    public DetailBookingDTO getBookingDetailById(Long id) {
+        Booking booking = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Booking not found with id: " + id));
+
+        // Use ModelMapper for basic fields (STRICT strategy avoids ambiguity)
+        DetailBookingDTO dto = MapperHelper.map(booking, DetailBookingDTO.class);
+
+        // Manual mapping for nested properties to avoid ambiguity
+        if (booking.getUser() != null) {
+            dto.setUserId(booking.getUser().getId());
+            dto.setUsername(booking.getUser().getUsername());
+        }
+
+        if (booking.getTourDeparture() != null) {
+            dto.setTourDepartureId(booking.getTourDeparture().getId());
+            dto.setDepartureDate(booking.getTourDeparture().getDepartureDate());
+            if (booking.getTourDeparture().getTour() != null) {
+                dto.setTourName(booking.getTourDeparture().getTour().getName());
+            }
         }
 
         return dto;

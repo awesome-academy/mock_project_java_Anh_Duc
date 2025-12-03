@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 
 /**
  * Helper class for reusing ModelMapper
@@ -11,6 +12,14 @@ import org.modelmapper.ModelMapper;
  */
 public class MapperHelper {
     private static final ModelMapper modelMapper = new ModelMapper();
+
+    static {
+        // Configure ModelMapper to use STRICT matching strategy
+        // This prevents ambiguous mappings by requiring exact name matches
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setSkipNullEnabled(true);
+    }
 
     // Private constructor to prevent instantiation
     private MapperHelper() {

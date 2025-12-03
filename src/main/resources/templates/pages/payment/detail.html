@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Payment Detail"></title>
+  <th:block layout:fragment="custom-css">
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Payment Detail</h1>
+      <a th:href="@{/admin/payments}" class="btn btn-secondary btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-arrow-left"></i>
+        </span>
+        <span class="text">Back to List</span>
+      </a>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="row">
+      <!-- Payment Information -->
+      <div class="col-lg-8">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Payment Information</h6>
+            <div>
+              <span th:switch="${payment.status}">
+                <span th:case="'PENDING'" class="badge badge-warning badge-lg">
+                  <i class="fas fa-clock"></i> Pending
+                </span>
+                <span th:case="'PROCESSING'" class="badge badge-info badge-lg">
+                  <i class="fas fa-spinner"></i> Processing
+                </span>
+                <span th:case="'COMPLETED'" class="badge badge-success badge-lg">
+                  <i class="fas fa-check-circle"></i> Completed
+                </span>
+                <span th:case="'FAILED'" class="badge badge-danger badge-lg">
+                  <i class="fas fa-times-circle"></i> Failed
+                </span>
+                <span th:case="'CANCELLED'" class="badge badge-dark badge-lg">
+                  <i class="fas fa-ban"></i> Cancelled
+                </span>
+                <span th:case="'REFUNDED'" class="badge badge-secondary badge-lg">
+                  <i class="fas fa-undo"></i> Refunded
+                </span>
+                <span th:case="*" class="badge badge-secondary badge-lg" th:text="${payment.status}"></span>
+              </span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <strong><i class="fas fa-hashtag"></i> Payment ID:</strong>
+              </div>
+              <div class="col-md-8">
+                <span th:text="${payment.id}"></span>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <strong><i class="fas fa-receipt"></i> Transaction ID:</strong>
+              </div>
+              <div class="col-md-8">
+                <code th:text="${payment.transactionId}"></code>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <strong><i class="fas fa-money-bill-wave"></i> Amount:</strong>
+              </div>
+              <div class="col-md-8">
+                <h5 class="text-success mb-0">
+                  <strong th:text="${#numbers.formatDecimal(payment.amount, 0, 'COMMA', 0, 'POINT')}"></strong> VND
+                </h5>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <strong><i class="fas fa-credit-card"></i> Payment Method:</strong>
+              </div>
+              <div class="col-md-8">
+                <span th:switch="${payment.paymentMethod}">
+                  <span th:case="'INTERNET_BANKING'" class="badge badge-info">
+                    <i class="fas fa-university"></i> Internet Banking
+                  </span>
+                  <span th:case="'CREDIT_CARD'" class="badge badge-primary">
+                    <i class="fas fa-credit-card"></i> Credit Card
+                  </span>
+                  <span th:case="'CASH'" class="badge badge-success">
+                    <i class="fas fa-money-bill"></i> Cash
+                  </span>
+                  <span th:case="*" class="badge badge-secondary" th:text="${payment.paymentMethod}"></span>
+                </span>
+              </div>
+            </div>
+
+            <div class="row mb-3" th:if="${payment.notes}">
+              <div class="col-md-4">
+                <strong><i class="fas fa-sticky-note"></i> Notes:</strong>
+              </div>
+              <div class="col-md-8">
+                <p class="text-muted mb-0" th:text="${payment.notes}"></p>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="row mb-3">
+              <div class="col-md-4">
+                <strong><i class="fas fa-calendar-plus"></i> Created At:</strong>
+              </div>
+              <div class="col-md-8">
+                <span th:text="${#temporals.format(payment.createdAt, 'dd/MM/yyyy HH:mm:ss')}"></span>
+              </div>
+            </div>
+
+            <div class="row mb-3" th:if="${payment.updatedAt}">
+              <div class="col-md-4">
+                <strong><i class="fas fa-calendar-check"></i> Updated At:</strong>
+              </div>
+              <div class="col-md-8">
+                <span th:text="${#temporals.format(payment.updatedAt, 'dd/MM/yyyy HH:mm:ss')}"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User & Booking Information -->
+      <div class="col-lg-4">
+        <!-- User Info -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">User Information</h6>
+          </div>
+          <div class="card-body">
+            <div class="mb-2">
+              <i class="fas fa-user text-primary"></i>
+              <strong th:text="${payment.username}"></strong>
+            </div>
+            <div class="mb-2 text-muted">
+              <i class="fas fa-envelope"></i>
+              <span th:text="${payment.userEmail}"></span>
+            </div>
+            <div>
+              <a th:href="@{/admin/users/edit/{id}(id=${payment.userId})}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-external-link-alt"></i> View User Profile
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking Info -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Booking Information</h6>
+          </div>
+          <div class="card-body">
+            <div class="mb-2">
+              <strong>Booking Code:</strong><br>
+              <code th:text="${payment.bookingCode}"></code>
+            </div>
+            <div class="mb-2">
+              <strong>Tour:</strong><br>
+              <span th:text="${payment.tourName}"></span>
+            </div>
+            <div class="mb-2">
+              <strong>Booking Status:</strong><br>
+              <span th:switch="${payment.bookingStatus}">
+                <span th:case="'PENDING'" class="badge badge-warning">Pending</span>
+                <span th:case="'CONFIRMED'" class="badge badge-success">Confirmed</span>
+                <span th:case="'CANCELLED'" class="badge badge-danger">Cancelled</span>
+                <span th:case="'COMPLETED'" class="badge badge-info">Completed</span>
+                <span th:case="*" class="badge badge-secondary" th:text="${payment.bookingStatus}"></span>
+              </span>
+            </div>
+            <div>
+              <a th:href="@{/admin/bookings/edit/{id}(id=${payment.bookingId})}" class="btn btn-sm btn-outline-primary">
+                <i class="fas fa-external-link-alt"></i> View Booking Details
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Actions</h6>
+          </div>
+          <div class="card-body">
+            <!-- Update Status -->
+            <div class="mb-3">
+              <label for="updateStatus" class="font-weight-bold">Update Status:</label>
+              <form th:action="@{/admin/payments/update-status/{id}(id=${payment.id})}" method="post">
+                <div class="input-group">
+                  <select class="form-control" id="updateStatus" name="status">
+                    <option th:each="paymentStatus : ${paymentStatuses}"
+                            th:value="${paymentStatus}"
+                            th:text="${paymentStatus}"
+                            th:selected="${payment.status == paymentStatus}"></option>
+                  </select>
+                  <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-sync-alt"></i> Update
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <hr>
+
+            <!-- Delete -->
+            <form th:action="@{/admin/payments/delete/{id}(id=${payment.id})}" method="post"
+                  onsubmit="return confirm('Are you sure you want to delete this payment?');">
+              <button type="submit" class="btn btn-danger btn-block">
+                <i class="fas fa-trash"></i> Delete Payment
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </th:block>
+
+  <th:block layout:fragment="custom-scripts">
+  </th:block>
+
+</body>
+
+</html>

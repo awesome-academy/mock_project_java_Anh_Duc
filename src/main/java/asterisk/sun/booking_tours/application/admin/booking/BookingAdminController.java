@@ -125,6 +125,20 @@ public class BookingAdminController extends BaseAdminController<BookingAdminServ
     }
 
     /**
+     * Show booking detail
+     */
+    @GetMapping("/detail/{id}")
+    public String showDetail(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("booking", service.getBookingDetailById(id));
+            return view("detail");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return handleError(redirectAttributes, "Booking not found!");
+        }
+    }
+
+    /**
      * Update existing booking
      */
     @PostMapping("/edit/{id}")

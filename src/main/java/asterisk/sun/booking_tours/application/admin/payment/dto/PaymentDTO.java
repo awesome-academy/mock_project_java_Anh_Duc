@@ -1,33 +1,32 @@
-package asterisk.sun.booking_tours.application.api.payment.dto;
+package asterisk.sun.booking_tours.application.admin.payment.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import asterisk.sun.booking_tours.core.booking.BookingStatus;
 import asterisk.sun.booking_tours.core.payment.PaymentMethod;
 import asterisk.sun.booking_tours.core.payment.PaymentStatus;
 
-public class PaymentResponseDTO {
+public class PaymentDTO {
 
     private Long id;
+    private Long userId;
+    private String username;
+    private String userEmail;
     private Long bookingId;
     private String bookingCode;
-    private Long userId;
+    private BookingStatus bookingStatus;
+    private String tourName;
     private BigDecimal amount;
     private PaymentMethod paymentMethod;
     private String transactionId;
-    private PaymentStatus status;
     private String notes;
+    private PaymentStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Additional fields for internet banking
-    private String bankCode;
-    private String accountNumber;
-    private String accountName;
-    private String paymentUrl;
-
     // Constructors
-    public PaymentResponseDTO() {}
+    public PaymentDTO() {}
 
     // Getters and Setters
     public Long getId() {
@@ -36,6 +35,30 @@ public class PaymentResponseDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public Long getBookingId() {
@@ -54,12 +77,20 @@ public class PaymentResponseDTO {
         this.bookingCode = bookingCode;
     }
 
-    public Long getUserId() {
-        return userId;
+    public BookingStatus getBookingStatus() {
+        return bookingStatus;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setBookingStatus(BookingStatus bookingStatus) {
+        this.bookingStatus = bookingStatus;
+    }
+
+    public String getTourName() {
+        return tourName;
+    }
+
+    public void setTourName(String tourName) {
+        this.tourName = tourName;
     }
 
     public BigDecimal getAmount() {
@@ -86,20 +117,20 @@ public class PaymentResponseDTO {
         this.transactionId = transactionId;
     }
 
-    public PaymentStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PaymentStatus status) {
-        this.status = status;
-    }
-
     public String getNotes() {
         return notes;
     }
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -116,37 +147,5 @@ public class PaymentResponseDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public String getBankCode() {
-        return bankCode;
-    }
-
-    public void setBankCode(String bankCode) {
-        this.bankCode = bankCode;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
-    }
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
-    public String getPaymentUrl() {
-        return paymentUrl;
-    }
-
-    public void setPaymentUrl(String paymentUrl) {
-        this.paymentUrl = paymentUrl;
     }
 }
