@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- Import Spring Boot's default configuration -->
+    <!-- Import Spring Boot's default configuration for patterns and colors -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
-    <!-- Console appender with colorful output -->
+    <!-- Define log file paths -->
+    <property name="LOG_FILE" value="logs/booking-tour.log"/>
+    <property name="LOG_ERROR_FILE" value="logs/error.log"/>
+
+    <!-- Console Appender: Good for Dev environment -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx</pattern>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
 
-    <!-- File appender for all logs -->
+    <!-- File Appender: Rolling based on size and time -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/employee-management.log</file>
+        <file>${LOG_FILE}</file>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/employee-management.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- Archive logs to a separate folder -->
+            <fileNamePattern>logs/archived/booking-tour.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
             <maxHistory>30</maxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
-    <!-- File appender for error logs only -->
+    <!-- Error File Appender: Only logs ERROR level -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/error.log</file>
+        <file>${LOG_ERROR_FILE}</file>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
@@ -39,26 +43,51 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>30</maxHistory>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
     </appender>
 
-    <!-- Logger for all controllers -->
-    <logger name="asterisk.sun.booking_tours.admin.controllers" level="INFO" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="ERROR_FILE"/>
-    </logger>
+    <!-- Async Appender: Wraps File Appender for performance -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE" />
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
 
-    <!-- Root logger -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="ERROR_FILE"/>
-    </root>
+    <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ERROR_FILE" />
+        <queueSize>256</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
+
+    <!-- Profile Specific Configuration -->
+
+    <!-- DEV Profile: Debug level, Console enabled -->
+    <springProfile name="dev,default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="ASYNC_ERROR_FILE"/>
+        </root>
+        <!-- Show DEBUG logs for your application code in DEV -->
+        <logger name="asterisk.sun.booking_tours" level="DEBUG"/>
+    </springProfile>
+
+    <!-- PROD Profile: Info level, Async File logging -->
+    <springProfile name="prod">
+        <root level="INFO">
+            <!-- In containerized prod (Docker/K8s), Console is often preferred for log aggregation -->
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="ASYNC_ERROR_FILE"/>
+        </root>
+        <logger name="asterisk.sun.booking_tours" level="INFO"/>
+    </springProfile>
+
 </configuration>

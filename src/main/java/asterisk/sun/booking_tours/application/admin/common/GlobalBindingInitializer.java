@@ -21,6 +21,7 @@ public class GlobalBindingInitializer {
         breadcrumbs.add(new Breadcrumb("Booking", "/admin/bookings", "fas fa-book"));
         breadcrumbs.add(new Breadcrumb("Coupons", "/admin/coupons", "fas fa-ticket-alt"));
         breadcrumbs.add(new Breadcrumb("Payments", "/admin/payments", "fas fa-credit-card"));
+        breadcrumbs.add(new Breadcrumb("Bank Account", "/admin/bank-accounts", "fas fa-university"));
         breadcrumbs.add(new Breadcrumb("Reviews", "/admin/reviews", "fas fa-star"));
 
         return breadcrumbs;

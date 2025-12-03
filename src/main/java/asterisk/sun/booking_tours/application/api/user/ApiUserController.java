@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
+import asterisk.sun.booking_tours.application.api.user.dto.UserProfileResponseDTO;
 import asterisk.sun.booking_tours.application.api.user.dto.UserRegistrationRequestDTO;
 import asterisk.sun.booking_tours.application.api.user.dto.UserRegistrationResponseDTO;
 import asterisk.sun.booking_tours.application.api.user.dto.UserResendVerificationRequestDTO;
@@ -62,4 +63,17 @@ public class ApiUserController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<SuccessResponse<UserProfileResponseDTO>> getProfile(@RequestParam Long userId) {
+        UserProfileResponseDTO userProfile = apiUserService.getUserProfile(userId);
+
+        SuccessResponse<UserProfileResponseDTO> response = new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "User profile retrieved successfully.",
+                userProfile);
+
+        return ResponseEntity.ok(response);
+    }
+
 }
