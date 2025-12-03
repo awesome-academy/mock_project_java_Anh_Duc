@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/base}">
+
+<head>
+  <title layout:title-append=" | Coupon Management"></title>
+  <th:block layout:fragment="custom-css">
+  </th:block>
+</head>
+
+<body>
+
+  <th:block layout:fragment="content">
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Coupon Management</h1>
+      <a th:href="@{/admin/coupons/create}" class="btn btn-primary btn-icon-split">
+        <span class="icon text-white-50">
+          <i class="fas fa-plus"></i>
+        </span>
+        <span class="text">Add Coupon</span>
+      </a>
+    </div>
+
+    <!-- Search Form -->
+    <div class="card shadow mb-4">
+      <div class="card-body">
+        <form th:action="@{/admin/coupons}" method="get" class="form-inline">
+          <div class="form-group mr-3 mb-2">
+            <label for="keyword" class="mr-2">Search:</label>
+            <input type="text" class="form-control" id="keyword" name="keyword" th:value="${searchRequest.keyword}"
+              placeholder="Search by code or description..." style="min-width: 250px;">
+          </div>
+          <div class="form-group mr-3 mb-2">
+            <label for="status" class="mr-2">Status:</label>
+            <select class="form-control" id="status" name="status">
+              <option value="">All Status</option>
+              <option th:each="stat : ${couponStatuses}" th:value="${stat}" th:text="${stat}"
+                th:selected="${stat.toString() == searchRequest.status}"></option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary mb-2 mr-2">
+            <i class="fas fa-search"></i> Search
+          </button>
+          <a th:href="@{/admin/coupons}" class="btn btn-secondary mb-2">
+            <i class="fas fa-undo"></i> Reset
+          </a>
+        </form>
+      </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle"></i>
+      <span th:text="${successMessage}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span th:text="${error}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Coupon List</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover" id="couponTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr class="bg-light">
+                    <th>Code</th>
+                    <th>Type</th>
+                    <th>Discount Value</th>
+                    <th>Usage</th>
+                    <th>Valid From</th>
+                    <th>Valid To</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="coupon : ${coupons}">
+                    <td>
+                      <strong th:text="${coupon.code}"></strong>
+                      <br>
+                      <small class="text-muted" th:text="${coupon.description}"></small>
+                    </td>
+                    <td>
+                      <span class="badge badge-info" th:text="${coupon.type}"></span>
+                    </td>
+                    <td>
+                      <span th:if="${coupon.type.toString() == 'PERCENTAGE'}"
+                        th:text="${coupon.discountValue + '%'}"></span>
+                      <span th:if="${coupon.type.toString() == 'FIXED_AMOUNT'}"
+                        th:text="${#numbers.formatDecimal(coupon.discountValue, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
+                      <br>
+                      <small class="text-muted" th:if="${coupon.maxDiscountAmount != null}">
+                        Max: <span
+                          th:text="${#numbers.formatDecimal(coupon.maxDiscountAmount, 0, 'COMMA', 0, 'POINT') + ' VND'}"></span>
+                      </small>
+                    </td>
+                    <td>
+                      <span th:text="${coupon.usedCount}"></span> /
+                      <span th:text="${coupon.usageLimit != null ? coupon.usageLimit : '∞'}"></span>
+                    </td>
+                    <td>
+                      <small
+                        th:text="${coupon.validFrom != null ? #temporals.format(coupon.validFrom, 'dd/MM/yyyy HH:mm') : '-'}"></small>
+                    </td>
+                    <td>
+                      <small
+                        th:text="${coupon.validTo != null ? #temporals.format(coupon.validTo, 'dd/MM/yyyy HH:mm') : '-'}"></small>
+                    </td>
+                    <td>
+                      <span th:class="${coupon.status.badgeClass}"
+                        th:text="${coupon.status.label}"></span>
+                    </td>
+                    <td>
+                      <a th:href="@{/admin/coupons/edit/{id}(id=${coupon.id})}" class="btn btn-sm btn-info">
+                        <i class="fas fa-edit"></i>
+                      </a>
+
+                      <form th:action="@{/admin/coupons/delete/{id}(id=${coupon.id})}" method="post" class="d-inline"
+                        onsubmit="return confirm('Do you want to delete this coupon?');">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+
+                  <tr th:if="${coupons.empty}">
+                    <td colspan="8" class="text-center">
+                      <div th:replace="~{fragments/no-data :: noDataSimple}"></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Pagination -->
+            <div th:with="queryStr='&keyword=' + (${searchRequest.keyword} ?: '')">
+
+              <div th:replace="~{fragments/pagination :: pagination(
+                        ${coupons},
+                        '/admin/coupons',
+                        ${queryStr},
+                        'coupons'
+              )}">
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </th:block>
+
+  <th:block layout:fragment="custom-scripts">
+    <script>
+      // Auto dismiss alerts after 5 seconds
+      setTimeout(function () {
+        $('.alert').fadeOut('slow');
+      }, 5000);
+    </script>
+  </th:block>
+
+</body>
+
+</html>
