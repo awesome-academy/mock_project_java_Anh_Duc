@@ -1,5 +1,6 @@
 package asterisk.sun.booking_tours.application.api.payment;
 
+import java.lang.ProcessHandle.Info;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -8,33 +9,65 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import asterisk.sun.booking_tours.application.api.payment.dto.InforPaymentRequestDTO;
+import asterisk.sun.booking_tours.application.api.payment.dto.InforPaymentResponseDTO;
 import asterisk.sun.booking_tours.application.api.payment.dto.PaymentResponseDTO;
 import asterisk.sun.booking_tours.application.api.payment.dto.RequestPaymentDTO;
 import asterisk.sun.booking_tours.application.api.payment.dto.UpdatePaymentStatusDTO;
+import asterisk.sun.booking_tours.application.api.tour.dto.ViewTourDeparturesResponseDTO;
+import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;
+import asterisk.sun.booking_tours.core.payment.BankAccount;
+import asterisk.sun.booking_tours.core.payment.BankAccountRepository;
 import asterisk.sun.booking_tours.core.payment.Payment;
 import asterisk.sun.booking_tours.core.payment.PaymentMethod;
 import asterisk.sun.booking_tours.core.payment.PaymentRepository;
 import asterisk.sun.booking_tours.core.payment.PaymentStatus;
+import asterisk.sun.booking_tours.core.tour.Tour;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PaymentService {
-
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
+    private final BankAccountRepository bankAccountRepository;
 
     public PaymentService(PaymentRepository paymentRepository,
             BookingRepository bookingRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository, BankAccountRepository bankAccountRepository) {
         this.paymentRepository = paymentRepository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
+        this.bankAccountRepository = bankAccountRepository;
+    }
+
+    public InforPaymentResponseDTO getInfoPaymentForBooking(InforPaymentRequestDTO request) {
+        Booking booking = bookingRepository.findById(request.getBookingId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Booking not found with id: " + request.getBookingId()));
+        Tour tour = booking.getTourDeparture().getTour();
+
+        List<BankAccount> bankAccounts = bankAccountRepository.findAll();
+
+        return InforPaymentResponseDTO.builder()
+                .departureDate(booking.getTourDeparture().getDepartureDate())
+                .returnDate(booking.getTourDeparture().getReturnDate())
+                .durationDays(booking.getTourDeparture().getTour().getDurationDays())
+                .numAdults(booking.getNumAdults())
+                .numChildren(booking.getNumChild())
+                .finalTotal(booking.getFinalTotal())
+                .notes(booking.getNotes())
+                .contactName(booking.getContactName())
+                .contactPhone(booking.getContactPhone())
+                .tourName(tour.getName())
+                .tourDescription(tour.getDescription())
+                .bankAccounts(bankAccounts)
+                .build();
     }
 
     /**
