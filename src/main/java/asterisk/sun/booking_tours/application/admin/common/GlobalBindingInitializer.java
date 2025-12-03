@@ -13,7 +13,6 @@ public class GlobalBindingInitializer {
     @ModelAttribute("breadcrumbs")
     public List<Breadcrumb> initializeBreadcrumbs() {
         List<Breadcrumb> breadcrumbs = new ArrayList<>();
-        breadcrumbs.add(new Breadcrumb("Dashboard", "/admin/dashboard", "fas fa-tachometer-alt"));
         breadcrumbs.add(new Breadcrumb("Users", "/admin/users", "fas fa-users"));
         breadcrumbs.add(new Breadcrumb("Categories", "/admin/categories", "fas fa-list"));
         breadcrumbs.add(new Breadcrumb("Tours", "/admin/tours", "fas fa-plane"));
