@@ -13,7 +13,6 @@ public class RequestBookingDTO extends BaseDTO {
     @NotNull(message = "User ID is required")
     private Long userId;
 
-
     @NotNull(message = "Number of adults is required")
     @Min(value = 1, message = "Number of adults must be at least 1")
     private Integer numAdults;
@@ -43,54 +42,71 @@ public class RequestBookingDTO extends BaseDTO {
     public Long getTourDepartureId() {
         return tourDepartureId;
     }
+
     public void setTourDepartureId(Long tourDepartureId) {
         this.tourDepartureId = tourDepartureId;
     }
+
     public Long getUserId() {
         return userId;
     }
+
     public void setUserId(Long userId) {
         this.userId = userId;
     }
+
     public Integer getNumAdults() {
         return numAdults;
     }
+
     public void setNumAdults(Integer numAdults) {
         this.numAdults = numAdults;
     }
+
     public Integer getNumChild() {
         return numChild;
     }
+
     public void setNumChild(Integer numChild) {
         this.numChild = numChild;
     }
+
     public String getContactName() {
         return contactName;
     }
+
     public void setContactName(String contactName) {
         this.contactName = contactName;
     }
+
     public String getContactPhone() {
         return contactPhone;
     }
+
     public void setContactPhone(String contactPhone) {
         this.contactPhone = contactPhone;
     }
+
     public String getContactEmail() {
         return contactEmail;
     }
+
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
     }
+
     public String getNotes() {
         return notes;
     }
+
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
     public String getCouponCode() {
         return couponCode;
     }
+
     public void setCouponCode(String couponCode) {
         this.couponCode = couponCode;
     }

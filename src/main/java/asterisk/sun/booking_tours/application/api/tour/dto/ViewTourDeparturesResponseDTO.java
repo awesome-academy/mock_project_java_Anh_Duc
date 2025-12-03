@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class ViewTourDeparturesResponseDTO {
-    private Long tourId;
+    private Long id;
     private LocalDate departureDate;
     private LocalDate returnDate;
     private int availableSlots;

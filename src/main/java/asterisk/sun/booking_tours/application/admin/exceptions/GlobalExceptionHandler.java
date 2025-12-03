@@ -13,7 +13,8 @@ import jakarta.persistence.EntityNotFoundException;
 /**
  * Global exception handler for all admin controllers.
  * Handles exceptions across the whole application using @ControllerAdvice.
- * Provides centralized exception handling with proper logging and user-friendly error pages.
+ * Provides centralized exception handling with proper logging and user-friendly
+ * error pages.
  */
 @ControllerAdvice(basePackages = "asterisk.sun.booking_tours.application.admin")
 public class GlobalExceptionHandler {
@@ -36,7 +37,8 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handle IllegalArgumentException - invalid arguments or business logic violations.
+     * Handle IllegalArgumentException - invalid arguments or business logic
+     * violations.
      * Returns a custom error page with the specific error message.
      */
     @ExceptionHandler(IllegalArgumentException.class)
@@ -61,7 +63,7 @@ public class GlobalExceptionHandler {
         ModelAndView modelAndView = new ModelAndView("pages/500");
         modelAndView.addObject("message", "Data Constraint Violation");
         modelAndView.addObject("details",
-            "Unable to complete the operation due to data constraints. The record may be in use or violates data rules.");
+                "Unable to complete the operation due to data constraints. The record may be in use or violates data rules.");
         modelAndView.setStatus(HttpStatus.CONFLICT);
         return modelAndView;
     }
@@ -77,7 +79,7 @@ public class GlobalExceptionHandler {
         ModelAndView modelAndView = new ModelAndView("pages/500");
         modelAndView.addObject("message", "Internal Server Error");
         modelAndView.addObject("details",
-            "An unexpected error occurred while processing your request. Please try again later.");
+                "An unexpected error occurred while processing your request. Please try again later.");
         modelAndView.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         return modelAndView;
     }

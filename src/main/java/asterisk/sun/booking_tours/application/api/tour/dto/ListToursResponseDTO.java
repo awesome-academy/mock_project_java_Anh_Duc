@@ -1,6 +1,7 @@
 package asterisk.sun.booking_tours.application.api.tour.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,4 +21,5 @@ public class ListToursResponseDTO {
     private String itinerary;
     private Integer durationDays;
     private BigDecimal price;
+    private List<ViewTourDeparturesResponseDTO> departures;
 }

@@ -144,6 +144,12 @@ public class Coupon extends BaseEntity {
     // Business methods
     public boolean isValid() {
         LocalDateTime now = LocalDateTime.now();
+
+        System.out.println("Checking validity for coupon: " + code);
+        System.out.println("Current time: " + now);
+
+        System.out.println("validFrom.isBefore =================" + validFrom.isBefore(now));
+
         return status == CouponStatus.ACTIVE
                 && (validFrom == null || validFrom.isBefore(now) || validFrom.isEqual(now))
                 && (validTo == null || validTo.isAfter(now))

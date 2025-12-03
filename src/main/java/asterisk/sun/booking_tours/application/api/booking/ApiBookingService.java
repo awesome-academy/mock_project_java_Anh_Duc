@@ -1,7 +1,5 @@
 package asterisk.sun.booking_tours.application.api.booking;
 
-import java.math.BigDecimal;
-
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
@@ -9,6 +7,8 @@ import asterisk.sun.booking_tours.common.utils.CodeGenerator;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;
+import asterisk.sun.booking_tours.core.coupon.Coupon;
+import asterisk.sun.booking_tours.core.coupon.CouponRepository;
 import asterisk.sun.booking_tours.core.tour.Tour;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
@@ -23,12 +23,14 @@ public class ApiBookingService {
     private final TourDeparturesRepository tourDeparturesRepository;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
+    private final CouponRepository couponRepository;
 
     public ApiBookingService(TourDeparturesRepository tourDeparturesRepository, BookingRepository bookingRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository, CouponRepository couponRepository) {
         this.tourDeparturesRepository = tourDeparturesRepository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
+        this.couponRepository = couponRepository;
     }
 
     @Transactional
@@ -38,13 +40,27 @@ public class ApiBookingService {
         Tour tour = tourDeparture.getTour();
         User user = userRepository.findById(requestBookingDTO.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User with the given ID does not exist."));
-        // Implement booking logic here
 
-        PriceCalculator priceCalculator = new PriceCalculator(requestBookingDTO.getNumAdults(),
-                requestBookingDTO.getNumChild(),
-                tour.getPriceAdult(),
-                tour.getPriceChild(),
-                new BigDecimal("5"));
+        PriceCalculator priceCalculator;
+        if (requestBookingDTO.getCouponCode() != null && !requestBookingDTO.getCouponCode().isEmpty()) {
+            Coupon coupon = couponRepository.findByCode(requestBookingDTO.getCouponCode())
+                    .orElseThrow(() -> new EntityNotFoundException("Coupon with the given code does not exist."));
+            // Additional coupon validations can be added here
+            if (!coupon.isValid()) {
+                throw new IllegalArgumentException("Coupon is not valid.");
+            }
+
+            priceCalculator = new PriceCalculator(requestBookingDTO.getNumAdults(),
+                    requestBookingDTO.getNumChild(),
+                    tour.getPriceAdult(),
+                    tour.getPriceChild(),
+                    coupon);
+        } else {
+            priceCalculator = new PriceCalculator(requestBookingDTO.getNumAdults(),
+                    requestBookingDTO.getNumChild(),
+                    tour.getPriceAdult(),
+                    tour.getPriceChild());
+        }
 
         Booking booking = new Booking();
         booking.setUser(user);
