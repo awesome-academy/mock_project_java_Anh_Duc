@@ -6,27 +6,27 @@ import jakarta.validation.constraints.Size;
 
 public class CreateBankAccountDTO {
 
-    @NotBlank(message = "Tên ngân hàng không được để trống")
-    @Size(max = 100, message = "Tên ngân hàng không được vượt quá 100 ký tự")
+    @NotBlank(message = "Bank name is required")
+    @Size(max = 100, message = "Bank name must not exceed 100 characters")
     private String bankName;
 
-    @NotBlank(message = "Số tài khoản không được để trống")
-    @Size(max = 50, message = "Số tài khoản không được vượt quá 50 ký tự")
+    @NotBlank(message = "Account number is required")
+    @Size(max = 50, message = "Account number must not exceed 50 characters")
     private String accountNumber;
 
-    @NotBlank(message = "Tên chủ tài khoản không được để trống")
-    @Size(max = 100, message = "Tên chủ tài khoản không được vượt quá 100 ký tự")
+    @NotBlank(message = "Account holder is required")
+    @Size(max = 100, message = "Account holder must not exceed 100 characters")
     private String accountHolder;
 
-    @Size(max = 100, message = "Chi nhánh không được vượt quá 100 ký tự")
+    @Size(max = 100, message = "Branch must not exceed 100 characters")
     private String branch;
 
-    @Size(max = 20, message = "Mã SWIFT không được vượt quá 20 ký tự")
+    @Size(max = 20, message = "SWIFT code must not exceed 20 characters")
     private String swiftCode;
 
     private String description;
 
-    @NotNull(message = "Trạng thái không được để trống")
+    @NotNull(message = "Status is required")
     private Boolean isActive = true;
 
     private Integer displayOrder = 0;

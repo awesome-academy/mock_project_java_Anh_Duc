@@ -72,13 +72,13 @@ public class BankAccountAdminController extends BaseAdminController<BankAccountA
 
         try {
             service.createBankAccount(dto);
-            redirectAttributes.addFlashAttribute("successMessage", "Tạo tài khoản ngân hàng thành công!");
+            redirectAttributes.addFlashAttribute("successMessage", "Bank account created successfully!");
             return getDefaultRedirectPath();
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return view("create");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Có lỗi xảy ra khi tạo tài khoản ngân hàng!");
+            model.addAttribute("errorMessage", "An error occurred while creating bank account!");
             return view("create");
         }
     }
@@ -105,7 +105,7 @@ public class BankAccountAdminController extends BaseAdminController<BankAccountA
             model.addAttribute("bankAccountDTO", dto);
             return view("edit");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy tài khoản ngân hàng!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Bank account not found!");
             return getDefaultRedirectPath();
         }
     }
@@ -128,13 +128,13 @@ public class BankAccountAdminController extends BaseAdminController<BankAccountA
         try {
             dto.setId(id);
             service.updateBankAccount(dto);
-            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật tài khoản ngân hàng thành công!");
+            redirectAttributes.addFlashAttribute("successMessage", "Bank account updated successfully!");
             return getDefaultRedirectPath();
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return view("edit");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Có lỗi xảy ra khi cập nhật tài khoản ngân hàng!");
+            model.addAttribute("errorMessage", "An error occurred while updating bank account!");
             return view("edit");
         }
     }
@@ -146,9 +146,9 @@ public class BankAccountAdminController extends BaseAdminController<BankAccountA
     public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             service.deleteBankAccount(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Xóa tài khoản ngân hàng thành công!");
+            redirectAttributes.addFlashAttribute("successMessage", "Bank account deleted successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi xóa tài khoản ngân hàng!");
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while deleting bank account!");
         }
         return getDefaultRedirectPath();
     }
@@ -160,10 +160,10 @@ public class BankAccountAdminController extends BaseAdminController<BankAccountA
     public String toggleStatus(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             BankAccount bankAccount = service.toggleBankAccountStatus(id);
-            String status = bankAccount.getIsActive() ? "kích hoạt" : "vô hiệu hóa";
-            redirectAttributes.addFlashAttribute("successMessage", "Đã " + status + " tài khoản ngân hàng thành công!");
+            String status = bankAccount.getIsActive() ? "activated" : "deactivated";
+            redirectAttributes.addFlashAttribute("successMessage", "Bank account " + status + " successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi thay đổi trạng thái!");
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while changing status!");
         }
         return getDefaultRedirectPath();
     }
@@ -178,7 +178,7 @@ public class BankAccountAdminController extends BaseAdminController<BankAccountA
             model.addAttribute("bankAccount", bankAccount);
             return view("detail");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy tài khoản ngân hàng!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Bank account not found!");
             return getDefaultRedirectPath();
         }
     }

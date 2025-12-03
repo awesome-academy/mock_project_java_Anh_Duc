@@ -13,9 +13,9 @@
   <th:block layout:fragment="content">
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-      <h1 class="h3 mb-0 text-gray-800">Chỉnh sửa Tài khoản Ngân hàng</h1>
+      <h1 class="h3 mb-0 text-gray-800">Edit Bank Account</h1>
       <a th:href="@{/admin/bank-accounts}" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Quay lại
+        <i class="fas fa-arrow-left"></i> Back
       </a>
     </div>
 
@@ -33,7 +33,7 @@
       <div class="col-lg-8">
         <div class="card shadow mb-4">
           <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Thông tin Tài khoản Ngân hàng</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Bank Account Information</h6>
           </div>
           <div class="card-body">
             <form th:action="@{/admin/bank-accounts/edit/{id}(id=${bankAccountDTO.id})}" method="post" th:object="${bankAccountDTO}">
@@ -41,28 +41,28 @@
               <input type="hidden" th:field="*{id}" />
 
               <div class="form-group">
-                <label for="bankName">Tên ngân hàng <span class="text-danger">*</span></label>
+                <label for="bankName">Bank Name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="bankName" th:field="*{bankName}"
                   th:classappend="${#fields.hasErrors('bankName')} ? 'is-invalid'"
-                  placeholder="Vd: Vietcombank, Techcombank, VPBank...">
+                  placeholder="E.g: Vietcombank, Techcombank, VPBank...">
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('bankName')}" th:errors="*{bankName}">
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="accountNumber">Số tài khoản <span class="text-danger">*</span></label>
+                <label for="accountNumber">Account Number <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="accountNumber" th:field="*{accountNumber}"
                   th:classappend="${#fields.hasErrors('accountNumber')} ? 'is-invalid'"
-                  placeholder="Nhập số tài khoản">
+                  placeholder="Enter account number">
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('accountNumber')}" th:errors="*{accountNumber}">
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="accountHolder">Chủ tài khoản <span class="text-danger">*</span></label>
+                <label for="accountHolder">Account Holder <span class="text-danger">*</span></label>
                 <input type="text" class="form-control" id="accountHolder" th:field="*{accountHolder}"
                   th:classappend="${#fields.hasErrors('accountHolder')} ? 'is-invalid'"
-                  placeholder="Tên chủ tài khoản">
+                  placeholder="Account holder name">
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('accountHolder')}" th:errors="*{accountHolder}">
                 </div>
               </div>
@@ -70,20 +70,20 @@
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="branch">Chi nhánh</label>
+                    <label for="branch">Branch</label>
                     <input type="text" class="form-control" id="branch" th:field="*{branch}"
                       th:classappend="${#fields.hasErrors('branch')} ? 'is-invalid'"
-                      placeholder="Tên chi nhánh (nếu có)">
+                      placeholder="Branch name (optional)">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('branch')}" th:errors="*{branch}">
                     </div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="swiftCode">Mã SWIFT</label>
+                    <label for="swiftCode">SWIFT Code</label>
                     <input type="text" class="form-control" id="swiftCode" th:field="*{swiftCode}"
                       th:classappend="${#fields.hasErrors('swiftCode')} ? 'is-invalid'"
-                      placeholder="Mã SWIFT (nếu có)">
+                      placeholder="SWIFT code (optional)">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('swiftCode')}" th:errors="*{swiftCode}">
                     </div>
                   </div>
@@ -91,28 +91,28 @@
               </div>
 
               <div class="form-group">
-                <label for="description">Mô tả</label>
+                <label for="description">Description</label>
                 <textarea class="form-control" id="description" th:field="*{description}" rows="3"
-                  placeholder="Ghi chú hoặc mô tả thêm về tài khoản này..."></textarea>
+                  placeholder="Notes or additional description about this account..."></textarea>
               </div>
 
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label for="displayOrder">Thứ tự hiển thị</label>
+                    <label for="displayOrder">Display Order</label>
                     <input type="number" class="form-control" id="displayOrder" th:field="*{displayOrder}"
                       min="0">
-                    <small class="form-text text-muted">Số thứ tự hiển thị (0 là đầu tiên)</small>
+                    <small class="form-text text-muted">Display order number (0 is first)</small>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label>Trạng thái <span class="text-danger">*</span></label>
+                    <label>Status <span class="text-danger">*</span></label>
                     <div class="custom-control custom-switch">
                       <input type="checkbox" class="custom-control-input" id="isActive" th:field="*{isActive}">
-                      <label class="custom-control-label" for="isActive">Kích hoạt</label>
+                      <label class="custom-control-label" for="isActive">Active</label>
                     </div>
-                    <small class="form-text text-muted">Chỉ tài khoản được kích hoạt mới hiển thị cho khách hàng</small>
+                    <small class="form-text text-muted">Only active accounts will be displayed to customers</small>
                   </div>
                 </div>
               </div>
@@ -121,10 +121,10 @@
 
               <div class="d-flex justify-content-between">
                 <a th:href="@{/admin/bank-accounts}" class="btn btn-secondary">
-                  <i class="fas fa-times"></i> Hủy
+                  <i class="fas fa-times"></i> Cancel
                 </a>
                 <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-save"></i> Cập nhật
+                  <i class="fas fa-save"></i> Update
                 </button>
               </div>
 
@@ -138,26 +138,26 @@
         <div class="card shadow mb-4">
           <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-info">
-              <i class="fas fa-info-circle"></i> Hướng dẫn
+              <i class="fas fa-info-circle"></i> Instructions
             </h6>
           </div>
           <div class="card-body">
-            <h6>Thông tin bắt buộc:</h6>
+            <h6>Required Information:</h6>
             <ul class="small">
-              <li>Tên ngân hàng</li>
-              <li>Số tài khoản</li>
-              <li>Chủ tài khoản</li>
+              <li>Bank name</li>
+              <li>Account number</li>
+              <li>Account holder</li>
             </ul>
 
-            <h6 class="mt-3">Lưu ý:</h6>
+            <h6 class="mt-3">Notes:</h6>
             <ul class="small">
-              <li>Số tài khoản phải là duy nhất</li>
-              <li>Tài khoản được kích hoạt sẽ hiển thị cho khách hàng khi chọn phương thức thanh toán Internet Banking</li>
-              <li>Thứ tự hiển thị giúp sắp xếp các tài khoản theo ưu tiên</li>
+              <li>Account number must be unique</li>
+              <li>Active accounts will be displayed to customers when selecting Internet Banking payment method</li>
+              <li>Display order helps arrange accounts by priority</li>
             </ul>
 
-            <h6 class="mt-3">Mã SWIFT:</h6>
-            <p class="small">Mã SWIFT là mã định danh ngân hàng quốc tế, cần thiết cho các giao dịch chuyển tiền quốc tế.</p>
+            <h6 class="mt-3">SWIFT Code:</h6>
+            <p class="small">SWIFT code is an international bank identifier, necessary for international money transfers.</p>
           </div>
         </div>
       </div>

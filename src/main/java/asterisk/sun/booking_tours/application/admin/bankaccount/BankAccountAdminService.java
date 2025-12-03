@@ -56,7 +56,7 @@ public class BankAccountAdminService extends BaseServiceController<BankAccountRe
      */
     public BankAccount getBankAccountById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy tài khoản ngân hàng với ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Bank account not found with ID: " + id));
     }
 
     /**
@@ -66,7 +66,7 @@ public class BankAccountAdminService extends BaseServiceController<BankAccountRe
     public BankAccount createBankAccount(CreateBankAccountDTO dto) {
         // Check if account number already exists
         if (repository.existsByAccountNumber(dto.getAccountNumber())) {
-            throw new IllegalArgumentException("Số tài khoản đã tồn tại: " + dto.getAccountNumber());
+            throw new IllegalArgumentException("Account number already exists: " + dto.getAccountNumber());
         }
 
         BankAccount bankAccount = new BankAccount();
@@ -92,7 +92,7 @@ public class BankAccountAdminService extends BaseServiceController<BankAccountRe
         // Check if account number changed and already exists
         if (!bankAccount.getAccountNumber().equals(dto.getAccountNumber()) &&
             repository.existsByAccountNumber(dto.getAccountNumber())) {
-            throw new IllegalArgumentException("Số tài khoản đã tồn tại: " + dto.getAccountNumber());
+            throw new IllegalArgumentException("Account number already exists: " + dto.getAccountNumber());
         }
 
         bankAccount.setBankName(dto.getBankName());
