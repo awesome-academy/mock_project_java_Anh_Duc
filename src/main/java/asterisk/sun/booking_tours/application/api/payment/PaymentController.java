@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
+import asterisk.sun.booking_tours.application.api.payment.dto.InforPaymentRequestDTO;
 import asterisk.sun.booking_tours.application.api.payment.dto.RequestPaymentDTO;
 import asterisk.sun.booking_tours.common.aspect.Loggable;
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping(ApiV1.PAYMENT_ENDPOINT)
@@ -26,6 +28,12 @@ public class PaymentController {
 
     public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
+    }
+
+    @GetMapping
+    public String getInfoPaymentForBooking(InforPaymentRequestDTO request) {
+
+        return new String();
     }
 
     @Loggable
