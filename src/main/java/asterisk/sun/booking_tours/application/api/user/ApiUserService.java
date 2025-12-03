@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import asterisk.sun.booking_tours.application.api.user.dto.UserProfileResponseDTO;
 import asterisk.sun.booking_tours.application.api.user.dto.UserRegistrationRequestDTO;
 import asterisk.sun.booking_tours.application.api.user.dto.UserRegistrationResponseDTO;
 import asterisk.sun.booking_tours.application.api.user.dto.UserResendVerificationRequestDTO;
@@ -90,5 +91,12 @@ public class ApiUserService {
             user.setStatus(UserStatus.ACTIVE);
             userRepository.save(user);
         }
+    }
+
+    public UserProfileResponseDTO getUserProfile(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("User not found with ID: " + userId));
+
+        return MapperHelper.map(user, UserProfileResponseDTO.class);
     }
 }
