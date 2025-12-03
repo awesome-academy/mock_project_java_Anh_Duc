@@ -3,10 +3,15 @@ package asterisk.sun.booking_tours.application.admin.tourdepartures;
 import asterisk.sun.booking_tours.application.admin.common.BaseAdminController;
 import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.FormCreateTourDeparturesDTO;
 import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.FormEditTourDeparturesDTO;
+import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.ListTourDeparturesDTO;
+import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.SearchTourDeparturesDTO;
 import asterisk.sun.booking_tours.application.admin.tourdepartures.validator.FormTourDeparturesValidator;
 import asterisk.sun.booking_tours.core.tour.TourRepository;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDepartureStatus;
+import io.micrometer.core.instrument.search.Search;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,9 +51,11 @@ public class TourDeparturesAdminController extends BaseAdminController<TourDepar
     }
 
     @GetMapping
-    public String index(Model model, @RequestParam(required = false) String keyword) {
-        model.addAttribute("tourDepartures", service.queryTourDeparturesByKeyword(keyword));
-        model.addAttribute("keyword", keyword);
+    public String index(Model model, SearchTourDeparturesDTO request) {
+        Page<ListTourDeparturesDTO> tourDepartures = service.queryTourDeparturesByKeyword(request);
+
+        model.addAttribute("tourDepartures", tourDepartures);
+        model.addAttribute("searchRequest", request);
         return view("index");
     }
 

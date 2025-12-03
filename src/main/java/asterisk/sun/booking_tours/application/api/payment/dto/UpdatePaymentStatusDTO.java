@@ -1,6 +1,6 @@
 package asterisk.sun.booking_tours.application.api.payment.dto;
 
-import asterisk.sun.booking_tours.core.enums.PaymentStatus;
+import asterisk.sun.booking_tours.core.payment.PaymentStatus;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 

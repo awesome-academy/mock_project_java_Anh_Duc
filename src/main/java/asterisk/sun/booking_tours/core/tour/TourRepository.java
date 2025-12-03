@@ -25,4 +25,6 @@ public interface TourRepository extends JpaRepository<Tour, Long> {
 
     @Query("SELECT DISTINCT t FROM Tour t JOIN t.departures d WHERE :date IS NULL OR d.departureDate = :date")
     List<Tour> searchByDate(@Param("date") LocalDate date);
+
+
 }

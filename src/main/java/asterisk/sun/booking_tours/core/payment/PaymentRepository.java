@@ -8,9 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import asterisk.sun.booking_tours.core.entities.Payment;
-import asterisk.sun.booking_tours.core.enums.PaymentStatus;
-
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 

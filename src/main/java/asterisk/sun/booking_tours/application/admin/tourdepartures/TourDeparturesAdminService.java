@@ -4,16 +4,20 @@ import asterisk.sun.booking_tours.application.admin.common.BaseServiceController
 import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.FormCreateTourDeparturesDTO;
 import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.FormEditTourDeparturesDTO;
 import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.ListTourDeparturesDTO;
+import asterisk.sun.booking_tours.application.admin.tourdepartures.dto.SearchTourDeparturesDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.tour.Tour;
 import asterisk.sun.booking_tours.core.tour.TourRepository;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
 import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class TourDeparturesAdminService extends BaseServiceController<TourDeparturesRepository> {
@@ -26,24 +30,40 @@ public class TourDeparturesAdminService extends BaseServiceController<TourDepart
         this.tourRepository = tourRepository;
     }
 
-    public List<ListTourDeparturesDTO> queryTourDeparturesByKeyword(String keyword) {
-        List<TourDeparture> tourDepartures = repository.searchByKeyword(keyword);
+    public Page<ListTourDeparturesDTO> queryTourDeparturesByKeyword(SearchTourDeparturesDTO request) {
+        Pageable pageable = request.getPageable();
 
-        return tourDepartures.stream()
-                .map(td -> {
-                    ListTourDeparturesDTO dto = MapperHelper.map(td, ListTourDeparturesDTO.class);
-                    dto.setStatus(td.getStatus().name());
-                    if (td.getTour() != null) {
-                        dto.setTourId(td.getTour().getId());
-                        dto.setTourName(td.getTour().getName());
-                        dto.setTourTitle(td.getTour().getTitle());
-                        if (td.getTour().getCategory() != null) {
-                            dto.setCategoryName(td.getTour().getCategory().getName());
-                        }
-                    }
-                    return dto;
-                })
-                .toList();
+        Specification<TourDeparture> spec = (root, query, cb) -> {
+            // To avoid duplicates when using fetch joins
+            query.distinct(true);
+
+            if (request.getKeyword() != null && !request.getKeyword().isEmpty()) {
+                String likeKey = "%" + request.getKeyword().toLowerCase() + "%";
+                return cb.or(
+                        cb.like(cb.lower(root.get("status").as(String.class)), likeKey),
+                        cb.like(cb.lower(root.join("tour").get("name")), likeKey),
+                        cb.like(cb.lower(root.join("tour").get("title")), likeKey),
+                        cb.like(cb.lower(root.join("tour").join("category").get("name")), likeKey)
+                );
+            }
+            return cb.conjunction();
+        };
+
+        Page<TourDeparture> pageResult = repository.findAll(spec, pageable);
+
+        return pageResult.map(td -> {
+            ListTourDeparturesDTO dto = MapperHelper.map(td, ListTourDeparturesDTO.class);
+            dto.setStatus(td.getStatus());
+            if (td.getTour() != null) {
+                dto.setTourId(td.getTour().getId());
+                dto.setTourName(td.getTour().getName());
+                dto.setTourTitle(td.getTour().getTitle());
+                if (td.getTour().getCategory() != null) {
+                    dto.setCategoryName(td.getTour().getCategory().getName());
+                }
+            }
+            return dto;
+        });
     }
 
     public void createTourDeparture(FormCreateTourDeparturesDTO formCreateTourDeparturesDTO) {

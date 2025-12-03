@@ -1,6 +1,7 @@
 package asterisk.sun.booking_tours.application.admin.tourdepartures.dto;
 
 import java.time.LocalDate;
+import asterisk.sun.booking_tours.core.tourdepartures.TourDepartureStatus;
 
 public class ListTourDeparturesDTO {
     private Long id;
@@ -8,7 +9,7 @@ public class ListTourDeparturesDTO {
     private String tourName;
     private String tourTitle;
     private String categoryName;
-    private String status;
+    private TourDepartureStatus status;
     private LocalDate departureDate;
     private LocalDate returnDate;
     private Integer totalSlots;
@@ -55,11 +56,11 @@ public class ListTourDeparturesDTO {
         this.categoryName = categoryName;
     }
 
-    public String getStatus() {
+    public TourDepartureStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TourDepartureStatus status) {
         this.status = status;
     }
 

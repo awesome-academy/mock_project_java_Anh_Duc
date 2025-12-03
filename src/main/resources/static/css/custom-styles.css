@@ -141,3 +141,44 @@ textarea.form-control {
   font-style: italic;
 }
 
+/* Table Responsive with Fixed Height */
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for table-responsive */
+.table-responsive::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar support */
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+/* Fixed header for tables */
+.table-responsive thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fc;
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+}
+

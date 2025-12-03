@@ -1,11 +1,9 @@
-package asterisk.sun.booking_tours.core.entities;
+package asterisk.sun.booking_tours.core.payment;
 
 import java.math.BigDecimal;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
 import asterisk.sun.booking_tours.core.booking.Booking;
-import asterisk.sun.booking_tours.core.enums.PaymentMethod;
-import asterisk.sun.booking_tours.core.enums.PaymentStatus;
 import asterisk.sun.booking_tours.core.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

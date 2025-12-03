@@ -71,7 +71,6 @@
                   <tr class="bg-light">
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Title</th>
                     <th>Category</th>
                     <th>Price</th>
                     <th>Duration</th>
@@ -84,7 +83,6 @@
                   <tr th:each="tour : ${tours}">
                     <td th:text="${tour.id}"></td>
                     <td th:text="${tour.name}"></td>
-                    <td th:text="${tour.title}"></td>
                     <td th:text="${tour.categoryName}"></td>
                     <td>
                       <span th:text="${#numbers.formatDecimal(tour.price, 0, 'COMMA', 0, 'POINT')}"></span>
