@@ -29,11 +29,6 @@ public class ApiBookingController {
         this.clientCancelBookingService = clientCancelBookingService;
     }
 
-    @GetMapping("/demo")
-    public String getMethodName() {
-        return "Hello World!";
-    }
-
     @Loggable
     @PostMapping("/booking")
     public ResponseEntity<SuccessResponse<String>> booking(@Valid @RequestBody RequestBookingDTO requestBookingDTO) {

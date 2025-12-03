@@ -3,17 +3,26 @@ package asterisk.sun.booking_tours.application.api.booking;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import asterisk.sun.booking_tours.core.coupon.Coupon;
+
 public class PriceCalculator {
     private final BigDecimal subTotal;
-    private final BigDecimal discount;
     private final BigDecimal finalTotal;
+    private final BigDecimal discountAmount;
 
     public PriceCalculator(Integer numAdults, Integer numChild,
             BigDecimal adultPrice, BigDecimal childPrice,
-            BigDecimal discountPercent) {
+            Coupon coupon) {
         this.subTotal = calculateSubTotal(numAdults, numChild, adultPrice, childPrice);
-        this.discount = calculateDiscount(this.subTotal, discountPercent);
-        this.finalTotal = this.subTotal.subtract(this.discount);
+        this.discountAmount = coupon.calculateDiscount(this.subTotal);
+        this.finalTotal = this.subTotal.subtract(this.discountAmount);
+    }
+
+    public PriceCalculator(Integer numAdults, Integer numChild,
+            BigDecimal adultPrice, BigDecimal childPrice) {
+        this.subTotal = calculateSubTotal(numAdults, numChild, adultPrice, childPrice);
+        this.finalTotal = this.subTotal;
+        this.discountAmount = BigDecimal.ZERO;
     }
 
     private BigDecimal calculateSubTotal(Integer numAdults, Integer numChild,
@@ -23,23 +32,15 @@ public class PriceCalculator {
         return adultTotal.add(childTotal).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateDiscount(BigDecimal subTotal, BigDecimal discountPercent) {
-        if (discountPercent == null || discountPercent.compareTo(BigDecimal.ZERO) == 0) {
-            return BigDecimal.ZERO;
-        }
-        return subTotal.multiply(discountPercent)
-                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-    }
-
     public BigDecimal getSubTotal() {
         return subTotal;
     }
 
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
     public BigDecimal getFinalTotal() {
         return finalTotal;
+    }
+
+    public BigDecimal getDiscount() {
+        return discountAmount;
     }
 }

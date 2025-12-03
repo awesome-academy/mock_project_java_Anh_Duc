@@ -17,23 +17,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class RequestPaymentDTO {
-
-    @NotNull(message = "Booking ID is required")
-    private Long bookingId;
+    @NotNull(message = "Transaction ID is required")
+    private String transactionId;
 
     @NotNull(message = "User ID is required")
     private Long userId;
 
-    @NotNull(message = "Amount is required")
-    @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
-    private BigDecimal amount;
-
-    @NotNull(message = "Payment method is required")
-    private PaymentMethod paymentMethod;
-
     @Size(max = 100, message = "Bank code cannot exceed 100 characters")
     private String bankCode;
-
-    @Size(max = 500, message = "Notes cannot exceed 500 characters")
-    private String notes;
 }

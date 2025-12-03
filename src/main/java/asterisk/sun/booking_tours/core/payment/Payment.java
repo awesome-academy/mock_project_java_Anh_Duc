@@ -43,6 +43,13 @@ public class Payment extends BaseEntity {
     @Column(name = "status")
     private PaymentStatus status;
 
+    @Column(name = "bank_code")
+    private String bankCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_account_id", referencedColumnName = "id")
+    private BankAccount bankAccount;
+
     // Constructors
     public Payment() {}
 
@@ -101,5 +108,21 @@ public class Payment extends BaseEntity {
 
     public void setStatus(PaymentStatus status) {
         this.status = status;
+    }
+
+    public BankAccount getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public String getBankCode() {
+        return bankCode;
+    }
+
+    public void setBankCode(String bankCode) {
+        this.bankCode = bankCode;
     }
 }
