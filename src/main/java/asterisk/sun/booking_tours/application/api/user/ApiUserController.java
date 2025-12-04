@@ -2,6 +2,8 @@ package asterisk.sun.booking_tours.application.api.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,8 +67,9 @@ public class ApiUserController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<SuccessResponse<UserProfileResponseDTO>> getProfile(@RequestParam Long userId) {
-        UserProfileResponseDTO userProfile = apiUserService.getUserProfile(userId);
+    public ResponseEntity<SuccessResponse<UserProfileResponseDTO>> getProfile(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        UserProfileResponseDTO userProfile = apiUserService.getUserProfile(userDetails.getUsername());
 
         SuccessResponse<UserProfileResponseDTO> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),

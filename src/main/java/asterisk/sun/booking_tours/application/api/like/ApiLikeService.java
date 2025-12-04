@@ -105,8 +105,6 @@ public class ApiLikeService {
                 request.getLikeableType(), request.getLikeableId());
 
         return LikeResponseDTO.builder()
-                .userId(user.getId())
-                .userName(userDetails.getUsername())
                 .likeableType(request.getLikeableType())
                 .likeableId(request.getLikeableId())
                 .likesCount(likesCount)

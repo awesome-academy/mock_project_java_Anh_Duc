@@ -10,9 +10,6 @@ public class RequestBookingDTO extends BaseDTO {
     @NotNull(message = "Tour departure ID is required")
     private Long tourDepartureId;
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
     @NotNull(message = "Number of adults is required")
     @Min(value = 1, message = "Number of adults must be at least 1")
     private Integer numAdults;

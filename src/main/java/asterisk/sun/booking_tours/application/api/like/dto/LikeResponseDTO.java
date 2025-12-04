@@ -11,13 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class LikeResponseDTO {
-
-    private Long likeId;
-
-    private Long userId;
-
-    private String userName;
-
     private LikeableType likeableType;
 
     private Long likeableId;

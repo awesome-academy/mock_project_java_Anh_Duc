@@ -34,12 +34,12 @@ public class ApiBookingService {
     }
 
     @Transactional
-    public void bookTour(RequestBookingDTO requestBookingDTO) {
+    public void bookTour(RequestBookingDTO requestBookingDTO, String email) {
         // Validate tour departure
         TourDeparture tourDeparture = validateTourDeparture(requestBookingDTO.getTourDepartureId());
         Tour tour = tourDeparture.getTour();
-        User user = userRepository.findById(requestBookingDTO.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User with the given ID does not exist."));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User with the given email does not exist."));
 
         PriceCalculator priceCalculator;
         if (requestBookingDTO.getCouponCode() != null && !requestBookingDTO.getCouponCode().isEmpty()) {

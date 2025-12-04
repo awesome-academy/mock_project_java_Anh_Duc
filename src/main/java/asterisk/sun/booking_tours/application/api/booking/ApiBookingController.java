@@ -10,6 +10,8 @@ import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
 import asterisk.sun.booking_tours.common.aspect.Loggable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -31,9 +33,9 @@ public class ApiBookingController {
 
     @Loggable
     @PostMapping("/booking")
-    public ResponseEntity<SuccessResponse<String>> booking(@Valid @RequestBody RequestBookingDTO requestBookingDTO) {
+    public ResponseEntity<SuccessResponse<String>> booking(@Valid @RequestBody RequestBookingDTO requestBookingDTO, @AuthenticationPrincipal UserDetails userDetails) {
 
-        clientBookingService.bookTour(requestBookingDTO);
+        clientBookingService.bookTour(requestBookingDTO, userDetails.getUsername());
 
         SuccessResponse<String> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),

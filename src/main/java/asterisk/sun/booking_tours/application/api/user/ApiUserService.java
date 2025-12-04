@@ -93,9 +93,9 @@ public class ApiUserService {
         }
     }
 
-    public UserProfileResponseDTO getUserProfile(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("User not found with ID: " + userId));
+    public UserProfileResponseDTO getUserProfile(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new IllegalArgumentException("User not found with email: " + email));
 
         return MapperHelper.map(user, UserProfileResponseDTO.class);
     }
