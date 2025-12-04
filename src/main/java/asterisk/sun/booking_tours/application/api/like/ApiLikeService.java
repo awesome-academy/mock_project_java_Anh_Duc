@@ -38,15 +38,12 @@ public class ApiLikeService {
         like.setLikeableType(request.getLikeableType());
         like.setLikeableId(request.getLikeableId());
 
-        Like savedLike = likeRepository.save(like);
+        likeRepository.save(like);
 
         Long likesCount = likeRepository.countByLikeableTypeAndLikeableId(
                 request.getLikeableType(), request.getLikeableId());
 
         return LikeResponseDTO.builder()
-                .likeId(savedLike.getId())
-                .userId(user.getId())
-                .userName(user.getFirstName() + " " + user.getLastName())
                 .likeableType(request.getLikeableType())
                 .likeableId(request.getLikeableId())
                 .likesCount(likesCount)

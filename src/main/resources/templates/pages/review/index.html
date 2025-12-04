@@ -80,6 +80,8 @@
                     <th>Rating</th>
                     <th>Content</th>
                     <th>Status</th>
+                    <th>Likes</th>
+                    <th>Comments</th>
                     <th>Created</th>
                     <th>Actions</th>
                   </tr>
@@ -112,6 +114,14 @@
                       <span th:if="${review.status.name() == 'APPROVED'}" class="badge badge-success">Approved</span>
                       <span th:if="${review.status.name() == 'REJECTED'}" class="badge badge-danger">Rejected</span>
                       <span th:if="${review.status.name() == 'HIDDEN'}" class="badge badge-secondary">Hidden</span>
+                    </td>
+                    <td class="text-center">
+                      <i class="fas fa-thumbs-up text-primary"></i>
+                      <span th:text="${review.likeCount}">0</span>
+                    </td>
+                    <td class="text-center">
+                      <i class="fas fa-comment text-info"></i>
+                      <span th:text="${review.commentCount}">0</span>
                     </td>
                     <td>
                       <span th:text="${#temporals.format(review.createdAt, 'dd/MM/yyyy HH:mm')}"></span>

@@ -16,6 +16,8 @@ public class ListReviewDTO {
     private ReviewStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long likeCount;
+    private Long commentCount;
 
     // Constructors
     public ListReviewDTO() {}
@@ -99,5 +101,21 @@ public class ListReviewDTO {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Long getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Long getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(Long commentCount) {
+        this.commentCount = commentCount;
     }
 }

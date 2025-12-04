@@ -9,6 +9,10 @@ import asterisk.sun.booking_tours.application.admin.common.BaseServiceController
 import asterisk.sun.booking_tours.application.admin.review.dto.FormUpdateReviewDTO;
 import asterisk.sun.booking_tours.application.admin.review.dto.ListReviewDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
+import asterisk.sun.booking_tours.core.comment.CommentRepository;
+import asterisk.sun.booking_tours.core.comment.CommentableType;
+import asterisk.sun.booking_tours.core.like.LikeRepository;
+import asterisk.sun.booking_tours.core.like.LikeableType;
 import asterisk.sun.booking_tours.core.review.Review;
 import asterisk.sun.booking_tours.core.review.ReviewRepository;
 import asterisk.sun.booking_tours.core.review.ReviewStatus;
@@ -17,8 +21,13 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class ReviewAdminService extends BaseServiceController<ReviewRepository> {
 
-    public ReviewAdminService(ReviewRepository reviewRepository) {
+    private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
+
+    public ReviewAdminService(ReviewRepository reviewRepository, LikeRepository likeRepository, CommentRepository commentRepository) {
         super(reviewRepository);
+        this.likeRepository = likeRepository;
+        this.commentRepository = commentRepository;
     }
 
     public List<ListReviewDTO> queryReviewsByKeyword(String keyword) {
@@ -79,6 +88,15 @@ public class ReviewAdminService extends BaseServiceController<ReviewRepository> 
             dto.setUserName(review.getCreatedBy().getUsername());
             dto.setUserEmail(review.getCreatedBy().getEmail());
         }
+
+        // Count likes for this review
+        Long likeCount = likeRepository.countByLikeableTypeAndLikeableId(LikeableType.REVIEW, review.getId());
+        dto.setLikeCount(likeCount);
+
+        // Count comments for this review
+        Long commentCount = commentRepository.countByCommentableTypeAndCommentableId(CommentableType.REVIEW, review.getId());
+        dto.setCommentCount(commentCount);
+
         return dto;
     }
 }
