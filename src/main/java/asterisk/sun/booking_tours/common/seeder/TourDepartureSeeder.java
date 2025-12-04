@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component
-@Order(4)
+@Order(5)
 public class TourDepartureSeeder implements CommandLineRunner {
     private final Logger logger = LoggerFactory.getLogger(TourDepartureSeeder.class);
     private final TourDeparturesRepository tourDeparturesRepository;

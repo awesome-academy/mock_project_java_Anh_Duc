@@ -85,9 +85,6 @@ public class PaymentService {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(
                         () -> new EntityNotFoundException("User not found with email: " + userDetails.getUsername()));
-        Booking booking = bookingRepository.findById(requestPaymentDTO.getBookingId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Booking not found with id: " + requestPaymentDTO.getBookingId()));
 
         Payment payment = paymentRepository.findByTransactionId(requestPaymentDTO.getTransactionId())
                 .orElseThrow(() -> new EntityNotFoundException(

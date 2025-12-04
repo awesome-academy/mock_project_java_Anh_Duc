@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component
-@Order(3)
+@Order(4)
 public class TourSeeder implements CommandLineRunner {
     private final Logger logger = LoggerFactory.getLogger(TourSeeder.class);
     private final TourRepository tourRepository;
