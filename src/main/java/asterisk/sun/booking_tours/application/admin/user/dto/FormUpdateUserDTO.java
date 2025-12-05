@@ -38,6 +38,10 @@ public class FormUpdateUserDTO {
     @NotNull(message = "Status is required")
     private UserStatus status;
 
+    @NotBlank(message = "Address is required")
+    @Size(max = 500, message = "Address must not exceed 500 characters")
+    private String address;
+
     private String avatarUrl;
 
     @OptionalPassword(min = 6, max = 100, message = "Password must be between 6 and 100 characters when provided")
@@ -110,6 +114,14 @@ public class FormUpdateUserDTO {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getAvatarUrl() {

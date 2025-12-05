@@ -69,8 +69,7 @@
                 </label>
                 <input type="text" class="form-control" id="lastName" th:field="*{lastName}"
                   placeholder="Enter last name">
-                <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
-                  class="invalid-feedback d-block">
+                <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="invalid-feedback d-block">
                 </div>
               </div>
             </div>
@@ -82,8 +81,7 @@
                 <label for="phone" class="font-weight-bold">
                   <i class="fas fa-phone text-primary"></i> Phone Number <span class="text-danger">*</span>
                 </label>
-                <input type="text" class="form-control" id="phone" th:field="*{phone}"
-                  placeholder="e.g., 0123456789">
+                <input type="text" class="form-control" id="phone" th:field="*{phone}" placeholder="e.g., 0123456789">
                 <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="invalid-feedback d-block">
                 </div>
                 <small class="form-text text-muted">Enter a 10-11 digit phone number</small>
@@ -100,6 +98,21 @@
                   class="invalid-feedback d-block">
                 </div>
                 <small class="form-text text-muted">Optional URL for user avatar</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="address" class="font-weight-bold">
+                  <i class="fas fa-map-marker-alt text-primary"></i> Address <span class="text-danger">*</span>
+                </label>
+                <textarea class="form-control" id="address" th:field="*{address}" rows="3"
+                  placeholder="Enter full address (street, district, city, etc.)"></textarea>
+                <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="invalid-feedback d-block">
+                </div>
+                <small class="form-text text-muted">Enter complete address details</small>
               </div>
             </div>
           </div>
@@ -132,8 +145,7 @@
                 <label for="email" class="font-weight-bold">
                   <i class="fas fa-envelope text-success"></i> Email Address <span class="text-danger">*</span>
                 </label>
-                <input type="email" class="form-control" id="email" th:field="*{email}"
-                  placeholder="user@example.com">
+                <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="user@example.com">
                 <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback d-block">
                 </div>
                 <small class="form-text text-muted">Valid email address</small>
@@ -149,8 +161,7 @@
                 </label>
                 <input type="password" class="form-control" id="password" th:field="*{password}"
                   placeholder="Enter password">
-                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                  class="invalid-feedback d-block">
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback d-block">
                 </div>
                 <small class="form-text text-muted">Minimum 6 characters</small>
               </div>
@@ -214,7 +225,8 @@
           </div>
 
           <div class="alert alert-info mt-2">
-            <i class="fas fa-info-circle"></i> <strong>Note:</strong> ADMIN users have full system access. USER role has limited permissions.
+            <i class="fas fa-info-circle"></i> <strong>Note:</strong> ADMIN users have full system access. USER role has
+            limited permissions.
           </div>
         </div>
       </div>

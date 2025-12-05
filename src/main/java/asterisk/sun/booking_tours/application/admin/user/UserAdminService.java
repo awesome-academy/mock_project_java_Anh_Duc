@@ -50,14 +50,7 @@ public class UserAdminService extends BaseServiceController<UserRepository> {
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + formUpdateUserDTO.getId()));
 
         if (user != null) {
-            user.setUsername(formUpdateUserDTO.getUsername());
-            user.setFirstName(formUpdateUserDTO.getFirstName());
-            user.setLastName(formUpdateUserDTO.getLastName());
-            user.setEmail(formUpdateUserDTO.getEmail());
-            user.setPhone(formUpdateUserDTO.getPhone());
-            user.setRole(formUpdateUserDTO.getRole());
-            user.setStatus(formUpdateUserDTO.getStatus());
-            user.setAvatarUrl(formUpdateUserDTO.getAvatarUrl());
+            user = MapperHelper.map(formUpdateUserDTO, User.class);
 
             // Update password only if provided
             if (formUpdateUserDTO.getPassword() != null && !formUpdateUserDTO.getPassword().isEmpty()) {
