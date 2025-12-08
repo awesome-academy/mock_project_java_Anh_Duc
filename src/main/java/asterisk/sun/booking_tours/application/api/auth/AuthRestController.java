@@ -80,31 +80,4 @@ public class AuthRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
         }
     }
-
-    /**
-     * Validate token endpoint
-     *
-     * @param token JWT token to validate
-     * @return Validation status
-     */
-    @GetMapping("/validate")
-    public ResponseEntity<?> validateToken(@RequestParam String token) {
-        try {
-            boolean isValid = jwtUtil.validateToken(token);
-            Map<String, Object> response = new HashMap<>();
-            response.put("valid", isValid);
-
-            if (isValid) {
-                response.put("username", jwtUtil.extractUsername(token));
-                response.put("expiresAt", jwtUtil.extractExpiration(token));
-            }
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Invalid token");
-            error.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        }
-    }
 }

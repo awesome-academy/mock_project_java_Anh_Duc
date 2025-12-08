@@ -141,22 +141,4 @@ public class CouponAdminController extends BaseAdminController<CouponAdminServic
             return getDefaultRedirectPath();
         }
     }
-
-    @GetMapping("/validate")
-    @ResponseBody
-    public ResponseEntity<?> validateCoupon(@RequestParam String code) {
-        try {
-            CouponResponseDTO coupon = service.validateAndGetCoupon(code);
-            return ResponseEntity.ok(coupon);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/check-code")
-    @ResponseBody
-    public ResponseEntity<Boolean> checkCodeExists(@RequestParam String code) {
-        boolean exists = service.existsByCode(code);
-        return ResponseEntity.ok(exists);
-    }
 }
