@@ -1,5 +1,4 @@
 package asterisk.sun.booking_tours.application.api.comment.dto;
-import asterisk.sun.booking_tours.core.comment.CommentableType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -11,16 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateCommentRequestDTO {
+public class CreateCommentForReviewRequestDTO {
     @NotNull(message = "Content must not be null")
     @Size(min = 1, max = 1000, message = "Content must be between 1 and 1000 characters")
     private String content;
 
-    @NotNull(message = "Commentable type must not be null")
-    private CommentableType commentableType;
-
-    @NotNull(message = "Commentable ID must not be null")
-    private Long commentableId;
+    @NotNull(message = "Review ID must not be null")
+    private Long reviewId;
 
     private Long parentCommentId;
 }

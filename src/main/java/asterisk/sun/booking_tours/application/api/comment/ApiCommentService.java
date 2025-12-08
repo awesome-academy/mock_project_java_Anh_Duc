@@ -3,9 +3,11 @@ package asterisk.sun.booking_tours.application.api.comment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import asterisk.sun.booking_tours.application.api.comment.dto.CreateCommentForReviewRequestDTO;
 import asterisk.sun.booking_tours.application.api.comment.dto.CreateCommentRequestDTO;
 import asterisk.sun.booking_tours.core.comment.Comment;
 import asterisk.sun.booking_tours.core.comment.CommentRepository;
+import asterisk.sun.booking_tours.core.comment.CommentableType;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,14 +22,16 @@ public class ApiCommentService {
         this.userRepository = userRepository;
     }
 
-    public void createComment(CreateCommentRequestDTO request, UserDetails userDetails) {
+    public void createCommentForReview(CreateCommentForReviewRequestDTO request, UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+        CommentableType commentableType = CommentableType.REVIEW;
+
         Comment comment = new Comment();
         comment.setContent(request.getContent());
-        comment.setCommentableType(request.getCommentableType());
-        comment.setCommentableId(request.getCommentableId());
+        comment.setCommentableType(commentableType);
+        comment.setCommentableId(request.getReviewId());
         comment.setUser(user);
 
         if (request.getParentCommentId() != null) {

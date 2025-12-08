@@ -2,7 +2,7 @@ package asterisk.sun.booking_tours.application.api.comment;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import asterisk.sun.booking_tours.application.api.comment.dto.CreateCommentRequestDTO;
+import asterisk.sun.booking_tours.application.api.comment.dto.CreateCommentForReviewRequestDTO;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
 
@@ -26,8 +26,8 @@ public class ApiCommentController {
     }
 
     @PostMapping
-    public ResponseEntity<SuccessResponse<String>> comment(@RequestBody CreateCommentRequestDTO request, @AuthenticationPrincipal UserDetails userDetails) {
-        apiCommentService.createComment(request, userDetails);
+    public ResponseEntity<SuccessResponse<String>> comment(@RequestBody CreateCommentForReviewRequestDTO request, @AuthenticationPrincipal UserDetails userDetails) {
+        apiCommentService.createCommentForReview(request, userDetails);
 
         SuccessResponse<String> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
