@@ -15,6 +15,7 @@ import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
 import asterisk.sun.booking_tours.application.api.like.dto.CreateLikeRequestDTO;
 import asterisk.sun.booking_tours.application.api.like.dto.LikeResponseDTO;
+import asterisk.sun.booking_tours.application.api.like.dto.ToggleLikeCommentRequestDTO;
 import jakarta.validation.Valid;
 
 @RestController
@@ -26,48 +27,32 @@ public class ApiLikeController {
         this.apiLikeService = apiLikeService;
     }
 
-    @PostMapping("toggle")
-    public ResponseEntity<SuccessResponse<LikeResponseDTO>> toggleLike(
+    @PostMapping("/toggle-for-review")
+    public ResponseEntity<SuccessResponse<String>> toggleLikeForReview(
             @Valid @RequestBody CreateLikeRequestDTO dto,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        LikeResponseDTO likeResponse = apiLikeService.toggleLike(dto, userDetails);
+        apiLikeService.toggleLikeForReview(dto, userDetails);
 
-        SuccessResponse<LikeResponseDTO> response = new SuccessResponse<>(
+        SuccessResponse<String> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
                 "Like toggled successfully",
-                likeResponse);
+                null);
 
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("count")
-    public ResponseEntity<SuccessResponse<Long>> getLikesCount(
-            @RequestParam String likeableType,
-            @RequestParam Long likeableId) {
-
-        Long likesCount = apiLikeService.getLikesCount(likeableType, likeableId);
-
-        SuccessResponse<Long> response = new SuccessResponse<>(
-                HttpStatus.OK.value(),
-                "Likes count retrieved successfully",
-                likesCount);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("is-liked")
-    public ResponseEntity<SuccessResponse<Boolean>> isLikedByCurrentUser(
-            @RequestParam String likeableType,
-            @RequestParam Long likeableId,
+    @PostMapping("/toggle-for-comment")
+    public ResponseEntity<SuccessResponse<String>> toggleLikeForComment(
+            @Valid @RequestBody ToggleLikeCommentRequestDTO dto,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        boolean isLiked = apiLikeService.isLikedByCurrentUser(likeableType, likeableId, userDetails);
+        apiLikeService.toggleLikeForComment(dto, userDetails);
 
-        SuccessResponse<Boolean> response = new SuccessResponse<>(
+        SuccessResponse<String> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
-                "Like status retrieved successfully",
-                isLiked);
+                "Like toggled successfully",
+                null);
 
         return ResponseEntity.ok(response);
     }

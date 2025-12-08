@@ -4,9 +4,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.api.like.dto.CreateLikeRequestDTO;
-import asterisk.sun.booking_tours.application.api.like.dto.LikeResponseDTO;
+import asterisk.sun.booking_tours.application.api.like.dto.ToggleLikeCommentRequestDTO;
 import asterisk.sun.booking_tours.core.like.Like;
 import asterisk.sun.booking_tours.core.like.LikeRepository;
+import asterisk.sun.booking_tours.core.like.LikeableType;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,90 +22,54 @@ public class ApiLikeService {
         this.userRepository = userRepository;
     }
 
-    public LikeResponseDTO createLike(CreateLikeRequestDTO request, UserDetails userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        // Check if like already exists
-        boolean likeExists = likeRepository.existsByUserIdAndLikeableTypeAndLikeableId(
-                user.getId(), request.getLikeableType(), request.getLikeableId());
-
-        if (likeExists) {
-            throw new IllegalArgumentException("You have already liked this item");
-        }
-
+    public void createLike(LikeableType likeableType, Long likeableId, User user) {
         Like like = new Like();
         like.setUser(user);
-        like.setLikeableType(request.getLikeableType());
-        like.setLikeableId(request.getLikeableId());
+        like.setLikeableType(likeableType);
+        like.setLikeableId(likeableId);
 
         likeRepository.save(like);
-
-        Long likesCount = likeRepository.countByLikeableTypeAndLikeableId(
-                request.getLikeableType(), request.getLikeableId());
-
-        return LikeResponseDTO.builder()
-                .likeableType(request.getLikeableType())
-                .likeableId(request.getLikeableId())
-                .likesCount(likesCount)
-                .build();
     }
 
-    public void removeLike(CreateLikeRequestDTO request, UserDetails userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
+    public void removeLike(LikeableType likeableType, Long likeableId, User user) {
         Like like = likeRepository.findByUserAndLikeableTypeAndLikeableId(
-                user, request.getLikeableType(), request.getLikeableId())
+                user, likeableType, likeableId)
                 .orElseThrow(() -> new EntityNotFoundException("Like not found"));
 
         likeRepository.delete(like);
     }
 
-    public Long getLikesCount(String likeableType, Long likeableId) {
-        try {
-            return likeRepository.countByLikeableTypeAndLikeableId(
-                    Enum.valueOf(asterisk.sun.booking_tours.core.like.LikeableType.class, likeableType),
-                    likeableId);
-        } catch (IllegalArgumentException e) {
-            throw new EntityNotFoundException("Invalid likeable type: " + likeableType);
-        }
-    }
-
-    public boolean isLikedByCurrentUser(String likeableType, Long likeableId, UserDetails userDetails) {
+    public void toggleLikeForReview(CreateLikeRequestDTO request, UserDetails userDetails) {
         User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        try {
-            return likeRepository.existsByUserIdAndLikeableTypeAndLikeableId(
-                    user.getId(),
-                    Enum.valueOf(asterisk.sun.booking_tours.core.like.LikeableType.class, likeableType),
-                    likeableId);
-        } catch (IllegalArgumentException e) {
-            throw new EntityNotFoundException("Invalid likeable type: " + likeableType);
-        }
-    }
-
-    public LikeResponseDTO toggleLike(CreateLikeRequestDTO request, UserDetails userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        LikeableType likeableTypeReview = LikeableType.REVIEW;
 
         boolean likeExists = likeRepository.existsByUserIdAndLikeableTypeAndLikeableId(
-                user.getId(), request.getLikeableType(), request.getLikeableId());
+                user.getId(), likeableTypeReview, request.getReviewId());
 
         if (likeExists) {
-            removeLike(request, userDetails);
+            removeLike(likeableTypeReview, request.getReviewId(), user);
         } else {
-            return createLike(request, userDetails);
+            createLike(likeableTypeReview, request.getReviewId(), user);
         }
+    }
 
-        Long likesCount = likeRepository.countByLikeableTypeAndLikeableId(
-                request.getLikeableType(), request.getLikeableId());
+    public void toggleLikeForComment(
+            ToggleLikeCommentRequestDTO request,
+            UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return LikeResponseDTO.builder()
-                .likeableType(request.getLikeableType())
-                .likeableId(request.getLikeableId())
-                .likesCount(likesCount)
-                .build();
+        LikeableType likeableTypeComment = LikeableType.COMMENT;
+
+        boolean likeExists = likeRepository.existsByUserIdAndLikeableTypeAndLikeableId(
+                user.getId(), likeableTypeComment, request.getCommentId());
+
+        if (likeExists) {
+            removeLike(likeableTypeComment, request.getCommentId(), user);
+        } else {
+            createLike(likeableTypeComment, request.getCommentId(), user);
+        }
     }
 }

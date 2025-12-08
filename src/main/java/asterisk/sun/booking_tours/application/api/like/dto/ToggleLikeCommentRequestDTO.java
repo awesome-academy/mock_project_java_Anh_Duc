@@ -1,6 +1,5 @@
 package asterisk.sun.booking_tours.application.api.like.dto;
-
-import asterisk.sun.booking_tours.core.like.LikeableType;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LikeResponseDTO {
-    private LikeableType likeableType;
-
-    private Long likeableId;
-
-    private Long likesCount;
+public class ToggleLikeCommentRequestDTO {
+    @NotNull(message = "Comment ID must not be null")
+    private Long commentId;
 }
