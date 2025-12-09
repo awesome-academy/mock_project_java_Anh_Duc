@@ -2,8 +2,13 @@ package asterisk.sun.booking_tours.application.api.tour;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import asterisk.sun.booking_tours.application.api.common.dto.PaginatedResponse;
 import asterisk.sun.booking_tours.application.api.tour.dto.ListToursResponseDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.SearchToursRequestDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailResponseDTO;
@@ -20,24 +25,30 @@ public class ApiTourService {
         this.tourRepository = tourRepository;
     }
 
-    public List<ListToursResponseDTO> getListTours(SearchToursRequestDTO param) {
-        if (param.getKeyword() != null) {
-            List<Tour> tours = tourRepository.searchByKeyword(param.getKeyword());
-            return MapperHelper.mapList(tours, ListToursResponseDTO.class);
-        }
+    public Page<Tour> getListTours(SearchToursRequestDTO request) {
+        Pageable pageable = request.getPageable();
 
-        if (param.getMainDestination() != null) {
-            List<Tour> tours = tourRepository.searchByLocation(param.getMainDestination());
-            return MapperHelper.mapList(tours, ListToursResponseDTO.class);
-        }
+        Specification<Tour> spec = (root, query, cb) -> {
+            if (request.getKeyword() != null) {
+                String likeKey = "%" + request.getKeyword().toLowerCase() + "%";
+                return cb.or(
+                        cb.like(cb.lower(root.get("name")), likeKey),
+                        cb.like(cb.lower(root.get("description")), likeKey));
+            }
 
-        if (param.getDate() != null) {
-            List<Tour> tours = tourRepository.searchByDate(param.getDate());
-            return MapperHelper.mapList(tours, ListToursResponseDTO.class);
-        }
+            if (request.getMainDestination() != null) {
+                String likeLocation = "%" + request.getMainDestination().toLowerCase() + "%";
+                return cb.like(cb.lower(root.get("mainDestination")), likeLocation);
+            }
 
-        List<Tour> tours = tourRepository.findAll();
-        return MapperHelper.mapList(tours, ListToursResponseDTO.class);
+            if (request.getDate() != null) {
+                return cb.equal(root.join("departures").get("departureDate"), request.getDate());
+            }
+
+            return cb.conjunction();
+        };
+
+        return tourRepository.findAll(spec, pageable);
     }
 
     public ViewDetailResponseDTO getTourDetail(Long tourId) {
