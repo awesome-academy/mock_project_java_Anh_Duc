@@ -1,21 +1,19 @@
 package asterisk.sun.booking_tours.application.api.tour;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import asterisk.sun.booking_tours.application.api.common.dto.PaginatedResponse;
-import asterisk.sun.booking_tours.application.api.tour.dto.ListToursResponseDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.SearchToursRequestDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewDetailResponseDTO;
 import asterisk.sun.booking_tours.application.api.tour.dto.ViewTourDeparturesResponseDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.tour.Tour;
 import asterisk.sun.booking_tours.core.tour.TourRepository;
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class ApiTourService {
@@ -27,25 +25,27 @@ public class ApiTourService {
 
     public Page<Tour> getListTours(SearchToursRequestDTO request) {
         Pageable pageable = request.getPageable();
-
         Specification<Tour> spec = (root, query, cb) -> {
-            if (request.getKeyword() != null) {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (request.getKeyword() != null && !request.getKeyword().isEmpty()) {
                 String likeKey = "%" + request.getKeyword().toLowerCase() + "%";
-                return cb.or(
+                Predicate keywordPredicate = cb.or(
                         cb.like(cb.lower(root.get("name")), likeKey),
                         cb.like(cb.lower(root.get("description")), likeKey));
+                predicates.add(keywordPredicate);
             }
 
-            if (request.getMainDestination() != null) {
+            if (request.getMainDestination() != null && !request.getMainDestination().isEmpty()) {
                 String likeLocation = "%" + request.getMainDestination().toLowerCase() + "%";
-                return cb.like(cb.lower(root.get("mainDestination")), likeLocation);
+                predicates.add(cb.like(cb.lower(root.get("mainDestination")), likeLocation));
             }
 
             if (request.getDate() != null) {
-                return cb.equal(root.join("departures").get("departureDate"), request.getDate());
+                predicates.add(cb.equal(root.join("departures").get("departureDate"), request.getDate()));
             }
 
-            return cb.conjunction();
+            return cb.and(predicates.toArray(new Predicate[0]));
         };
 
         return tourRepository.findAll(spec, pageable);
