@@ -72,6 +72,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // API authentication endpoints - public
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Admin API authentication endpoints - public
+                        .requestMatchers("/api/v1/admin/auth/**").permitAll()
                         // API endpoints - require authentication via JWT
                         .requestMatchers("/api/**").authenticated()
                         // Employee list - accessible by all authenticated users (including USER role)
