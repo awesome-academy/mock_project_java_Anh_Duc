@@ -9,6 +9,7 @@ import asterisk.sun.booking_tours.application.admin.common.BaseServiceController
 import asterisk.sun.booking_tours.application.admin.user.dto.FormCreateUserDTO;
 import asterisk.sun.booking_tours.application.admin.user.dto.FormUpdateUserDTO;
 import asterisk.sun.booking_tours.application.admin.user.dto.ListUserDTO;
+import asterisk.sun.booking_tours.application.rest.admin.user.dto.ListUserResponseDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
@@ -28,6 +29,12 @@ public class UserAdminService extends BaseServiceController<UserRepository> {
         List<UserBasicProjection> users = repository.searchByKeyword(keyword);
 
         return MapperHelper.mapList(users, ListUserDTO.class);
+    }
+
+    public List<ListUserResponseDTO> queryListUserByKeywordApiAdmin(String keyword) {
+        List<UserBasicProjection> users = repository.searchByKeyword(keyword);
+
+        return MapperHelper.mapList(users, ListUserResponseDTO.class);
     }
 
     public void createUser(FormCreateUserDTO formCreateUserDTO) {

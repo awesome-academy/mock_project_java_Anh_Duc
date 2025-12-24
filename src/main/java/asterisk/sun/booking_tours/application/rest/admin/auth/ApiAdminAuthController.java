@@ -120,4 +120,23 @@ public class ApiAdminAuthController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<SuccessResponse<Void>> logout() {
+        // Tạo HTTP-ONLY COOKIE với giá trị rỗng và thời gian sống bằng 0
+        ResponseCookie cookie = ResponseCookie.from("access_token", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+        SuccessResponse<Void> response = new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "Logout successful",
+                null);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(response);
+    }
 }
