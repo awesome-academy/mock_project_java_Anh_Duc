@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/api/v1/admin/auth")
@@ -123,20 +124,34 @@ public class ApiAdminAuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<RestSuccessResponse<Void>> logout() {
-        // Tạo HTTP-ONLY COOKIE với giá trị rỗng và thời gian sống bằng 0
-        ResponseCookie cookie = ResponseCookie.from("access_token", "")
+        // Xóa SecurityContext để clear authentication
+        SecurityContextHolder.clearContext();
+
+        // Xóa access_token cookie
+        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
                 .secure(false)
                 .path("/")
                 .maxAge(0)
                 .sameSite("Lax")
                 .build();
+
+        // Xóa JSESSIONID cookie
+        ResponseCookie jsessionidCookie = ResponseCookie.from("JSESSIONID", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .build();
+
         RestSuccessResponse<Void> response = new RestSuccessResponse<>(
                 HttpStatus.OK.value(),
                 "Logout successful",
                 null);
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, jsessionidCookie.toString())
                 .body(response);
     }
 }
