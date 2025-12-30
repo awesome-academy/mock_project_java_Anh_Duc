@@ -8,13 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.api.common.endpoint.ApiV1;
 import asterisk.sun.booking_tours.application.api.like.dto.CreateLikeRequestDTO;
-import asterisk.sun.booking_tours.application.api.like.dto.LikeResponseDTO;
 import asterisk.sun.booking_tours.application.api.like.dto.ToggleLikeCommentRequestDTO;
 import jakarta.validation.Valid;
 

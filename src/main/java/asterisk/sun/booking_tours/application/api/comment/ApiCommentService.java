@@ -4,7 +4,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.api.comment.dto.CreateCommentForReviewRequestDTO;
-import asterisk.sun.booking_tours.application.api.comment.dto.CreateCommentRequestDTO;
 import asterisk.sun.booking_tours.core.comment.Comment;
 import asterisk.sun.booking_tours.core.comment.CommentRepository;
 import asterisk.sun.booking_tours.core.comment.CommentableType;
