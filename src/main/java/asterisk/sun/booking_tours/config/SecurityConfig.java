@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import asterisk.sun.booking_tours.application.admin.auth.AuthAdminService;
 
@@ -39,6 +40,9 @@ public class SecurityConfig {
     @Autowired
     private RestAccessDeniedHandler restAccessDeniedHandler;
 
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
+
     @Bean
     @SuppressWarnings("deprecation")
     public DaoAuthenticationProvider authenticationProvider() {
@@ -56,6 +60,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // Enable CORS with custom configuration
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf
                         // Disable CSRF for API endpoints
                         .ignoringRequestMatchers("/api/**"))
@@ -72,6 +78,10 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // API authentication endpoints - public
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Admin API authentication endpoints - public
+                        .requestMatchers("/api/v1/admin/auth/login").permitAll()
+                        // Admin API endpoints - require ADMIN role
+                        .requestMatchers("/api/v1/admin/auth/**").hasRole("ADMIN")
                         // API endpoints - require authentication via JWT
                         .requestMatchers("/api/**").authenticated()
                         // Employee list - accessible by all authenticated users (including USER role)
