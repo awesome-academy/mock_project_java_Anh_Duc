@@ -20,6 +20,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,6 +75,16 @@ public class ApiAdminUserController {
                 HttpStatus.OK.value(),
                 "User updated successfully");
 
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> delete(@PathVariable Long id) {
+        userAdminService.deleteUser(id);
+
+        SuccessResponse<String> response = new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "User deleted successfully");
         return ResponseEntity.ok(response);
     }
 }
