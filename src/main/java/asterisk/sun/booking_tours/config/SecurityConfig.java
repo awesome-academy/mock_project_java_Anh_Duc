@@ -63,8 +63,8 @@ public class SecurityConfig {
                 // Enable CORS with custom configuration
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(csrf -> csrf
-                        // Disable CSRF for API endpoints
-                        .ignoringRequestMatchers("/api/**"))
+                        // Disable CSRF for API endpoints and WebSocket
+                        .ignoringRequestMatchers("/api/**", "/ws/**"))
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authz -> authz
                         // Public endpoints
@@ -76,6 +76,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/users/register", "/api/v1/users/verify-email", "/api/v1/users/resend-verification").permitAll()
                         // Swagger UI endpoints - public access
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        // WebSocket endpoints - public access
+                        .requestMatchers("/ws/**").permitAll()
                         // API authentication endpoints - public
                         .requestMatchers("/api/auth/**").permitAll()
                         // Admin API authentication endpoints - public

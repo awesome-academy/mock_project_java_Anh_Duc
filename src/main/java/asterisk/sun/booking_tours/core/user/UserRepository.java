@@ -46,4 +46,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Optional<User> findByPhone(String phone);
 
     List<User> findByRole(Role role);
+
+    Long countByStatus(UserStatus status);
 }

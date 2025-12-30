@@ -8,7 +8,6 @@ import asterisk.sun.booking_tours.application.admin.user.dto.FormCreateUserDTO;
 import asterisk.sun.booking_tours.application.admin.user.dto.FormUpdateUserDTO;
 import asterisk.sun.booking_tours.application.api.common.dto.PaginatedResponse;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
-import asterisk.sun.booking_tours.application.rest.admin.user.dto.CreateUserRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.user.dto.GetUsersRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.user.dto.ListUserResponseDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
