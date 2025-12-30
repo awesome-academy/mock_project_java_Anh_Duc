@@ -83,16 +83,20 @@ public class UserAdminService extends BaseServiceController<UserRepository> {
         User user = repository.findById(formUpdateUserDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + formUpdateUserDTO.getId()));
 
-        if (user != null) {
-            user = MapperHelper.map(formUpdateUserDTO, User.class);
+        // Store the current password before mapping
+        String currentPassword = user.getPassword();
 
-            // Update password only if provided
-            if (formUpdateUserDTO.getPassword() != null && !formUpdateUserDTO.getPassword().isEmpty()) {
-                user.setPassword(passwordEncoder.encode(formUpdateUserDTO.getPassword()));
-            }
+        // Map the DTO to the user entity
+        user = MapperHelper.map(formUpdateUserDTO, User.class);
 
-            repository.save(user);
+        // Update password only if provided, otherwise keep the current password
+        if (formUpdateUserDTO.getPassword() != null && !formUpdateUserDTO.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(formUpdateUserDTO.getPassword()));
+        } else {
+            user.setPassword(currentPassword);
         }
+
+        repository.save(user);
     }
 
     public void deleteUser(Long id) {
