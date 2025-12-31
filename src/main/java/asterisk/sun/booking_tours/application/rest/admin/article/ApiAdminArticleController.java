@@ -40,17 +40,16 @@ public class ApiAdminArticleController {
     public ResponseEntity<PaginatedResponse<ArticleResponseDTO>> getListArticles(GetArticlesRequestDTO param) {
         Page<Article> articles = articleAdminService.getArticles(param);
         List<ArticleResponseDTO> data = articles.getContent().stream()
-            .map(articleAdminService::mapEntityToResponse)
-            .toList();
+                .map(articleAdminService::mapEntityToResponse)
+                .toList();
 
         PaginatedResponse<ArticleResponseDTO> response = new PaginatedResponse<>(
-            HttpStatus.OK.value(),
-            "Get List Articles Successfully",
-            data,
-            articles.getTotalElements(),
-            articles.getNumber() + 1,
-            articles.getSize()
-        );
+                HttpStatus.OK.value(),
+                "Get List Articles Successfully",
+                data,
+                articles.getTotalElements(),
+                articles.getNumber() + 1,
+                articles.getSize());
 
         return ResponseEntity.ok(response);
     }
@@ -64,15 +63,14 @@ public class ApiAdminArticleController {
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<ArticleResponseDTO>> getArticleById(@PathVariable Long id) {
         Article article = articleAdminService.getArticleById(id)
-            .orElseThrow(() -> new RuntimeException("Article not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Article not found with id: " + id));
 
         ArticleResponseDTO dto = articleAdminService.mapEntityToResponse(article);
 
         SuccessResponse<ArticleResponseDTO> response = new SuccessResponse<>(
-            HttpStatus.OK.value(),
-            "Get Article Successfully",
-            dto
-        );
+                HttpStatus.OK.value(),
+                "Get Article Successfully",
+                dto);
 
         return ResponseEntity.ok(response);
     }
@@ -88,9 +86,8 @@ public class ApiAdminArticleController {
         articleAdminService.deleteArticle(id);
 
         SuccessResponse<String> response = new SuccessResponse<>(
-            HttpStatus.OK.value(),
-            "Article deleted successfully"
-        );
+                HttpStatus.OK.value(),
+                "Article deleted successfully");
 
         return ResponseEntity.ok(response);
     }
@@ -104,9 +101,11 @@ public class ApiAdminArticleController {
      *
      * - slug: Required. Unique identifier for URL
      * - content: Required. Article content
-     * - article_type: Required. One of: NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT
+     * - article_type: Required. One of: NEWS, BLOG, GUIDE, TIPS, DESTINATION,
+     * ANNOUNCEMENT
      * - thumbnail: Optional. Image URL
-     * - status: Optional. One of: DRAFT, PUBLISHED, ARCHIVED, DELETED. Default: DRAFT
+     * - status: Optional. One of: DRAFT, PUBLISHED, ARCHIVED, DELETED. Default:
+     * DRAFT
      * - user_id: Optional. Author's user ID
      *
      * @param file Excel file (.xlsx or .xls)
@@ -120,23 +119,20 @@ public class ApiAdminArticleController {
             ArticleImportResponseDTO result = articleAdminService.importFromExcel(file);
 
             String message = String.format(
-                "Import completed: %d/%d articles imported successfully",
-                result.getSuccessCount(),
-                result.getTotalRows()
-            );
+                    "Import completed: %d/%d articles imported successfully",
+                    result.getSuccessCount(),
+                    result.getTotalRows());
 
             SuccessResponse<ArticleImportResponseDTO> response = new SuccessResponse<>(
-                HttpStatus.OK.value(),
-                message,
-                result
-            );
+                    HttpStatus.OK.value(),
+                    message,
+                    result);
 
             return ResponseEntity.ok(response);
         } catch (ExcelImportException e) {
             SuccessResponse<ArticleImportResponseDTO> response = new SuccessResponse<>(
-                HttpStatus.BAD_REQUEST.value(),
-                "Import failed: " + e.getMessage()
-            );
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Import failed: " + e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }
@@ -151,19 +147,17 @@ public class ApiAdminArticleController {
         ImportTemplateInfo template = new ImportTemplateInfo();
         template.setDescription("Excel template for importing articles");
         template.setColumns(List.of(
-            new ColumnInfo("slug", "String", true, "Unique URL slug for the article"),
-            new ColumnInfo("content", "String", true, "Article content (HTML or plain text)"),
-            new ColumnInfo("article_type", "Enum", true, "NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT"),
-            new ColumnInfo("thumbnail", "String", false, "Image URL for thumbnail"),
-            new ColumnInfo("status", "Enum", false, "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)"),
-            new ColumnInfo("user_id", "Long", false, "Author's user ID")
-        ));
+                new ColumnInfo("title", "String", true, "Article title (slug will be auto-generated from title)"),
+                new ColumnInfo("content", "String", true, "Article content (HTML or plain text)"),
+                new ColumnInfo("article_type", "Enum", true, "NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT"),
+                new ColumnInfo("thumbnail", "String", false, "Image URL for thumbnail"),
+                new ColumnInfo("status", "Enum", false, "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)"),
+                new ColumnInfo("user_id", "Long", false, "Author's user ID")));
 
         SuccessResponse<ImportTemplateInfo> response = new SuccessResponse<>(
-            HttpStatus.OK.value(),
-            "Import template information",
-            template
-        );
+                HttpStatus.OK.value(),
+                "Import template information",
+                template);
 
         return ResponseEntity.ok(response);
     }
@@ -201,7 +195,8 @@ public class ApiAdminArticleController {
         private boolean required;
         private String description;
 
-        public ColumnInfo() {}
+        public ColumnInfo() {
+        }
 
         public ColumnInfo(String name, String type, boolean required, String description) {
             this.name = name;

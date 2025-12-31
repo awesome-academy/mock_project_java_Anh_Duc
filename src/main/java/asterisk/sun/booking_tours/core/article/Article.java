@@ -14,6 +14,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "articles")
 public class Article extends BaseEntity {
+    @Column(name = "title", length = 255, nullable = false)
+    private String title;
 
     @Column(name = "slug", length = 255, nullable = false, unique = true)
     private String slug;
@@ -40,6 +42,14 @@ public class Article extends BaseEntity {
     public Article() {}
 
     // Getters and Setters
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getSlug() {
         return slug;
     }

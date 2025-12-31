@@ -26,9 +26,9 @@ public class ExcelImportService {
     /**
      * Import data from Excel file to list of DTOs
      *
-     * @param file      Uploaded Excel file
-     * @param dtoClass  Target DTO class with @ExcelColumn annotations
-     * @param <T>       DTO type
+     * @param file     Uploaded Excel file
+     * @param dtoClass Target DTO class with @ExcelColumn annotations
+     * @param <T>      DTO type
      * @return Import result containing success items and errors
      */
     public <T> ExcelImportResult<T> importFromExcel(MultipartFile file, Class<T> dtoClass) {
@@ -39,7 +39,7 @@ public class ExcelImportService {
         int totalRows = 0;
 
         try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
+                Workbook workbook = new XSSFWorkbook(inputStream)) {
 
             Sheet sheet = workbook.getSheetAt(0);
             if (sheet == null || sheet.getPhysicalNumberOfRows() == 0) {
@@ -88,7 +88,7 @@ public class ExcelImportService {
 
         String contentType = file.getContentType();
         if (contentType == null ||
-            (!contentType.equals(XLSX_CONTENT_TYPE) && !contentType.equals(XLS_CONTENT_TYPE))) {
+                (!contentType.equals(XLSX_CONTENT_TYPE) && !contentType.equals(XLS_CONTENT_TYPE))) {
             throw new ExcelImportException("Invalid file type. Only Excel files (.xlsx, .xls) are supported");
         }
     }
@@ -175,17 +175,17 @@ public class ExcelImportService {
                 // Check required field
                 if (annotation.required() && (value == null || value.toString().isEmpty())) {
                     errors.add(new ExcelImportResult.ExcelImportError(
-                        rowNumber, annotation.value(), "Required field is empty", rawValue));
+                            rowNumber, annotation.value(), "Required field is empty", rawValue));
                     continue;
                 }
 
                 field.set(dto, value);
             } catch (IllegalAccessException e) {
                 errors.add(new ExcelImportResult.ExcelImportError(
-                    rowNumber, annotation.value(), "Cannot set field value", rawValue));
+                        rowNumber, annotation.value(), "Cannot set field value", rawValue));
             } catch (ValueConversionException e) {
                 errors.add(new ExcelImportResult.ExcelImportError(
-                    rowNumber, annotation.value(), e.getMessage(), rawValue));
+                        rowNumber, annotation.value(), e.getMessage(), rawValue));
             }
         }
 
@@ -236,7 +236,7 @@ public class ExcelImportService {
             }
         } catch (Exception e) {
             throw new ValueConversionException(
-                String.format("Cannot convert '%s' to %s", rawValue, targetType.getSimpleName()));
+                    String.format("Cannot convert '%s' to %s", rawValue, targetType.getSimpleName()));
         }
 
         throw new ValueConversionException("Unsupported field type: " + targetType.getName());
@@ -246,11 +246,16 @@ public class ExcelImportService {
      * Get default value for primitive types
      */
     private Object getDefaultValue(Class<?> type) {
-        if (type == int.class) return 0;
-        if (type == long.class) return 0L;
-        if (type == double.class) return 0.0;
-        if (type == float.class) return 0.0f;
-        if (type == boolean.class) return false;
+        if (type == int.class)
+            return 0;
+        if (type == long.class)
+            return 0L;
+        if (type == double.class)
+            return 0.0;
+        if (type == float.class)
+            return 0.0f;
+        if (type == boolean.class)
+            return false;
         return null;
     }
 
@@ -258,7 +263,8 @@ public class ExcelImportService {
      * Parse boolean value from string
      */
     private Boolean parseBoolean(String value) {
-        if (value == null) return null;
+        if (value == null)
+            return null;
         String v = value.toLowerCase().trim();
         return v.equals("true") || v.equals("1") || v.equals("yes") || v.equals("có") || v.equals("co");
     }
@@ -266,7 +272,7 @@ public class ExcelImportService {
     /**
      * Parse enum value from string using Reflection
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private Object parseEnum(String value, Class<?> enumClass) throws ValueConversionException {
         try {
             return Enum.valueOf((Class<Enum>) enumClass, value.toUpperCase().trim());
@@ -278,8 +284,8 @@ public class ExcelImportService {
                 }
             }
             throw new ValueConversionException(
-                String.format("Invalid enum value '%s'. Valid values: %s",
-                    value, Arrays.toString(enumClass.getEnumConstants())));
+                    String.format("Invalid enum value '%s'. Valid values: %s",
+                            value, Arrays.toString(enumClass.getEnumConstants())));
         }
     }
 
@@ -324,7 +330,7 @@ public class ExcelImportService {
         for (int i = row.getFirstCellNum(); i < row.getLastCellNum(); i++) {
             Cell cell = row.getCell(i);
             if (cell != null && cell.getCellType() != CellType.BLANK
-                && !getCellStringValue(cell).trim().isEmpty()) {
+                    && !getCellStringValue(cell).trim().isEmpty()) {
                 return false;
             }
         }
@@ -334,7 +340,8 @@ public class ExcelImportService {
     /**
      * Column mapping record
      */
-    private record ColumnMapping(int columnIndex, ExcelColumn annotation) {}
+    private record ColumnMapping(int columnIndex, ExcelColumn annotation) {
+    }
 
     /**
      * Exception for value conversion errors

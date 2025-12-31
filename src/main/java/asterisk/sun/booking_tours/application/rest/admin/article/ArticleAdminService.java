@@ -40,8 +40,8 @@ public class ArticleAdminService {
     private final Slugify slugify;
 
     public ArticleAdminService(ArticleRepository articleRepository,
-                               UserRepository userRepository,
-                               ExcelImportService excelImportService) {
+            UserRepository userRepository,
+            ExcelImportService excelImportService) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.excelImportService = excelImportService;
@@ -53,17 +53,15 @@ public class ArticleAdminService {
      */
     public Page<Article> getArticles(GetArticlesRequestDTO request) {
         Sort sort = Sort.by(
-            request.getSortDir().equalsIgnoreCase("asc")
-                ? Sort.Direction.ASC
-                : Sort.Direction.DESC,
-            request.getSortBy()
-        );
+                request.getSortDir().equalsIgnoreCase("asc")
+                        ? Sort.Direction.ASC
+                        : Sort.Direction.DESC,
+                request.getSortBy());
 
         Pageable pageable = PageRequest.of(
-            Math.max(0, request.getPage() - 1),
-            request.getSize(),
-            sort
-        );
+                Math.max(0, request.getPage() - 1),
+                request.getSize(),
+                sort);
 
         Specification<Article> spec = buildSpecification(request);
         return articleRepository.findAll(spec, pageable);
@@ -80,9 +78,9 @@ public class ArticleAdminService {
             if (request.getKeyword() != null && !request.getKeyword().trim().isEmpty()) {
                 String keyword = "%" + request.getKeyword().toLowerCase() + "%";
                 Predicate slugPredicate = criteriaBuilder.like(
-                    criteriaBuilder.lower(root.get("slug")), keyword);
+                        criteriaBuilder.lower(root.get("slug")), keyword);
                 Predicate contentPredicate = criteriaBuilder.like(
-                    criteriaBuilder.lower(root.get("content")), keyword);
+                        criteriaBuilder.lower(root.get("content")), keyword);
                 predicates.add(criteriaBuilder.or(slugPredicate, contentPredicate));
             }
 
@@ -123,7 +121,7 @@ public class ArticleAdminService {
     @Transactional
     public Article updateArticle(Long id, ArticleImportDTO dto) {
         Article article = articleRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Article not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Article not found with id: " + id));
 
         mapDtoToEntity(dto, article);
         return articleRepository.save(article);
@@ -146,8 +144,8 @@ public class ArticleAdminService {
     @Transactional
     public ArticleImportResponseDTO importFromExcel(MultipartFile file) {
         // Parse Excel file using Reflection-based ExcelImportService
-        ExcelImportResult<ArticleImportDTO> importResult =
-            excelImportService.importFromExcel(file, ArticleImportDTO.class);
+        ExcelImportResult<ArticleImportDTO> importResult = excelImportService.importFromExcel(file,
+                ArticleImportDTO.class);
 
         List<ArticleResponseDTO> importedArticles = new ArrayList<>();
         List<ExcelImportResult.ExcelImportError> allErrors = new ArrayList<>(importResult.getErrors());
@@ -165,32 +163,27 @@ public class ArticleAdminService {
             } catch (Exception e) {
                 // Add error for this row
                 allErrors.add(new ExcelImportResult.ExcelImportError(
-                    i + 2, // Row number (1-indexed, plus header)
-                    "general",
-                    e.getMessage(),
-                    dto.getSlug()
-                ));
+                        i + 2, // Row number (1-indexed, plus header)
+                        "general",
+                        e.getMessage(),
+                        dto.getTitle()));
             }
         }
 
         return new ArticleImportResponseDTO(
-            importResult.getTotalRows(),
-            importedArticles.size(),
-            allErrors.size(),
-            importedArticles,
-            allErrors
-        );
+                importResult.getTotalRows(),
+                importedArticles.size(),
+                allErrors.size(),
+                importedArticles,
+                allErrors);
     }
 
     /**
      * Create Article entity from DTO
      */
     private Article createArticleFromDto(ArticleImportDTO dto) {
-        // Generate slug if not provided or validate uniqueness
-        String slug = dto.getSlug();
-        if (slug == null || slug.trim().isEmpty()) {
-            slug = slugify.slugify(dto.getContent().substring(0, Math.min(50, dto.getContent().length())));
-        }
+        // Generate slug from title
+        String slug = slugify.slugify(dto.getTitle());
 
         // Ensure slug uniqueness
         String baseSlug = slug;
@@ -200,6 +193,7 @@ public class ArticleAdminService {
         }
 
         Article article = new Article();
+        article.setTitle(dto.getTitle());
         article.setSlug(slug);
         article.setContent(dto.getContent());
         article.setArticleType(dto.getArticleType() != null ? dto.getArticleType() : ArticleType.NEWS);
@@ -209,7 +203,7 @@ public class ArticleAdminService {
         // Set user if provided
         if (dto.getUserId() != null) {
             User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
             article.setUser(user);
         }
 
@@ -220,12 +214,16 @@ public class ArticleAdminService {
      * Map DTO to existing entity
      */
     private void mapDtoToEntity(ArticleImportDTO dto, Article article) {
-        if (dto.getSlug() != null) {
-            String slug = dto.getSlug();
+        if (dto.getTitle() != null) {
+            article.setTitle(dto.getTitle());
+            // Generate new slug from title
+            String slug = slugify.slugify(dto.getTitle());
             // Check uniqueness for new or different slug
             if (article.getId() == null || !slug.equals(article.getSlug())) {
-                if (articleRepository.existsBySlug(slug)) {
-                    throw new RuntimeException("Article with slug '" + slug + "' already exists");
+                String baseSlug = slug;
+                int counter = 1;
+                while (articleRepository.existsBySlug(slug)) {
+                    slug = baseSlug + "-" + counter++;
                 }
             }
             article.setSlug(slug);
@@ -249,7 +247,7 @@ public class ArticleAdminService {
 
         if (dto.getUserId() != null) {
             User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
             article.setUser(user);
         }
     }

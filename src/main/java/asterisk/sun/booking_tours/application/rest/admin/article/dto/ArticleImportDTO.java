@@ -10,8 +10,8 @@ import asterisk.sun.booking_tours.core.article.ArticleType;
  */
 public class ArticleImportDTO {
 
-    @ExcelColumn(value = "slug", required = true)
-    private String slug;
+    @ExcelColumn(value = "title", required = true)
+    private String title;
 
     @ExcelColumn(value = "content", required = true)
     private String content;
@@ -32,12 +32,12 @@ public class ArticleImportDTO {
     public ArticleImportDTO() {}
 
     // Getters and Setters
-    public String getSlug() {
-        return slug;
+    public String getTitle() {
+        return title;
     }
 
-    public void setSlug(String slug) {
-        this.slug = slug;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {

@@ -16,11 +16,12 @@ public class ArticleImportResponseDTO {
     private List<ExcelImportResult.ExcelImportError> errors;
 
     // Constructors
-    public ArticleImportResponseDTO() {}
+    public ArticleImportResponseDTO() {
+    }
 
     public ArticleImportResponseDTO(int totalRows, int successCount, int errorCount,
-                                    List<ArticleResponseDTO> importedArticles,
-                                    List<ExcelImportResult.ExcelImportError> errors) {
+            List<ArticleResponseDTO> importedArticles,
+            List<ExcelImportResult.ExcelImportError> errors) {
         this.totalRows = totalRows;
         this.successCount = successCount;
         this.errorCount = errorCount;
