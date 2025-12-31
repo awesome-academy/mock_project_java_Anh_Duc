@@ -88,7 +88,7 @@ public class SecurityConfig {
 
                         // ==================== ADMIN API (/api/v1/admin/**) ====================
                         // Admin authentication - public (login only)
-                        .requestMatchers("/api/v1/admin/auth/login").permitAll()
+                        .requestMatchers("/api/v1/admin/auth/login", "/api/v1/admin/auth/google").permitAll()
                         // All Admin API endpoints - require ADMIN role
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
 

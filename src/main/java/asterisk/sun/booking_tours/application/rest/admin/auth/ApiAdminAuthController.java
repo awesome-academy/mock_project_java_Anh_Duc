@@ -4,7 +4,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.api.auth.dto.JwtAuthenticationRequest;
+import asterisk.sun.booking_tours.application.rest.admin.auth.dto.GoogleLoginRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.auth.dto.LoginResponseDTO;
+import asterisk.sun.booking_tours.application.rest.admin.auth.service.GoogleAuthService;
 import asterisk.sun.booking_tours.application.rest.common.dto.RestSuccessResponse;
 import asterisk.sun.booking_tours.common.security.JwtUtil;
 import asterisk.sun.booking_tours.core.user.User;
@@ -45,6 +47,9 @@ public class ApiAdminAuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private GoogleAuthService googleAuthService;
 
     @PostMapping("/login")
     public ResponseEntity<RestSuccessResponse<LoginResponseDTO>> login(@Valid @RequestBody JwtAuthenticationRequest request,
@@ -93,6 +98,51 @@ public class ApiAdminAuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(loginResponse);
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<RestSuccessResponse<LoginResponseDTO>> loginWithGoogle(
+            @Valid @RequestBody GoogleLoginRequestDTO request,
+            HttpServletResponse response) {
+        try {
+            // Authenticate with Google
+            GoogleAuthService.GoogleAuthResult authResult = googleAuthService.authenticateWithGoogle(request.getIdToken());
+
+            // Create HTTP-ONLY COOKIE with JWT token
+            ResponseCookie cookie = ResponseCookie.from("access_token", authResult.getJwtToken())
+                    .httpOnly(true)
+                    .secure(false)
+                    .path("/")
+                    .maxAge(7 * 24 * 60 * 60)
+                    .sameSite("Lax")
+                    .build();
+
+            String message = authResult.isNewUser()
+                    ? "Google login successful - New admin account created"
+                    : "Google login successful";
+
+            RestSuccessResponse<LoginResponseDTO> loginResponse = new RestSuccessResponse<>(
+                    HttpStatus.OK.value(),
+                    message,
+                    authResult.getUserInfo());
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                    .body(loginResponse);
+
+        } catch (IllegalArgumentException e) {
+            RestSuccessResponse<LoginResponseDTO> errorResponse = new RestSuccessResponse<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage(),
+                    null);
+            return ResponseEntity.badRequest().body(errorResponse);
+        } catch (Exception e) {
+            RestSuccessResponse<LoginResponseDTO> errorResponse = new RestSuccessResponse<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Google authentication failed: " + e.getMessage(),
+                    null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     @GetMapping("/me")
