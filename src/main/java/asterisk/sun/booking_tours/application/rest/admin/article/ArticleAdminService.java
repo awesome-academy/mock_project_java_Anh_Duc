@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -140,9 +141,14 @@ public class ArticleAdminService {
 
     /**
      * Import articles from Excel file using Apache POI and Reflection
+     * User ID is automatically set from the currently logged-in user
      */
     @Transactional
-    public ArticleImportResponseDTO importFromExcel(MultipartFile file) {
+    public ArticleImportResponseDTO importFromExcel(MultipartFile file, UserDetails userDetails) {
+        // Get current logged-in user
+        User currentUser = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+
         // Parse Excel file using Reflection-based ExcelImportService
         ExcelImportResult<ArticleImportDTO> importResult = excelImportService.importFromExcel(file,
                 ArticleImportDTO.class);
@@ -154,8 +160,8 @@ public class ArticleAdminService {
         for (int i = 0; i < importResult.getSuccessItems().size(); i++) {
             ArticleImportDTO dto = importResult.getSuccessItems().get(i);
             try {
-                // Validate and save article
-                Article article = createArticleFromDto(dto);
+                // Validate and save article with current user
+                Article article = createArticleFromDto(dto, currentUser);
                 Article savedArticle = articleRepository.save(article);
 
                 ArticleResponseDTO responseDTO = mapEntityToResponse(savedArticle);
@@ -179,9 +185,9 @@ public class ArticleAdminService {
     }
 
     /**
-     * Create Article entity from DTO
+     * Create Article entity from DTO with current logged-in user
      */
-    private Article createArticleFromDto(ArticleImportDTO dto) {
+    private Article createArticleFromDto(ArticleImportDTO dto, User currentUser) {
         // Generate slug from title
         String slug = slugify.slugify(dto.getTitle());
 
@@ -200,18 +206,15 @@ public class ArticleAdminService {
         article.setThumbnail(dto.getThumbnail());
         article.setStatus(dto.getStatus() != null ? dto.getStatus() : ArticleStatus.DRAFT);
 
-        // Set user if provided
-        if (dto.getUserId() != null) {
-            User user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
-            article.setUser(user);
-        }
+        // Always set the current logged-in user as the article author
+        article.setUser(currentUser);
 
         return article;
     }
 
     /**
      * Map DTO to existing entity
+     * Note: User is not updated from DTO - it's set from the currently logged-in user during import
      */
     private void mapDtoToEntity(ArticleImportDTO dto, Article article) {
         if (dto.getTitle() != null) {
@@ -243,12 +246,6 @@ public class ArticleAdminService {
 
         if (dto.getStatus() != null) {
             article.setStatus(dto.getStatus());
-        }
-
-        if (dto.getUserId() != null) {
-            User user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
-            article.setUser(user);
         }
     }
 

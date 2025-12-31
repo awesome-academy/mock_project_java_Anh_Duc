@@ -7,6 +7,7 @@ import asterisk.sun.booking_tours.core.article.ArticleType;
 /**
  * DTO for importing Article data from Excel
  * Uses @ExcelColumn annotation for Reflection-based mapping
+ * Note: User ID is automatically set from the currently logged-in user
  */
 public class ArticleImportDTO {
 
@@ -24,9 +25,6 @@ public class ArticleImportDTO {
 
     @ExcelColumn(value = "status", defaultValue = "DRAFT")
     private ArticleStatus status;
-
-    @ExcelColumn(value = "user_id")
-    private Long userId;
 
     // Constructors
     public ArticleImportDTO() {}
@@ -70,13 +68,5 @@ public class ArticleImportDTO {
 
     public void setStatus(ArticleStatus status) {
         this.status = status;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 }

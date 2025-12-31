@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,28 +97,30 @@ public class ApiAdminArticleController {
     /**
      * Import articles from Excel file
      * Uses Apache POI for Excel parsing and Reflection for DTO mapping
+     * User ID is automatically set from the currently logged-in user
      *
      * Excel file format:
-     * | slug | content | article_type | thumbnail | status | user_id |
+     * | title | content | article_type | thumbnail | status |
      *
-     * - slug: Required. Unique identifier for URL
+     * - title: Required. Article title (slug will be auto-generated)
      * - content: Required. Article content
      * - article_type: Required. One of: NEWS, BLOG, GUIDE, TIPS, DESTINATION,
      * ANNOUNCEMENT
      * - thumbnail: Optional. Image URL
      * - status: Optional. One of: DRAFT, PUBLISHED, ARCHIVED, DELETED. Default:
      * DRAFT
-     * - user_id: Optional. Author's user ID
      *
      * @param file Excel file (.xlsx or .xls)
+     * @param userDetails Current logged-in user (automatically injected)
      * @return Import result with success count, error count, and details
      */
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse<ArticleImportResponseDTO>> importFromExcel(
-            @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         try {
-            ArticleImportResponseDTO result = articleAdminService.importFromExcel(file);
+            ArticleImportResponseDTO result = articleAdminService.importFromExcel(file, userDetails);
 
             String message = String.format(
                     "Import completed: %d/%d articles imported successfully",
@@ -145,14 +149,13 @@ public class ApiAdminArticleController {
     @GetMapping("/import/template")
     public ResponseEntity<SuccessResponse<ImportTemplateInfo>> getImportTemplate() {
         ImportTemplateInfo template = new ImportTemplateInfo();
-        template.setDescription("Excel template for importing articles");
+        template.setDescription("Excel template for importing articles. User ID is automatically set from the currently logged-in user.");
         template.setColumns(List.of(
                 new ColumnInfo("title", "String", true, "Article title (slug will be auto-generated from title)"),
                 new ColumnInfo("content", "String", true, "Article content (HTML or plain text)"),
                 new ColumnInfo("article_type", "Enum", true, "NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT"),
                 new ColumnInfo("thumbnail", "String", false, "Image URL for thumbnail"),
-                new ColumnInfo("status", "Enum", false, "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)"),
-                new ColumnInfo("user_id", "Long", false, "Author's user ID")));
+                new ColumnInfo("status", "Enum", false, "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)")));
 
         SuccessResponse<ImportTemplateInfo> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
