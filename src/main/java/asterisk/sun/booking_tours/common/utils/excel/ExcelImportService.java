@@ -55,9 +55,18 @@ public class ExcelImportService {
             Map<String, Integer> headerMap = buildHeaderMap(headerRow);
             Map<Field, ColumnMapping> fieldMappings = buildFieldMappings(dtoClass, headerMap);
 
-            // Process data rows (skip header)
-            totalRows = sheet.getLastRowNum();
-            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            // Process data rows (skip header row at index 0 and suggestion row at index 1)
+            // Row 0: Header
+            // Row 1: Suggestion/hint row (skipped)
+            // Row 2+: Actual data
+
+            // Check if there is any data row after suggestion row
+            if (sheet.getLastRowNum() < 2) {
+                throw new ExcelImportException("No data found. Excel file must contain at least one data row after the header and suggestion rows.");
+            }
+
+            totalRows = sheet.getLastRowNum() - 1; // Subtract 1 to exclude suggestion row from total count
+            for (int rowIndex = 2; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
                 Row row = sheet.getRow(rowIndex);
                 if (row == null || isRowEmpty(row)) {
                     continue;
@@ -69,6 +78,11 @@ public class ExcelImportService {
                 } catch (RowParseException e) {
                     errors.addAll(e.getErrors());
                 }
+            }
+
+            // Check if any valid data was found after processing
+            if (successItems.isEmpty() && errors.isEmpty()) {
+                throw new ExcelImportException("No valid data found. All data rows are empty or invalid.");
             }
 
         } catch (IOException e) {
