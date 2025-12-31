@@ -67,29 +67,39 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/api/**", "/ws/**"))
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authz -> authz
-                        // Public endpoints
-                        .requestMatchers("/admin/auth/login", "/admin/auth/register", "/css/**", "/js/**", "/img/**",
-                                "/vendor/**",
+                        // ==================== PUBLIC ENDPOINTS ====================
+                        // Static resources
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/vendor/**",
                                 "/scss/**", "/favicon.ico", "/favicon.svg", "/error", "/access-denied")
                         .permitAll()
-                        // User endpoints - register new users and email verification
-                        .requestMatchers("/api/v1/users/register", "/api/v1/users/verify-email", "/api/v1/users/resend-verification").permitAll()
-                        // Swagger UI endpoints - public access
+                        // Swagger UI endpoints
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        // WebSocket endpoints - public access
+                        // WebSocket endpoints
                         .requestMatchers("/ws/**").permitAll()
-                        // API authentication endpoints - public
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // Admin API authentication endpoints - public
+
+                        // ==================== USER CLIENT API (/api/v1/users/**) ====================
+                        // User authentication - public (register, login, verify email)
+                        .requestMatchers("/api/v1/users/register", "/api/v1/users/login",
+                                "/api/v1/users/verify-email", "/api/v1/users/resend-verification",
+                                "/api/v1/users/forgot-password", "/api/v1/users/reset-password")
+                        .permitAll()
+                        // User API endpoints - require USER or ADMIN role
+                        .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")
+
+                        // ==================== ADMIN API (/api/v1/admin/**) ====================
+                        // Admin authentication - public (login only)
                         .requestMatchers("/api/v1/admin/auth/login").permitAll()
-                        // Admin API endpoints - require ADMIN role
-                        .requestMatchers("/api/v1/admin/auth/**").hasRole("ADMIN")
-                        // API endpoints - require authentication via JWT
-                        .requestMatchers("/api/**").authenticated()
-                        // Employee list - accessible by all authenticated users (including USER role)
+                        // All Admin API endpoints - require ADMIN role
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+
+                        // ==================== WEB ADMIN PANEL ====================
+                        // Admin web login page
+                        .requestMatchers("/admin/auth/login", "/admin/auth/register").permitAll()
+                        // Employee list - accessible by ADMIN and USER
                         .requestMatchers("/admin/employees").hasAnyRole("ADMIN", "USER")
-                        // Admin endpoints - full CRUD
+                        // Admin web panel - require ADMIN role
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+
                         // All other requests require authentication
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
