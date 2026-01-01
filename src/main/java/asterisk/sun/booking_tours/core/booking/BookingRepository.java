@@ -1,5 +1,6 @@
 package asterisk.sun.booking_tours.core.booking;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -54,4 +55,29 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * Find booking by code
      */
     Booking findByCode(String code);
+
+    /**
+     * Find overdue pending bookings that need to be auto-cancelled
+     * A booking is considered overdue if:
+     * - Status is PENDING
+     * - Payment deadline has passed
+     */
+    @Query("SELECT b FROM Booking b " +
+            "LEFT JOIN FETCH b.tourDeparture td " +
+            "WHERE b.status = :status " +
+            "AND b.paymentDeadline IS NOT NULL " +
+            "AND b.paymentDeadline < :currentTime")
+    List<Booking> findOverdueBookings(
+            @Param("status") BookingStatus status,
+            @Param("currentTime") LocalDateTime currentTime);
+
+    /**
+     * Find pending bookings with payment deadline
+     */
+    @Query("SELECT b FROM Booking b " +
+            "LEFT JOIN FETCH b.tourDeparture td " +
+            "LEFT JOIN FETCH b.user u " +
+            "WHERE b.status = :status " +
+            "AND b.paymentDeadline IS NOT NULL")
+    List<Booking> findPendingBookingsWithDeadline(@Param("status") BookingStatus status);
 }

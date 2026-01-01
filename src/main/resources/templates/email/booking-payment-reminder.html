@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhắc nhở thanh toán</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding: 40px 0;">
+                <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 30px; background-color: #f39c12; border-radius: 8px 8px 0 0; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 24px;">⏰ Nhắc nhở thanh toán</h1>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 30px;">
+                            <p style="margin: 0 0 20px; color: #333333; font-size: 16px;">
+                                Xin chào <strong th:text="${contactName}">Khách hàng</strong>,
+                            </p>
+
+                            <p style="margin: 0 0 20px; color: #333333; font-size: 16px;">
+                                Đây là email nhắc nhở về việc thanh toán cho đơn đặt tour của bạn. Vui lòng hoàn tất thanh toán sớm để giữ chỗ của bạn.
+                            </p>
+
+                            <!-- Warning Box -->
+                            <div style="background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+                                <p style="margin: 0; color: #856404; font-size: 16px; font-weight: bold;">
+                                    ⚠️ Đơn đặt tour của bạn sẽ bị tự động hủy nếu không thanh toán trước:
+                                </p>
+                                <p style="margin: 10px 0 0; color: #e74c3c; font-size: 20px; font-weight: bold;" th:text="${paymentDeadline}">
+                                    01/01/2026 12:00
+                                </p>
+                            </div>
+
+                            <!-- Booking Details Box -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f9f9f9; border-radius: 8px; margin: 20px 0;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <h3 style="margin: 0 0 15px; color: #333333; font-size: 18px;">📋 Thông tin đặt tour</h3>
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #666666; font-size: 14px;">Mã đặt tour:</td>
+                                                <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: bold;" th:text="${bookingCode}">BK-XXXXX</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #666666; font-size: 14px;">Tour:</td>
+                                                <td style="padding: 8px 0; color: #333333; font-size: 14px; font-weight: bold;" th:text="${tourName}">Tên tour</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #666666; font-size: 14px;">Tổng tiền cần thanh toán:</td>
+                                                <td style="padding: 8px 0; color: #27ae60; font-size: 18px; font-weight: bold;" th:text="${#numbers.formatDecimal(finalTotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <!-- CTA Button -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a th:href="${baseUrl + '/payment'}" style="display: inline-block; padding: 15px 30px; background-color: #27ae60; color: #ffffff; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">
+                                            💳 Thanh toán ngay
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin: 20px 0 0; color: #666666; font-size: 14px;">
+                                Nếu có bất kỳ thắc mắc nào về thanh toán, xin vui lòng liên hệ với chúng tôi.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px 30px; background-color: #f9f9f9; border-radius: 0 0 8px 8px; text-align: center;">
+                            <p style="margin: 0; color: #666666; font-size: 14px;">
+                                Trân trọng,<br>
+                                <strong>Đội ngũ Booking Tours</strong>
+                            </p>
+                            <p style="margin: 15px 0 0; color: #999999; font-size: 12px;">
+                                © 2026 Booking Tours. All rights reserved.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

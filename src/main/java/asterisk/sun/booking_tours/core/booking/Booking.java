@@ -1,6 +1,7 @@
 package asterisk.sun.booking_tours.core.booking;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import asterisk.sun.booking_tours.core.BaseEntity;
 import asterisk.sun.booking_tours.core.coupon.Coupon;
@@ -67,6 +68,9 @@ public class Booking extends BaseEntity {
 
     @Column(name = "cancellation_reason", columnDefinition = "TEXT")
     private String cancellationReason;
+
+    @Column(name = "payment_deadline")
+    private LocalDateTime paymentDeadline;
 
     // Constructors
     public Booking() {}
@@ -190,5 +194,27 @@ public class Booking extends BaseEntity {
 
     public void setCancellationReason(String cancellationReason) {
         this.cancellationReason = cancellationReason;
+    }
+
+    public LocalDateTime getPaymentDeadline() {
+        return paymentDeadline;
+    }
+
+    public void setPaymentDeadline(LocalDateTime paymentDeadline) {
+        this.paymentDeadline = paymentDeadline;
+    }
+
+    /**
+     * Get total number of participants (adults + children)
+     */
+    public int getTotalParticipants() {
+        return (numAdults != null ? numAdults : 0) + (numChild != null ? numChild : 0);
+    }
+
+    /**
+     * Check if payment deadline has passed
+     */
+    public boolean isPaymentOverdue() {
+        return paymentDeadline != null && LocalDateTime.now().isAfter(paymentDeadline);
     }
 }

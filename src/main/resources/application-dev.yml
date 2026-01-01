@@ -35,6 +35,13 @@ app:
     from: ${MAIL_FROM:${MAIL_USERNAME}}
     verification-token-expiry: ${VERIFICATION_TOKEN_EXPIRY:24} # hours
 
+# Booking Configuration
+booking:
+  payment-deadline-hours: ${BOOKING_PAYMENT_DEADLINE_HOURS:24} # hours until payment deadline
+  auto-cancel:
+    enabled: true
+    check-interval-minutes: 5 # how often to check for overdue bookings
+
 # JWT Configuration
 jwt:
   secret: ${JWT_SECRET_KEY}
