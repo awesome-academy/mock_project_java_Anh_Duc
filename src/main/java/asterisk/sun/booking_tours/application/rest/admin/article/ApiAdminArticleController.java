@@ -2,13 +2,17 @@ package asterisk.sun.booking_tours.application.rest.admin.article;
 
 import asterisk.sun.booking_tours.application.api.common.dto.PaginatedResponse;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
+import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleImportDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleImportResponseDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleResponseDTO;
+import asterisk.sun.booking_tours.application.rest.admin.article.dto.CreateArticleRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.GetArticlesRequestDTO;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelColumnInfo;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelImportException;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelTemplateInfo;
 import asterisk.sun.booking_tours.core.article.Article;
+import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,12 +38,6 @@ public class ApiAdminArticleController {
         this.articleAdminService = articleAdminService;
     }
 
-    /**
-     * Get paginated list of articles with filtering
-     *
-     * @param param Query parameters for pagination and filtering
-     * @return Paginated list of articles
-     */
     @GetMapping
     public ResponseEntity<PaginatedResponse<ArticleResponseDTO>> getListArticles(GetArticlesRequestDTO param) {
         Page<Article> articles = articleAdminService.getArticles(param);
@@ -58,12 +56,6 @@ public class ApiAdminArticleController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get article by ID
-     *
-     * @param id Article ID
-     * @return Article details
-     */
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<ArticleResponseDTO>> getArticleById(@PathVariable Long id) {
         Article article = articleAdminService.getArticleById(id)
@@ -79,12 +71,34 @@ public class ApiAdminArticleController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Delete article by ID
-     *
-     * @param id Article ID
-     * @return Success message
-     */
+    @PostMapping
+    public ResponseEntity<SuccessResponse<ArticleResponseDTO>> store(@Valid @RequestBody ArticleImportDTO request) {
+        Article article = articleAdminService.createArticle(request);
+        ArticleResponseDTO dto = articleAdminService.mapEntityToResponse(article);
+
+        SuccessResponse<ArticleResponseDTO> response = new SuccessResponse<>(
+                HttpStatus.CREATED.value(),
+                "Article created successfully",
+                dto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SuccessResponse<ArticleResponseDTO>> updateArticle(
+            @PathVariable Long id,
+            @Valid @RequestBody ArticleImportDTO request) {
+        Article article = articleAdminService.updateArticle(id, request);
+        ArticleResponseDTO dto = articleAdminService.mapEntityToResponse(article);
+
+        SuccessResponse<ArticleResponseDTO> response = new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "Article updated successfully",
+                dto);
+
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<String>> deleteArticle(@PathVariable Long id) {
         articleAdminService.deleteArticle(id);
@@ -96,26 +110,6 @@ public class ApiAdminArticleController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Import articles from Excel file
-     * Uses Apache POI for Excel parsing and Reflection for DTO mapping
-     * User ID is automatically set from the currently logged-in user
-     *
-     * Excel file format:
-     * | title | content | article_type | thumbnail | status |
-     *
-     * - title: Required. Article title (slug will be auto-generated)
-     * - content: Required. Article content
-     * - article_type: Required. One of: NEWS, BLOG, GUIDE, TIPS, DESTINATION,
-     * ANNOUNCEMENT
-     * - thumbnail: Optional. Image URL
-     * - status: Optional. One of: DRAFT, PUBLISHED, ARCHIVED, DELETED. Default:
-     * DRAFT
-     *
-     * @param file Excel file (.xlsx or .xls)
-     * @param userDetails Current logged-in user (automatically injected)
-     * @return Import result with success count, error count, and details
-     */
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SuccessResponse<ArticleImportResponseDTO>> importFromExcel(
             @RequestParam("file") MultipartFile file,
@@ -143,21 +137,19 @@ public class ApiAdminArticleController {
         }
     }
 
-    /**
-     * Get Excel template information for article import
-     *
-     * @return Template format description
-     */
     @GetMapping("/import/template")
     public ResponseEntity<SuccessResponse<ExcelTemplateInfo>> getImportTemplate() {
         ExcelTemplateInfo template = new ExcelTemplateInfo(
                 "Excel template for importing articles. User ID is automatically set from the currently logged-in user.",
                 List.of(
-                        new ExcelColumnInfo("title", "String", true, "Article title (slug will be auto-generated from title)"),
+                        new ExcelColumnInfo("title", "String", true,
+                                "Article title (slug will be auto-generated from title)"),
                         new ExcelColumnInfo("content", "String", true, "Article content (HTML or plain text)"),
-                        new ExcelColumnInfo("article_type", "Enum", true, "NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT"),
+                        new ExcelColumnInfo("article_type", "Enum", true,
+                                "NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT"),
                         new ExcelColumnInfo("thumbnail", "String", false, "Image URL for thumbnail"),
-                        new ExcelColumnInfo("status", "Enum", false, "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)")));
+                        new ExcelColumnInfo("status", "Enum", false,
+                                "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)")));
 
         SuccessResponse<ExcelTemplateInfo> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
