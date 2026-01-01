@@ -14,18 +14,6 @@ import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
 import asterisk.sun.booking_tours.core.booking.BookingStatus;
 
-/**
- * Scheduled service for automatically cancelling overdue bookings
- * and restoring available slots to tour departures.
- *
- * This service runs as a background job using Spring's @Scheduled annotation.
- *
- * MULTI-THREADING ARCHITECTURE:
- * - Scheduler runs on a single thread (Spring's scheduling thread)
- * - Each booking cancellation is delegated to BookingCancellationProcessor
- * - BookingCancellationProcessor uses @Async to process in parallel threads
- * - Thread pool "bookingTaskExecutor" handles concurrent cancellations
- */
 @Service
 public class BookingAutoCancelScheduler {
 
@@ -41,72 +29,96 @@ public class BookingAutoCancelScheduler {
         this.cancellationProcessor = cancellationProcessor;
     }
 
-    /**
-     * Scheduled job that runs every 30 seconds to check for overdue bookings.
-     * For production, consider using cron expression for every 5 minutes.
-     *
-     * The job finds all PENDING bookings that have passed their payment deadline
-     * and processes them asynchronously using MULTI-THREADING.
-     *
-     * FLOW:
-     * 1. Main scheduler thread finds all overdue bookings
-     * 2. For each booking, submit to thread pool via @Async
-     * 3. Multiple bookings are processed in PARALLEL by worker threads
-     * 4. Wait for all tasks to complete (optional)
-     */
     @Scheduled(fixedRate = 30000) // Every 30 seconds for testing
     public void checkAndCancelOverdueBookings() {
         String threadName = Thread.currentThread().getName();
-        logger.info("[Thread: {}] Starting scheduled job: Check and cancel overdue bookings at {}",
-                threadName, LocalDateTime.now());
+        long jobStartTime = System.currentTimeMillis();
+
+        logger.info("╔══════════════════════════════════════════════════════════════════════════════╗");
+        logger.info("║ 🚀 SCHEDULER JOB STARTED                                                      ║");
+        logger.info("║ Thread: {} | Time: {}                                  ║",
+                String.format("%-15s", threadName), LocalDateTime.now());
+        logger.info("╚══════════════════════════════════════════════════════════════════════════════╝");
 
         try {
             LocalDateTime currentTime = LocalDateTime.now();
 
-            // DEBUG: First check all PENDING bookings
+            // STEP 1: Query all PENDING bookings for debugging
+            logger.info("┌─── STEP 1: Querying all PENDING bookings ───────────────────────────────────┐");
             List<Booking> allPendingBookings = bookingRepository.findByStatus(BookingStatus.PENDING);
-            logger.info("[DEBUG] Total PENDING bookings: {}", allPendingBookings.size());
+            logger.info("│ Total PENDING bookings found: {}                                             │", allPendingBookings.size());
 
-            for (Booking b : allPendingBookings) {
-                logger.info("[DEBUG] Booking {} - Deadline: {}, CurrentTime: {}, IsOverdue: {}",
-                    b.getCode(),
-                    b.getPaymentDeadline(),
-                    currentTime,
-                    b.getPaymentDeadline() != null ? b.getPaymentDeadline().isBefore(currentTime) : "null deadline");
+            if (!allPendingBookings.isEmpty()) {
+                logger.info("├─── PENDING Bookings Details ────────────────────────────────────────────────┤");
+                for (Booking b : allPendingBookings) {
+                    boolean isOverdue = b.getPaymentDeadline() != null && b.getPaymentDeadline().isBefore(currentTime);
+                    logger.info("│ Booking: {} | Deadline: {} | Overdue: {} │",
+                        String.format("%-10s", b.getCode()),
+                        b.getPaymentDeadline() != null ? b.getPaymentDeadline() : "NULL",
+                        isOverdue ? "✅ YES" : "❌ NO ");
+                }
             }
+            logger.info("└──────────────────────────────────────────────────────────────────────────────┘");
 
+            // STEP 2: Find overdue bookings
+            logger.info("┌─── STEP 2: Filtering OVERDUE bookings ──────────────────────────────────────┐");
+            logger.info("│ Current Time: {}                                             │", currentTime);
             List<Booking> overdueBookings = bookingRepository.findOverdueBookings(
                     BookingStatus.PENDING, currentTime);
 
             if (overdueBookings.isEmpty()) {
-                logger.info("[Thread: {}] No overdue bookings found", threadName);
+                logger.info("│ Result: No overdue bookings found                                            │");
+                logger.info("└──────────────────────────────────────────────────────────────────────────────┘");
+                logJobCompletion(threadName, jobStartTime, 0);
                 return;
             }
 
-            logger.info("[Thread: {}] Found {} overdue booking(s) to process using multi-threading",
-                    threadName, overdueBookings.size());
+            logger.info("│ Found {} overdue booking(s) to cancel                                        │", overdueBookings.size());
+            logger.info("└──────────────────────────────────────────────────────────────────────────────┘");
 
-            // Process each booking asynchronously using MULTI-THREADING
-            // Each call to processCancellationAsync runs in a SEPARATE THREAD
+            // STEP 3: Process each booking asynchronously
+            logger.info("┌─── STEP 3: Submitting bookings to ASYNC thread pool ────────────────────────┐");
             List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-            for (Booking booking : overdueBookings) {
-                // This delegates to BookingCancellationProcessor which has @Async
-                // Each booking will be processed by a different thread from the pool
+            for (int i = 0; i < overdueBookings.size(); i++) {
+                Booking booking = overdueBookings.get(i);
+                logger.info("│ [{}/{}] Submitting booking {} for async processing...                       │",
+                        i + 1, overdueBookings.size(), booking.getCode());
+
                 CompletableFuture<Void> future = cancellationProcessor.processCancellationAsync(booking);
                 futures.add(future);
-                logger.debug("[Thread: {}] Submitted booking {} for async processing",
-                        threadName, booking.getCode());
-            }
 
-            // Wait for all async tasks to complete
+                logger.debug("│      └─ Submitted to thread pool (bookingTaskExecutor)                      │");
+            }
+            logger.info("└──────────────────────────────────────────────────────────────────────────────┘");
+
+            // STEP 4: Wait for all async tasks to complete
+            logger.info("┌─── STEP 4: Waiting for all ASYNC tasks to complete ─────────────────────────┐");
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                    .thenRun(() -> logger.info("[Thread: {}] All {} bookings processed by worker threads",
-                            threadName, overdueBookings.size()));
+                    .thenRun(() -> {
+                        logger.info("│ ✅ All {} bookings have been processed by worker threads                    │", overdueBookings.size());
+                        logger.info("└──────────────────────────────────────────────────────────────────────────────┘");
+                        logJobCompletion(threadName, jobStartTime, overdueBookings.size());
+                    });
 
         } catch (Exception e) {
-            logger.error("[Thread: {}] Error in scheduled job: {}", threadName, e.getMessage(), e);
+            logger.error("╔══════════════════════════════════════════════════════════════════════════════╗");
+            logger.error("║ ❌ SCHEDULER JOB ERROR                                                        ║");
+            logger.error("║ Thread: {} | Error: {}                              ║", threadName, e.getMessage());
+            logger.error("╚══════════════════════════════════════════════════════════════════════════════╝", e);
         }
+    }
+
+    /**
+     * Helper method to log job completion with timing information
+     */
+    private void logJobCompletion(String threadName, long startTime, int processedCount) {
+        long duration = System.currentTimeMillis() - startTime;
+        logger.info("╔══════════════════════════════════════════════════════════════════════════════╗");
+        logger.info("║ ✅ SCHEDULER JOB COMPLETED                                                    ║");
+        logger.info("║ Thread: {} | Duration: {}ms | Processed: {} booking(s)           ║",
+                String.format("%-15s", threadName), duration, processedCount);
+        logger.info("╚══════════════════════════════════════════════════════════════════════════════╝");
     }
 
     /**

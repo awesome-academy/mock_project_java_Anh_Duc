@@ -16,19 +16,7 @@ import asterisk.sun.booking_tours.core.booking.BookingStatus;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
 
-/**
- * Service responsible for processing booking cancellations asynchronously.
- *
- * This service is separated from BookingAutoCancelScheduler to ensure that
- * @Async annotation works correctly. Spring AOP proxy does not intercept
- * self-invocation (calling @Async method from the same class), so we need
- * to put async methods in a separate bean.
- *
- * Multi-threading is achieved through:
- * 1. @Async annotation on processCancellationAsync() method
- * 2. ThreadPoolTaskExecutor "bookingTaskExecutor" configured in AsyncConfig
- * 3. Each booking cancellation runs in a separate thread from the pool
- */
+
 @Service
 public class BookingCancellationProcessor {
 
@@ -49,22 +37,6 @@ public class BookingCancellationProcessor {
         this.bookingNotificationService = bookingNotificationService;
     }
 
-    /**
-     * Asynchronously processes the cancellation of a single booking.
-     *
-     * MULTI-THREADING: This method runs in a separate thread from the
-     * "bookingTaskExecutor" thread pool. When multiple bookings need to be
-     * cancelled, each one is processed in parallel by different threads.
-     *
-     * Thread Pool Configuration (from AsyncConfig):
-     * - Core pool size: 2 threads
-     * - Max pool size: 5 threads
-     * - Queue capacity: 100 tasks
-     * - Thread name prefix: "BookingAsync-"
-     *
-     * @param booking The booking to cancel
-     * @return CompletableFuture indicating completion
-     */
     @Async("bookingTaskExecutor")
     public CompletableFuture<Void> processCancellationAsync(Booking booking) {
         String threadName = Thread.currentThread().getName();
@@ -95,12 +67,6 @@ public class BookingCancellationProcessor {
         return CompletableFuture.completedFuture(null);
     }
 
-    /**
-     * Cancels a booking and restores the available slots to the tour departure.
-     * This operation is transactional to ensure data consistency.
-     *
-     * @param booking The booking to cancel
-     */
     @Transactional
     public void cancelBookingAndRestoreSlots(Booking booking) {
         String threadName = Thread.currentThread().getName();
