@@ -5,7 +5,9 @@ import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleImportResponseDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleResponseDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.GetArticlesRequestDTO;
+import asterisk.sun.booking_tours.common.utils.excel.ExcelColumnInfo;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelImportException;
+import asterisk.sun.booking_tours.common.utils.excel.ExcelTemplateInfo;
 import asterisk.sun.booking_tours.core.article.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -147,97 +149,21 @@ public class ApiAdminArticleController {
      * @return Template format description
      */
     @GetMapping("/import/template")
-    public ResponseEntity<SuccessResponse<ImportTemplateInfo>> getImportTemplate() {
-        ImportTemplateInfo template = new ImportTemplateInfo();
-        template.setDescription("Excel template for importing articles. User ID is automatically set from the currently logged-in user.");
-        template.setColumns(List.of(
-                new ColumnInfo("title", "String", true, "Article title (slug will be auto-generated from title)"),
-                new ColumnInfo("content", "String", true, "Article content (HTML or plain text)"),
-                new ColumnInfo("article_type", "Enum", true, "NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT"),
-                new ColumnInfo("thumbnail", "String", false, "Image URL for thumbnail"),
-                new ColumnInfo("status", "Enum", false, "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)")));
+    public ResponseEntity<SuccessResponse<ExcelTemplateInfo>> getImportTemplate() {
+        ExcelTemplateInfo template = new ExcelTemplateInfo(
+                "Excel template for importing articles. User ID is automatically set from the currently logged-in user.",
+                List.of(
+                        new ExcelColumnInfo("title", "String", true, "Article title (slug will be auto-generated from title)"),
+                        new ExcelColumnInfo("content", "String", true, "Article content (HTML or plain text)"),
+                        new ExcelColumnInfo("article_type", "Enum", true, "NEWS, BLOG, GUIDE, TIPS, DESTINATION, ANNOUNCEMENT"),
+                        new ExcelColumnInfo("thumbnail", "String", false, "Image URL for thumbnail"),
+                        new ExcelColumnInfo("status", "Enum", false, "DRAFT, PUBLISHED, ARCHIVED, DELETED (default: DRAFT)")));
 
-        SuccessResponse<ImportTemplateInfo> response = new SuccessResponse<>(
+        SuccessResponse<ExcelTemplateInfo> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
                 "Import template information",
                 template);
 
         return ResponseEntity.ok(response);
-    }
-
-    /**
-     * Template information for Excel import
-     */
-    public static class ImportTemplateInfo {
-        private String description;
-        private List<ColumnInfo> columns;
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public List<ColumnInfo> getColumns() {
-            return columns;
-        }
-
-        public void setColumns(List<ColumnInfo> columns) {
-            this.columns = columns;
-        }
-    }
-
-    /**
-     * Column information for template
-     */
-    public static class ColumnInfo {
-        private String name;
-        private String type;
-        private boolean required;
-        private String description;
-
-        public ColumnInfo() {
-        }
-
-        public ColumnInfo(String name, String type, boolean required, String description) {
-            this.name = name;
-            this.type = type;
-            this.required = required;
-            this.description = description;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public boolean isRequired() {
-            return required;
-        }
-
-        public void setRequired(boolean required) {
-            this.required = required;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
     }
 }
