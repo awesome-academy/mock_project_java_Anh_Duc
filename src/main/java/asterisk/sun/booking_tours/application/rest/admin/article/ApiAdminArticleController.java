@@ -5,7 +5,6 @@ import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleImportDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleImportResponseDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleResponseDTO;
-import asterisk.sun.booking_tours.application.rest.admin.article.dto.CreateArticleRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.GetArticlesRequestDTO;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelColumnInfo;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelImportException;
