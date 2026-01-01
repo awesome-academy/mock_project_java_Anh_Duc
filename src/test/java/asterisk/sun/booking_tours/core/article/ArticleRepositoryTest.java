@@ -501,12 +501,9 @@ class ArticleRepositoryTest {
             articleRepository.deleteById(articleId);
             entityManager.flush();
 
-            // Then
-            // Note: Due to soft delete, this may behave differently
-            // depending on BaseEntity's @SQLDelete annotation
             Optional<Article> found = articleRepository.findById(articleId);
-            // If soft delete is enabled, article might still exist but with deletedAt set
-            // If hard delete, article should not exist
+
+            assertThat(found).isEmpty();
         }
 
         @Test
