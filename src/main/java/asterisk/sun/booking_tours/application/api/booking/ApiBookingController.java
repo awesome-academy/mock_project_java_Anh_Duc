@@ -3,6 +3,8 @@ package asterisk.sun.booking_tours.application.api.booking;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import asterisk.sun.booking_tours.application.api.booking.dto.BatchBookingResultDTO;
+import asterisk.sun.booking_tours.application.api.booking.dto.RequestBatchBookingDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestCancelBookingDTO;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
@@ -51,6 +53,31 @@ public class ApiBookingController {
         SuccessResponse<String> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
                 "Booking cancelled successfully");
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Create 5 bookings at once using available tour departures.
+     * This endpoint will automatically find 5 available tour departures and create bookings for each.
+     *
+     * @param requestBatchBookingDTO The batch booking request containing common booking info
+     * @param userDetails The authenticated user details
+     * @return BatchBookingResultDTO containing results of all booking attempts
+     */
+    @Loggable
+    @PostMapping("/batch-booking")
+    public ResponseEntity<SuccessResponse<BatchBookingResultDTO>> batchBooking(
+            @Valid @RequestBody RequestBatchBookingDTO requestBatchBookingDTO,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        BatchBookingResultDTO result = clientBookingService.bookMultipleTours(
+                requestBatchBookingDTO, userDetails.getUsername());
+
+        SuccessResponse<BatchBookingResultDTO> response = new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "Batch booking completed",
+                result);
 
         return ResponseEntity.ok(response);
     }

@@ -80,4 +80,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE b.status = :status " +
             "AND b.paymentDeadline IS NOT NULL")
     List<Booking> findPendingBookingsWithDeadline(@Param("status") BookingStatus status);
+
+    /**
+     * Find booking by ID with tour departure eagerly loaded.
+     * This is useful for async operations where the session may be closed.
+     */
+    @Query("SELECT b FROM Booking b " +
+            "LEFT JOIN FETCH b.tourDeparture td " +
+            "WHERE b.id = :id")
+    java.util.Optional<Booking> findByIdWithTourDeparture(@Param("id") Long id);
 }

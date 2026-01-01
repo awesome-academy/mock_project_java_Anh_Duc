@@ -68,20 +68,28 @@ public class BookingCancellationProcessor {
     @Async("bookingTaskExecutor")
     public CompletableFuture<Void> processCancellationAsync(Booking booking) {
         String threadName = Thread.currentThread().getName();
-        logger.info("[Thread: {}] Starting async cancellation for booking: {} (ID: {})",
-                threadName, booking.getCode(), booking.getId());
+        logger.info("┌─────────────────────────────────────────────────────────────┐");
+        logger.info("│ [{}] 🔄 START processing booking: {}", threadName, booking.getCode());
+        logger.info("└─────────────────────────────────────────────────────────────┘");
 
         long startTime = System.currentTimeMillis();
 
         try {
+            // Simulate some processing time (200ms) to demonstrate parallel execution
+            // In real scenario, this could be database operations, external API calls, etc.
+            Thread.sleep(200);
+
             cancelBookingAndRestoreSlots(booking);
 
             long duration = System.currentTimeMillis() - startTime;
-            logger.info("[Thread: {}] Successfully cancelled booking: {} in {}ms. Restored {} slot(s)",
-                    threadName, booking.getCode(), duration, booking.getTotalParticipants());
+            logger.info("┌─────────────────────────────────────────────────────────────┐");
+            logger.info("│ [{}] ✅ DONE booking: {} in {}ms", threadName, booking.getCode(), duration);
+            logger.info("└─────────────────────────────────────────────────────────────┘");
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            logger.error("[{}] Interrupted while processing booking {}", threadName, booking.getCode());
         } catch (Exception e) {
-            logger.error("[Thread: {}] Failed to cancel booking {}: {}",
-                    threadName, booking.getCode(), e.getMessage(), e);
+            logger.error("[{}] ❌ FAILED booking {}: {}", threadName, booking.getCode(), e.getMessage(), e);
         }
 
         return CompletableFuture.completedFuture(null);
@@ -97,8 +105,9 @@ public class BookingCancellationProcessor {
     public void cancelBookingAndRestoreSlots(Booking booking) {
         String threadName = Thread.currentThread().getName();
 
-        // Refresh booking from database to get latest state
-        Booking freshBooking = bookingRepository.findById(booking.getId())
+        // Refresh booking from database with TourDeparture eagerly loaded
+        // This is necessary because @Async runs in a separate thread without Hibernate session
+        Booking freshBooking = bookingRepository.findByIdWithTourDeparture(booking.getId())
                 .orElseThrow(() -> new IllegalStateException(
                         "Booking not found with ID: " + booking.getId()));
 
