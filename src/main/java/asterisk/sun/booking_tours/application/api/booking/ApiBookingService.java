@@ -2,6 +2,8 @@ package asterisk.sun.booking_tours.application.api.booking;
 
 import java.time.LocalDateTime;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ApiBookingService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiBookingService.class);
 
     private final TourDeparturesRepository tourDeparturesRepository;
     private final BookingRepository bookingRepository;
@@ -89,9 +93,19 @@ public class ApiBookingService {
 
         booking.setStatus(BookingStatus.PENDING);
 
-        // Set payment deadline (default: 24 hours from booking creation)
-        LocalDateTime paymentDeadline = LocalDateTime.now().plusHours(paymentDeadlineHours);
+        // Set payment deadline
+        // For testing: using minutes instead of hours (set booking.payment-deadline-hours to small value like 1)
+        // In production: use plusHours(paymentDeadlineHours) with value like 24
+        LocalDateTime paymentDeadline;
+        if (paymentDeadlineHours <= 0) {
+            // If 0 or negative, set deadline to 1 minute from now (for testing)
+            paymentDeadline = LocalDateTime.now().plusMinutes(1);
+        } else {
+            paymentDeadline = LocalDateTime.now().plusHours(paymentDeadlineHours);
+        }
         booking.setPaymentDeadline(paymentDeadline);
+
+        logger.info("Created booking with payment deadline: {}", paymentDeadline);
 
         updateAvailableSlots(tourDeparture, requestBookingDTO.getNumAdults() + requestBookingDTO.getNumChild());
 

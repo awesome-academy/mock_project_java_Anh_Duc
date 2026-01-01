@@ -72,9 +72,9 @@ public class PaymentReminderScheduler {
 
             logger.info("Found {} booking(s) needing payment reminders", bookingsNeedingReminder.size());
 
-            for (Booking booking : bookingsNeedingReminder) {
-                sendReminderAsync(booking);
-            }
+            // for (Booking booking : bookingsNeedingReminder) {
+            //     sendReminderAsync(booking);
+            // }
 
         } catch (Exception e) {
             logger.error("Error in payment reminder scheduler: {}", e.getMessage(), e);

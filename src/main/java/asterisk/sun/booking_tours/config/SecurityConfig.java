@@ -79,9 +79,7 @@ public class SecurityConfig {
 
                         // ==================== USER CLIENT API (/api/v1/users/**) ====================
                         // User authentication - public (register, login, verify email)
-                        .requestMatchers("/api/v1/users/register", "/api/v1/users/login",
-                                "/api/v1/users/verify-email", "/api/v1/users/resend-verification",
-                                "/api/v1/users/forgot-password", "/api/v1/users/reset-password")
+                        .requestMatchers("/api/v1/users/register", "/api/v1/auth/login")
                         .permitAll()
                         // User API endpoints - require USER or ADMIN role
                         .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")

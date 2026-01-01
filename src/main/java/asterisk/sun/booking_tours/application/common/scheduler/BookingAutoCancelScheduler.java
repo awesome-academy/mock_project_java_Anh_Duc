@@ -42,8 +42,8 @@ public class BookingAutoCancelScheduler {
     }
 
     /**
-     * Scheduled job that runs every 5 minutes to check for overdue bookings.
-     * Uses cron expression: runs at 0 seconds, every 5 minutes.
+     * Scheduled job that runs every 30 seconds to check for overdue bookings.
+     * For production, consider using cron expression for every 5 minutes.
      *
      * The job finds all PENDING bookings that have passed their payment deadline
      * and processes them asynchronously using MULTI-THREADING.
@@ -54,7 +54,7 @@ public class BookingAutoCancelScheduler {
      * 3. Multiple bookings are processed in PARALLEL by worker threads
      * 4. Wait for all tasks to complete (optional)
      */
-    @Scheduled(cron = "0 */5 * * * *") // Every 5 minutes
+    @Scheduled(fixedRate = 30000) // Every 30 seconds for testing
     public void checkAndCancelOverdueBookings() {
         String threadName = Thread.currentThread().getName();
         logger.info("[Thread: {}] Starting scheduled job: Check and cancel overdue bookings at {}",
@@ -62,6 +62,19 @@ public class BookingAutoCancelScheduler {
 
         try {
             LocalDateTime currentTime = LocalDateTime.now();
+
+            // DEBUG: First check all PENDING bookings
+            List<Booking> allPendingBookings = bookingRepository.findByStatus(BookingStatus.PENDING);
+            logger.info("[DEBUG] Total PENDING bookings: {}", allPendingBookings.size());
+
+            for (Booking b : allPendingBookings) {
+                logger.info("[DEBUG] Booking {} - Deadline: {}, CurrentTime: {}, IsOverdue: {}",
+                    b.getCode(),
+                    b.getPaymentDeadline(),
+                    currentTime,
+                    b.getPaymentDeadline() != null ? b.getPaymentDeadline().isBefore(currentTime) : "null deadline");
+            }
+
             List<Booking> overdueBookings = bookingRepository.findOverdueBookings(
                     BookingStatus.PENDING, currentTime);
 

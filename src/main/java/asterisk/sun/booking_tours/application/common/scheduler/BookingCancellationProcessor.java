@@ -126,7 +126,7 @@ public class BookingCancellationProcessor {
         restoreSlots(freshBooking);
 
         // Send notification email asynchronously (also runs in separate thread)
-        sendCancellationNotification(freshBooking);
+        // sendCancellationNotification(freshBooking);
 
         logger.info("[Thread: {}] Booking {} auto-cancelled. Deadline was: {}, Current time: {}",
                 threadName,
