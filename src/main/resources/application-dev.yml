@@ -40,7 +40,7 @@ booking:
   # payment-deadline-hours: ${BOOKING_PAYMENT_DEADLINE_HOURS:24} # hours until payment deadline
   payment-deadline-hours: ${BOOKING_PAYMENT_DEADLINE_HOURS:0} # hours until payment deadline
   auto-cancel:
-    enabled: true
+    enabled: false
     check-interval-minutes: 5 # how often to check for overdue bookings
 
 # JWT Configuration

@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,9 @@ public class BookingAutoCancelScheduler {
     private final BookingRepository bookingRepository;
     private final BookingCancellationProcessor cancellationProcessor;
 
+    @Value("${booking.auto-cancel.enabled:false}")
+    private boolean autoCancelEnabled;
+
     public BookingAutoCancelScheduler(
             BookingRepository bookingRepository,
             BookingCancellationProcessor cancellationProcessor) {
@@ -31,6 +35,11 @@ public class BookingAutoCancelScheduler {
 
     @Scheduled(fixedRate = 30000) // Every 30 seconds for testing
     public void checkAndCancelOverdueBookings() {
+        if (!autoCancelEnabled) {
+            logger.debug("Booking auto-cancel scheduler is DISABLED. Skipping...");
+            return;
+        }
+
         String threadName = Thread.currentThread().getName();
         long jobStartTime = System.currentTimeMillis();
 
