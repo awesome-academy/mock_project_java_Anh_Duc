@@ -6,11 +6,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.api.booking.dto.BatchBookingResultDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBatchBookingDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.ListBookingLatestDTO;
 import asterisk.sun.booking_tours.common.utils.CodeGenerator;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
@@ -35,6 +37,7 @@ public class ApiBookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     /**
      * Payment deadline in hours from booking creation time.
@@ -44,11 +47,12 @@ public class ApiBookingService {
     private int paymentDeadlineHours;
 
     public ApiBookingService(TourDeparturesRepository tourDeparturesRepository, BookingRepository bookingRepository,
-            UserRepository userRepository, CouponRepository couponRepository) {
+            UserRepository userRepository, CouponRepository couponRepository, SimpMessagingTemplate messagingTemplate) {
         this.tourDeparturesRepository = tourDeparturesRepository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.couponRepository = couponRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -112,7 +116,27 @@ public class ApiBookingService {
 
         updateAvailableSlots(tourDeparture, requestBookingDTO.getNumAdults() + requestBookingDTO.getNumChild());
 
-        bookingRepository.save(booking);
+        Booking savedBooking = bookingRepository.save(booking);
+
+        // Send realtime notification to dashboard
+        ListBookingLatestDTO dto = convertToRecentBookingDTO(savedBooking);
+        messagingTemplate.convertAndSend("/topic/dashboard/recent-bookings", dto);
+    }
+
+    /**
+     * Convert Booking entity to ListBookingLatestDTO for realtime notification
+     */
+    private ListBookingLatestDTO convertToRecentBookingDTO(Booking booking) {
+        return ListBookingLatestDTO.builder()
+                .id(booking.getId().toString())
+                .code(booking.getCode())
+                .tourName(booking.getTourDeparture() != null && booking.getTourDeparture().getTour() != null
+                        ? booking.getTourDeparture().getTour().getName() : null)
+                .contactName(booking.getContactName())
+                .status(booking.getStatus())
+                .finalTotal(booking.getFinalTotal())
+                .createdAt(booking.getCreatedAt())
+                .build();
     }
 
     private void updateAvailableSlots(TourDeparture tourDeparture, int totalParticipants) {
