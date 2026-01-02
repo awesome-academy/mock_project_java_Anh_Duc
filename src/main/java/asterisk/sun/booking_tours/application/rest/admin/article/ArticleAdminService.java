@@ -1,10 +1,12 @@
 package asterisk.sun.booking_tours.application.rest.admin.article;
 
+import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleExportDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleImportDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleImportResponseDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.ArticleResponseDTO;
 import asterisk.sun.booking_tours.application.rest.admin.article.dto.GetArticlesRequestDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
+import asterisk.sun.booking_tours.common.utils.excel.ExcelExportService;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelImportResult;
 import asterisk.sun.booking_tours.common.utils.excel.ExcelImportService;
 import asterisk.sun.booking_tours.core.article.Article;
@@ -38,14 +40,17 @@ public class ArticleAdminService {
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
     private final ExcelImportService excelImportService;
+    private final ExcelExportService excelExportService;
     private final Slugify slugify;
 
     public ArticleAdminService(ArticleRepository articleRepository,
             UserRepository userRepository,
-            ExcelImportService excelImportService) {
+            ExcelImportService excelImportService,
+            ExcelExportService excelExportService) {
         this.articleRepository = articleRepository;
         this.userRepository = userRepository;
         this.excelImportService = excelImportService;
+        this.excelExportService = excelExportService;
         this.slugify = Slugify.builder().build();
     }
 
@@ -254,6 +259,46 @@ public class ArticleAdminService {
      */
     public ArticleResponseDTO mapEntityToResponse(Article article) {
         ArticleResponseDTO dto = MapperHelper.map(article, ArticleResponseDTO.class);
+        if (article.getUser() != null) {
+            dto.setUserId(article.getUser().getId());
+            dto.setUserName(article.getUser().getUsername());
+        }
+        return dto;
+    }
+
+    /**
+     * Export articles to Excel file
+     *
+     * @param request Filter parameters for articles
+     * @return byte array of Excel file
+     */
+    public byte[] exportToExcel(GetArticlesRequestDTO request) {
+        // Set large page size to get all matching articles
+        request.setPage(1);
+        request.setSize(Integer.MAX_VALUE);
+
+        Specification<Article> spec = buildSpecification(request);
+        Sort sort = Sort.by(
+                request.getSortDir().equalsIgnoreCase("asc")
+                        ? Sort.Direction.ASC
+                        : Sort.Direction.DESC,
+                request.getSortBy());
+
+        List<Article> articles = articleRepository.findAll(spec, sort);
+
+        // Convert to export DTOs
+        List<ArticleExportDTO> exportData = articles.stream()
+                .map(this::mapEntityToExportDTO)
+                .toList();
+
+        return excelExportService.exportToExcel(exportData, ArticleExportDTO.class, "Articles");
+    }
+
+    /**
+     * Map Article entity to export DTO
+     */
+    private ArticleExportDTO mapEntityToExportDTO(Article article) {
+        ArticleExportDTO dto = MapperHelper.map(article, ArticleExportDTO.class);
         if (article.getUser() != null) {
             dto.setUserId(article.getUser().getId());
             dto.setUserName(article.getUser().getUsername());

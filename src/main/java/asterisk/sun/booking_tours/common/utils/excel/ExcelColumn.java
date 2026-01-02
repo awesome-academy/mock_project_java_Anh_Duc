@@ -31,4 +31,9 @@ public @interface ExcelColumn {
      * Default value if cell is empty
      */
     String defaultValue() default "";
+
+    /**
+     * Whether this field should be included in export
+     */
+    boolean exportable() default true;
 }
