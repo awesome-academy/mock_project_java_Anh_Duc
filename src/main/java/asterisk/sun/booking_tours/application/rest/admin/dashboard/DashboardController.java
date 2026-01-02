@@ -1,5 +1,7 @@
 package asterisk.sun.booking_tours.application.rest.admin.dashboard;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -9,9 +11,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.ListBookingLatestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.ListBookingLatestRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.UserCountDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 
 @RestController
 @RequestMapping("/api/v1/admin/dashboard")
@@ -41,5 +46,11 @@ public class DashboardController {
         UserCountDTO userCount = dashboardService.getUserCount();
         // Send to topic/dashboard/users - clients subscribed to this topic will receive updates
         messagingTemplate.convertAndSend("/topic/dashboard/users", userCount);
+    }
+
+    @GetMapping("/list-booking-latest")
+    public ResponseEntity<List<ListBookingLatestDTO>> getLatestBooking(ListBookingLatestRequestDTO request) {
+        List<ListBookingLatestDTO> latestBookings = dashboardService.getLatestBookingForUser(request);
+        return ResponseEntity.ok(latestBookings);
     }
 }

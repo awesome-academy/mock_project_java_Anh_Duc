@@ -89,4 +89,9 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "LEFT JOIN FETCH b.tourDeparture td " +
             "WHERE b.id = :id")
     java.util.Optional<Booking> findByIdWithTourDeparture(@Param("id") Long id);
+
+    /**
+     * Find top N latest bookings ordered by creation date descending
+     */
+    List<Booking> findAllByOrderByCreatedAtDesc(org.springframework.data.domain.Pageable pageable);
 }
