@@ -1,9 +1,9 @@
-package asterisk.sun.booking_tours.application.rest.dashboard;
+package asterisk.sun.booking_tours.application.rest.admin.dashboard;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import asterisk.sun.booking_tours.application.rest.dashboard.dto.UserCountDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.UserCountDTO;
 import asterisk.sun.booking_tours.core.user.UserRepository;
 import asterisk.sun.booking_tours.core.user.UserStatus;
 

@@ -1,4 +1,4 @@
-package asterisk.sun.booking_tours.application.rest.dashboard.dto;
+package asterisk.sun.booking_tours.application.rest.admin.dashboard.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
