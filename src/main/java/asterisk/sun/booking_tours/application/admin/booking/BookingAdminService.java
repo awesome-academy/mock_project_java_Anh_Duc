@@ -3,6 +3,9 @@ package asterisk.sun.booking_tours.application.admin.booking;
 import java.util.List;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.admin.booking.dto.DetailBookingDTO;
@@ -10,6 +13,9 @@ import asterisk.sun.booking_tours.application.admin.booking.dto.FormCreateBookin
 import asterisk.sun.booking_tours.application.admin.booking.dto.FormEditBookingDTO;
 import asterisk.sun.booking_tours.application.admin.booking.dto.ListBookingDTO;
 import asterisk.sun.booking_tours.application.admin.common.BaseServiceController;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.DashboardService;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.TopTourStatisticRequestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.TourStatisticDTO;
 import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
@@ -23,16 +29,24 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class BookingAdminService extends BaseServiceController<BookingRepository> {
 
+    private static final Logger logger = LoggerFactory.getLogger(BookingAdminService.class);
+
     private final UserRepository userRepository;
     private final TourDeparturesRepository tourDeparturesRepository;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final DashboardService dashboardService;
 
     public BookingAdminService(
             BookingRepository bookingRepository,
             UserRepository userRepository,
-            TourDeparturesRepository tourDeparturesRepository) {
+            TourDeparturesRepository tourDeparturesRepository,
+            SimpMessagingTemplate messagingTemplate,
+            DashboardService dashboardService) {
         super(bookingRepository);
         this.userRepository = userRepository;
         this.tourDeparturesRepository = tourDeparturesRepository;
+        this.messagingTemplate = messagingTemplate;
+        this.dashboardService = dashboardService;
     }
 
     /**
@@ -210,6 +224,10 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
             booking.setTourDeparture(tourDeparture);
         }
 
+        if (booking.getStatus() == BookingStatus.PAID || booking.getStatus() == BookingStatus.COMPLETED || booking.getStatus() == BookingStatus.PENDING) {
+            pushTopToursUpdate();
+        }
+
         repository.save(booking);
     }
 
@@ -222,6 +240,25 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
 
         booking.setStatus(status);
         repository.save(booking);
+
+        if (status == BookingStatus.PAID || status == BookingStatus.COMPLETED || status == BookingStatus.PENDING) {
+            pushTopToursUpdate();
+        }
+    }
+
+    /**
+     * Push top tours statistics update via WebSocket
+     */
+    private void pushTopToursUpdate() {
+        try {
+            TopTourStatisticRequestDTO request = new TopTourStatisticRequestDTO();
+            request.setLimit(10);
+            List<TourStatisticDTO> topTours = dashboardService.getTopPopularTours(request);
+            messagingTemplate.convertAndSend("/topic/dashboard/top-tours", topTours);
+            logger.info("Pushed top tours update via WebSocket");
+        } catch (Exception e) {
+            logger.error("Failed to push top tours update: {}", e.getMessage());
+        }
     }
 
     /**

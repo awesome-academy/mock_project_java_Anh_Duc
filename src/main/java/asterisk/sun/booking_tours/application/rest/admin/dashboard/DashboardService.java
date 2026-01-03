@@ -56,7 +56,6 @@ public class DashboardService {
      */
     public List<TourStatisticDTO> getTopPopularTours(TopTourStatisticRequestDTO request) {
         List<BookingStatus> validStatuses = List.of(
-                BookingStatus.CONFIRMED,
                 BookingStatus.PAID,
                 BookingStatus.COMPLETED
         );
