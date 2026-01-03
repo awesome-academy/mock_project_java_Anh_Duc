@@ -7,10 +7,12 @@ import asterisk.sun.booking_tours.core.report.ReportStatus;
 import asterisk.sun.booking_tours.core.report.ReportType;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReportResponseDTO {
@@ -21,7 +23,9 @@ public class ReportResponseDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String fileName;
+    private Long fileSize;
     private String errorMessage;
     private LocalDateTime generatedAt;
     private LocalDateTime createdAt;
+    private String requestedByUsername;
 }
