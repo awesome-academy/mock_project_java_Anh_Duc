@@ -12,7 +12,10 @@ import org.springframework.stereotype.Service;
 import asterisk.sun.booking_tours.application.api.booking.dto.BatchBookingResultDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBatchBookingDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.DashboardService;
 import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.ListBookingLatestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.TopTourStatisticRequestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.TourStatisticDTO;
 import asterisk.sun.booking_tours.common.utils.CodeGenerator;
 import asterisk.sun.booking_tours.core.booking.Booking;
 import asterisk.sun.booking_tours.core.booking.BookingRepository;
@@ -38,6 +41,7 @@ public class ApiBookingService {
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final DashboardService dashboardService;
 
     /**
      * Payment deadline in hours from booking creation time.
@@ -47,12 +51,14 @@ public class ApiBookingService {
     private int paymentDeadlineHours;
 
     public ApiBookingService(TourDeparturesRepository tourDeparturesRepository, BookingRepository bookingRepository,
-            UserRepository userRepository, CouponRepository couponRepository, SimpMessagingTemplate messagingTemplate) {
+            UserRepository userRepository, CouponRepository couponRepository, SimpMessagingTemplate messagingTemplate,
+            DashboardService dashboardService) {
         this.tourDeparturesRepository = tourDeparturesRepository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.couponRepository = couponRepository;
         this.messagingTemplate = messagingTemplate;
+        this.dashboardService = dashboardService;
     }
 
     @Transactional
@@ -121,6 +127,24 @@ public class ApiBookingService {
         // Send realtime notification to dashboard
         ListBookingLatestDTO dto = convertToRecentBookingDTO(savedBooking);
         messagingTemplate.convertAndSend("/topic/dashboard/recent-bookings", dto);
+
+        // Send realtime top tours statistics update
+        pushTopToursUpdate();
+    }
+
+    /**
+     * Push top tours statistics update via WebSocket
+     */
+    private void pushTopToursUpdate() {
+        try {
+            TopTourStatisticRequestDTO request = new TopTourStatisticRequestDTO();
+            request.setLimit(10); // Get top 10 popular tours
+            List<TourStatisticDTO> topTours = dashboardService.getTopPopularTours(request);
+            messagingTemplate.convertAndSend("/topic/dashboard/top-tours", topTours);
+            logger.info("Pushed top tours update via WebSocket");
+        } catch (Exception e) {
+            logger.error("Failed to push top tours update: {}", e.getMessage());
+        }
     }
 
     /**
@@ -300,6 +324,11 @@ public class ApiBookingService {
 
         logger.info("Batch booking completed: {} successful, {} failed out of {} requested",
                 successCount, failedCount, BATCH_SIZE);
+
+        // Send realtime top tours statistics update after batch booking
+        if (successCount > 0) {
+            pushTopToursUpdate();
+        }
 
         return result;
     }

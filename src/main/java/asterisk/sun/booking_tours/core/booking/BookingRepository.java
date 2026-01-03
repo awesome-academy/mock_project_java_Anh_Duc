@@ -94,4 +94,19 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      * Find top N latest bookings ordered by creation date descending
      */
     List<Booking> findAllByOrderByCreatedAtDesc(org.springframework.data.domain.Pageable pageable);
+
+    /**
+     * Get top popular tours statistics with booking count and revenue
+     * Only counts bookings with status CONFIRMED or COMPLETED
+     */
+    @Query("SELECT t.id, t.name, COUNT(b.id), COALESCE(SUM(b.finalTotal), 0) " +
+            "FROM Booking b " +
+            "JOIN b.tourDeparture td " +
+            "JOIN td.tour t " +
+            "WHERE b.status IN :statuses " +
+            "GROUP BY t.id, t.name " +
+            "ORDER BY COUNT(b.id) DESC, SUM(b.finalTotal) DESC")
+    List<Object[]> findTopPopularTourStatistics(
+            @Param("statuses") List<BookingStatus> statuses,
+            org.springframework.data.domain.Pageable pageable);
 }

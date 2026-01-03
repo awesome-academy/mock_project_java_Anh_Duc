@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.ListBookingLatestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.ListBookingLatestRequestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.TopTourStatisticRequestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.TourStatisticDTO;
 import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.UserCountDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,5 +54,12 @@ public class DashboardController {
     public ResponseEntity<List<ListBookingLatestDTO>> getLatestBooking(ListBookingLatestRequestDTO request) {
         List<ListBookingLatestDTO> latestBookings = dashboardService.getLatestBookingForUser(request);
         return ResponseEntity.ok(latestBookings);
+    }
+
+    @GetMapping("/top-tours")
+    @Operation(summary = "Get top popular tours statistics", description = "Returns list of top popular tours with booking count and revenue")
+    public ResponseEntity<List<TourStatisticDTO>> getTopPopularTours(TopTourStatisticRequestDTO request) {
+        List<TourStatisticDTO> popularTours = dashboardService.getTopPopularTours(request);
+        return ResponseEntity.ok(popularTours);
     }
 }
