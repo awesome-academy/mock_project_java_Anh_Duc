@@ -370,7 +370,7 @@ public class BookingPaymentSeeder implements CommandLineRunner {
         // Calculate prices based on tour
         BigDecimal adultPrice = null;
         BigDecimal childPrice = null;
-        
+
         if (departure.getTour() != null) {
             adultPrice = departure.getTour().getPriceAdult();
             childPrice = departure.getTour().getPriceChild();
@@ -427,7 +427,7 @@ public class BookingPaymentSeeder implements CommandLineRunner {
     private void recalculateBookingTotal(Booking booking, TourDeparture departure) {
         BigDecimal adultPrice = null;
         BigDecimal childPrice = null;
-        
+
         if (departure.getTour() != null) {
             adultPrice = departure.getTour().getPriceAdult();
             childPrice = departure.getTour().getPriceChild();

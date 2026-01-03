@@ -3,6 +3,11 @@ package asterisk.sun.booking_tours.application.rest.admin.report.dto;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import asterisk.sun.booking_tours.core.report.ReportType;
 
 public class ReportRequestMessage implements Serializable {
@@ -12,8 +17,15 @@ public class ReportRequestMessage implements Serializable {
     private Long reportId;
     private String reportCode;
     private ReportType reportType;
+
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate startDate;
+
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate endDate;
+
     private Long requestedByUserId;
 
     public ReportRequestMessage() {}
