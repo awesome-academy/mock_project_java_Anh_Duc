@@ -120,6 +120,40 @@ public class ReportService {
     }
 
     /**
+     * Cancel a report request
+     * Only reports in PENDING or PROCESSING status can be cancelled
+     */
+    @Transactional
+    public ReportResponseDTO cancelReport(String reportCode) {
+        RevenueReport report = reportRepository.findByReportCode(reportCode)
+                .orElseThrow(() -> new RuntimeException("Report not found: " + reportCode));
+
+        // Check if report is already cancelled
+        if (report.getStatus() == ReportStatus.CANCELLED) {
+            throw new RuntimeException("Report is already cancelled");
+        }
+
+        // Update status to CANCELLED (works for PENDING, PROCESSING, COMPLETED, FAILED)
+        report.setStatus(ReportStatus.CANCELLED);
+        report.setErrorMessage("Report cancelled by user");
+        report = reportRepository.save(report);
+
+        return mapToDTO(report);
+    }
+
+    /**
+     * Delete a report
+     * Any report can be deleted
+     */
+    @Transactional
+    public void deleteReport(String reportCode) {
+        RevenueReport report = reportRepository.findByReportCode(reportCode)
+                .orElseThrow(() -> new RuntimeException("Report not found: " + reportCode));
+
+        reportRepository.delete(report);
+    }
+
+    /**
      * Get all reports with pagination
      */
     public Page<RevenueReport> getAllReports(ReportRequestDTO request) {

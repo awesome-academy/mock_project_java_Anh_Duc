@@ -22,11 +22,11 @@ public class RevenueReport extends BaseEntity {
     private String reportCode;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "report_type", nullable = false)
+    @Column(name = "report_type", nullable = false, length = 50)
     private ReportType reportType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 20)
     private ReportStatus status;
 
     @Column(name = "start_date", nullable = false)

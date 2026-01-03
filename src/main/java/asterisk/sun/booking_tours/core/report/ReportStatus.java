@@ -4,7 +4,8 @@ public enum ReportStatus {
     PENDING("Pending", "fas fa-clock", "badge-warning"),
     PROCESSING("Processing", "fas fa-spinner", "badge-info"),
     COMPLETED("Completed", "fas fa-check-circle", "badge-success"),
-    FAILED("Failed", "fas fa-times-circle", "badge-danger");
+    FAILED("Failed", "fas fa-times-circle", "badge-danger"),
+    CANCELLED("Cancelled", "fas fa-ban", "badge-secondary");
 
     private final String label;
     private final String icon;

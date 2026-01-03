@@ -13,12 +13,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.api.common.dto.PaginatedResponse;
@@ -171,6 +172,42 @@ public class ApiAdminReportController {
                 reports.getSize());
 
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{reportCode}/cancel")
+    @Operation(summary = "Cancel a report request", description = "Cancel a report that is in PENDING or PROCESSING status. Once cancelled, the report will not be generated.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Report cancelled successfully"),
+            @ApiResponse(responseCode = "400", description = "Report cannot be cancelled (already completed/failed/cancelled)"),
+            @ApiResponse(responseCode = "404", description = "Report not found")
+    })
+    public ResponseEntity<SuccessResponse<ReportResponseDTO>> cancelReport(
+            @Parameter(description = "Report code") @PathVariable String reportCode) {
+
+        ReportResponseDTO response = reportService.cancelReport(reportCode);
+
+        return ResponseEntity.ok(new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "Report cancelled successfully",
+                response));
+    }
+
+    @DeleteMapping("/{reportCode}")
+    @Operation(summary = "Delete a report", description = "Delete a report that is in COMPLETED, FAILED, or CANCELLED status. Reports that are still being processed cannot be deleted.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Report deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Report cannot be deleted (still processing)"),
+            @ApiResponse(responseCode = "404", description = "Report not found")
+    })
+    public ResponseEntity<SuccessResponse<Void>> deleteReport(
+            @Parameter(description = "Report code") @PathVariable String reportCode) {
+
+        reportService.deleteReport(reportCode);
+
+        return ResponseEntity.ok(new SuccessResponse<>(
+                HttpStatus.OK.value(),
+                "Report deleted successfully",
+                null));
     }
 
     @GetMapping("/types")
