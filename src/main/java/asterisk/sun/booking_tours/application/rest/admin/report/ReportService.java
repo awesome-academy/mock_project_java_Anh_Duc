@@ -15,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.CreateReportRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.ReportRequestDTO;
@@ -77,7 +79,7 @@ public class ReportService {
         );
         report = reportRepository.save(report);
 
-        // Create message and send to queue
+        // Create message for queue
         ReportRequestMessage message = new ReportRequestMessage(
                 report.getId(),
                 reportCode,
@@ -86,7 +88,15 @@ public class ReportService {
                 request.getEndDate(),
                 userId
         );
-        reportQueueProducer.sendReportRequest(message);
+
+        // Send JMS message AFTER transaction is committed to avoid race condition
+        // where consumer tries to find report before it's committed to database
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                reportQueueProducer.sendReportRequest(message);
+            }
+        });
 
         return mapToDTO(report);
     }
