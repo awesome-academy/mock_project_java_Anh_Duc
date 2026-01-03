@@ -27,6 +27,12 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+  # JMS/ActiveMQ Configuration
+  activemq:
+    broker-url: vm://localhost?broker.persistent=false
+    non-blocking-redelivery: true
+  jms:
+    pub-sub-domain: false
 
 # Application Configuration
 app:
@@ -34,6 +40,10 @@ app:
   mail:
     from: ${MAIL_FROM:${MAIL_USERNAME}}
     verification-token-expiry: ${VERIFICATION_TOKEN_EXPIRY:24} # hours
+
+# Report Configuration
+report:
+  storage-path: ${REPORT_STORAGE_PATH:./reports}
 
 # Booking Configuration
 booking:
