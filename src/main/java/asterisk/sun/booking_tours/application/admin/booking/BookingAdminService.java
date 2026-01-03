@@ -196,8 +196,12 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
         Booking booking = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Booking not found with id: " + id));
 
+        // Store old status to check if statistics need to be updated
+        BookingStatus oldStatus = booking.getStatus();
+        BookingStatus newStatus = formEditBookingDTO.getStatus();
+
         // Update basic fields
-        booking.setStatus(formEditBookingDTO.getStatus());
+        booking.setStatus(newStatus);
         booking.setNotes(formEditBookingDTO.getNotes());
         booking.setNumAdults(formEditBookingDTO.getNumAdults());
         booking.setNumChild(formEditBookingDTO.getNumChild());
@@ -224,26 +228,45 @@ public class BookingAdminService extends BaseServiceController<BookingRepository
             booking.setTourDeparture(tourDeparture);
         }
 
-        if (booking.getStatus() == BookingStatus.PAID || booking.getStatus() == BookingStatus.COMPLETED || booking.getStatus() == BookingStatus.PENDING) {
+        repository.save(booking);
+
+        // Push update when status changes affect the top tours statistics
+        boolean wasCountedBefore = isCountedInStatistics(oldStatus);
+        boolean isCountedNow = isCountedInStatistics(newStatus);
+
+        if (wasCountedBefore != isCountedNow) {
             pushTopToursUpdate();
         }
-
-        repository.save(booking);
     }
 
     /**
      * Update booking status
      */
-    public void updateBookingStatus(Long id, BookingStatus status) {
+    public void updateBookingStatus(Long id, BookingStatus newStatus) {
         Booking booking = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Booking not found with id: " + id));
 
-        booking.setStatus(status);
+        BookingStatus oldStatus = booking.getStatus();
+        booking.setStatus(newStatus);
         repository.save(booking);
 
-        if (status == BookingStatus.PAID || status == BookingStatus.COMPLETED || status == BookingStatus.PENDING) {
+        // Push update when status changes affect the top tours statistics
+        // Statistics only count PAID and COMPLETED bookings
+        boolean wasCountedBefore = isCountedInStatistics(oldStatus);
+        boolean isCountedNow = isCountedInStatistics(newStatus);
+
+        // Push update if the booking enters or leaves the counted statuses
+        if (wasCountedBefore != isCountedNow) {
             pushTopToursUpdate();
         }
+    }
+
+    /**
+     * Check if a booking status is counted in top tours statistics
+     * Only PAID and COMPLETED bookings are counted
+     */
+    private boolean isCountedInStatistics(BookingStatus status) {
+        return status == BookingStatus.PAID || status == BookingStatus.COMPLETED;
     }
 
     /**

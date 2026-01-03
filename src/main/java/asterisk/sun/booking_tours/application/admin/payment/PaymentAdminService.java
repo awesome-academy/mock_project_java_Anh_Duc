@@ -95,14 +95,35 @@ public class PaymentAdminService extends BaseServiceController<PaymentRepository
 
         // Update booking status based on payment status
         if (payment.getBooking() != null) {
+            BookingStatus oldBookingStatus = payment.getBooking().getStatus();
+            BookingStatus newBookingStatus = null;
+
             if (status == PaymentStatus.COMPLETED) {
-                payment.getBooking().setStatus(BookingStatus.CONFIRMED);
-                // Push top tours statistics update when booking is CONFIRMED
-                pushTopToursUpdate();
+                newBookingStatus = BookingStatus.PAID;
+                payment.getBooking().setStatus(newBookingStatus);
             } else if (status == PaymentStatus.FAILED || status == PaymentStatus.CANCELLED) {
-                payment.getBooking().setStatus(BookingStatus.CANCELLED);
+                newBookingStatus = BookingStatus.CANCELLED;
+                payment.getBooking().setStatus(newBookingStatus);
+            }
+
+            // Push update when booking status changes affect the statistics
+            if (newBookingStatus != null) {
+                boolean wasCountedBefore = isCountedInStatistics(oldBookingStatus);
+                boolean isCountedNow = isCountedInStatistics(newBookingStatus);
+
+                if (wasCountedBefore != isCountedNow) {
+                    pushTopToursUpdate();
+                }
             }
         }
+    }
+
+    /**
+     * Check if a booking status is counted in top tours statistics
+     * Only PAID and COMPLETED bookings are counted
+     */
+    private boolean isCountedInStatistics(BookingStatus status) {
+        return status == BookingStatus.PAID || status == BookingStatus.COMPLETED;
     }
 
     /**
