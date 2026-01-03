@@ -1,8 +1,7 @@
 package asterisk.sun.booking_tours.application.rest.admin.report;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.CreateReportRequestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.report.dto.ReportRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.ReportRequestMessage;
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.ReportResponseDTO;
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.RevenueDataDTO;
@@ -112,32 +112,8 @@ public class ReportService {
     /**
      * Get all reports with pagination
      */
-    public Page<ReportResponseDTO> getAllReports(int page, int size) {
-        return reportRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, size))
-                .map(this::mapToDTO);
-    }
-
-    /**
-     * Get report file path for download
-     */
-    public Path getReportFilePath(String reportCode) {
-        RevenueReport report = reportRepository.findByReportCode(reportCode)
-                .orElseThrow(() -> new RuntimeException("Report not found"));
-
-        if (report.getStatus() != ReportStatus.COMPLETED) {
-            throw new RuntimeException("Report is not ready for download. Current status: " + report.getStatus());
-        }
-
-        if (report.getFilePath() == null) {
-            throw new RuntimeException("Report file not found");
-        }
-
-        Path filePath = Path.of(report.getFilePath());
-        if (!Files.exists(filePath)) {
-            throw new RuntimeException("Report file does not exist on disk");
-        }
-
-        return filePath;
+    public Page<RevenueReport> getAllReports(ReportRequestDTO request) {
+        return reportRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(request.getPage(), request.getLimit()));
     }
 
     /**
@@ -149,7 +125,46 @@ public class ReportService {
     }
 
     /**
+     * Generate report file as byte array for download (on-the-fly generation)
+     */
+    public byte[] generateReportForDownload(String reportCode) throws IOException {
+        RevenueReport report = reportRepository.findByReportCode(reportCode)
+                .orElseThrow(() -> new RuntimeException("Report not found"));
+
+        if (report.getStatus() != ReportStatus.COMPLETED) {
+            throw new RuntimeException("Report is not ready for download. Current status: " + report.getStatus());
+        }
+
+        // Fetch revenue data
+        List<RevenueDataDTO> revenueData = fetchRevenueData(
+                report.getStartDate(),
+                report.getEndDate(),
+                report.getReportType()
+        );
+
+        // Generate Excel file as byte array
+        return excelReportGenerator.generateRevenueReportAsBytes(
+                report.getReportCode(),
+                report.getReportType(),
+                report.getStartDate(),
+                report.getEndDate(),
+                revenueData
+        );
+    }
+
+    /**
+     * Generate filename for report download
+     */
+    public String getReportFileName(String reportCode) {
+        RevenueReport report = reportRepository.findByReportCode(reportCode)
+                .orElseThrow(() -> new RuntimeException("Report not found"));
+        return excelReportGenerator.generateFileName(reportCode, report.getReportType());
+    }
+
+    /**
      * Process report generation (called by queue consumer)
+     * This method validates the report request and marks it as completed.
+     * The actual Excel file is generated on-the-fly when user downloads.
      */
     @Transactional
     public void processReportGeneration(ReportRequestMessage message) {
@@ -161,26 +176,21 @@ public class ReportService {
             report.setStatus(ReportStatus.PROCESSING);
             reportRepository.save(report);
 
-            // Fetch revenue data
+            // Validate that we can fetch revenue data (pre-validation)
             List<RevenueDataDTO> revenueData = fetchRevenueData(
                     message.getStartDate(),
                     message.getEndDate(),
                     message.getReportType()
             );
 
-            // Generate Excel file
-            Path filePath = excelReportGenerator.generateRevenueReport(
+            // Generate filename for reference
+            String fileName = excelReportGenerator.generateFileName(
                     message.getReportCode(),
-                    message.getReportType(),
-                    message.getStartDate(),
-                    message.getEndDate(),
-                    revenueData
+                    message.getReportType()
             );
 
-            // Update report with file info
-            report.setFilePath(filePath.toAbsolutePath().toString());
-            report.setFileName(filePath.getFileName().toString());
-            report.setFileSize(Files.size(filePath));
+            // Update report metadata (no file stored on server)
+            report.setFileName(fileName);
             report.setGeneratedAt(LocalDateTime.now());
             report.setStatus(ReportStatus.COMPLETED);
             reportRepository.save(report);
@@ -190,7 +200,7 @@ public class ReportService {
             report.setStatus(ReportStatus.FAILED);
             report.setErrorMessage(e.getMessage());
             reportRepository.save(report);
-            throw new RuntimeException("Failed to generate report: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to process report: " + e.getMessage(), e);
         }
     }
 

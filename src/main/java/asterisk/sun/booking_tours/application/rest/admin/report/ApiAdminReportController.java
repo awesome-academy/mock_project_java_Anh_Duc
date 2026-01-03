@@ -1,8 +1,7 @@
 package asterisk.sun.booking_tours.application.rest.admin.report;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -22,9 +21,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import asterisk.sun.booking_tours.application.api.common.dto.PaginatedResponse;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.CreateReportRequestDTO;
+import asterisk.sun.booking_tours.application.rest.admin.report.dto.ReportRequestDTO;
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.ReportResponseDTO;
+import asterisk.sun.booking_tours.common.helper.MapperHelper;
 import asterisk.sun.booking_tours.core.report.ReportStatus;
 import asterisk.sun.booking_tours.core.report.ReportType;
 import asterisk.sun.booking_tours.core.report.RevenueReport;
@@ -115,7 +117,7 @@ public class ApiAdminReportController {
     }
 
     @GetMapping("/{reportCode}/download")
-    @Operation(summary = "Download report file", description = "Download the generated Excel report file. Report must be in COMPLETED status.")
+    @Operation(summary = "Download report file", description = "Download the generated Excel report file. Report must be in COMPLETED status. File is generated on-the-fly when downloading.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "File downloaded successfully"),
             @ApiResponse(responseCode = "400", description = "Report not ready for download"),
@@ -124,23 +126,23 @@ public class ApiAdminReportController {
     public ResponseEntity<Resource> downloadReport(
             @Parameter(description = "Report code") @PathVariable String reportCode) throws IOException {
 
-        // Get report entity
+        // Get report entity to validate status
         RevenueReport report = reportService.getReportForDownload(reportCode);
 
         if (report.getStatus() != ReportStatus.COMPLETED) {
             throw new RuntimeException("Report is not ready for download. Current status: " + report.getStatus());
         }
 
-        // Get file path
-        Path filePath = reportService.getReportFilePath(reportCode);
-
-        // Read file content
-        byte[] fileContent = Files.readAllBytes(filePath);
+        // Generate report file on-the-fly
+        byte[] fileContent = reportService.generateReportForDownload(reportCode);
         ByteArrayResource resource = new ByteArrayResource(fileContent);
+
+        // Get filename
+        String fileName = reportService.getReportFileName(reportCode);
 
         // Set response headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + report.getFileName() + "\"");
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
         headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION);
 
         return ResponseEntity.ok()
@@ -156,16 +158,19 @@ public class ApiAdminReportController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Reports retrieved successfully")
     })
-    public ResponseEntity<SuccessResponse<Page<ReportResponseDTO>>> getAllReports(
-            @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<PaginatedResponse<ReportResponseDTO>> getAllReports(ReportRequestDTO request) {
+        Page<RevenueReport> reports = reportService.getAllReports(request);
+        List<ReportResponseDTO> data = MapperHelper.mapList(reports.getContent(), ReportResponseDTO.class);
 
-        Page<ReportResponseDTO> reports = reportService.getAllReports(page, size);
-
-        return ResponseEntity.ok(new SuccessResponse<>(
+        PaginatedResponse<ReportResponseDTO> response = new PaginatedResponse<>(
                 HttpStatus.OK.value(),
                 "Reports retrieved successfully",
-                reports));
+                data,
+                reports.getTotalElements(),
+                reports.getNumber() + 1,
+                reports.getSize());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/types")

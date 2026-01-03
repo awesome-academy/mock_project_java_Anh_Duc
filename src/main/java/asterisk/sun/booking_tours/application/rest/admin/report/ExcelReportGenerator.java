@@ -1,11 +1,8 @@
 package asterisk.sun.booking_tours.application.rest.admin.report;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +20,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import asterisk.sun.booking_tours.application.rest.admin.report.dto.RevenueDataDTO;
@@ -32,36 +28,24 @@ import asterisk.sun.booking_tours.core.report.ReportType;
 @Component
 public class ExcelReportGenerator {
 
-    @Value("${report.storage-path:./reports}")
-    private String storagePath;
-
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private static final DateTimeFormatter FILE_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     /**
-     * Generate Excel report file
-     * @param reportCode Report code for file naming
+     * Generate Excel report and return as byte array (for streaming download)
+     * @param reportCode Report code for reference
      * @param reportType Type of report
      * @param startDate Start date of report period
      * @param endDate End date of report period
      * @param data List of revenue data
-     * @return Path to generated file
+     * @return byte array of Excel file content
      */
-    public Path generateRevenueReport(String reportCode, ReportType reportType,
-                                       LocalDate startDate, LocalDate endDate,
-                                       List<RevenueDataDTO> data) throws IOException {
-        // Ensure directory exists
-        Path dirPath = Paths.get(storagePath);
-        if (!Files.exists(dirPath)) {
-            Files.createDirectories(dirPath);
-        }
+    public byte[] generateRevenueReportAsBytes(String reportCode, ReportType reportType,
+                                                LocalDate startDate, LocalDate endDate,
+                                                List<RevenueDataDTO> data) throws IOException {
 
-        // Generate filename
-        String fileName = String.format("revenue_report_%s_%s.xlsx",
-                reportCode, LocalDateTime.now().format(FILE_DATE_FORMATTER));
-        Path filePath = dirPath.resolve(fileName);
+        try (Workbook workbook = new XSSFWorkbook();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
-        try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Revenue Report");
 
             // Create styles
@@ -95,11 +79,17 @@ public class ExcelReportGenerator {
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
             sheet.addMergedRegion(new CellRangeAddress(2, 2, 0, 6));
 
+            // Report code
+            Row codeRow = sheet.createRow(rowNum++);
+            Cell codeCell = codeRow.createCell(0);
+            codeCell.setCellValue(String.format("Report Code: %s", reportCode));
+            sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 6));
+
             rowNum++; // Empty row
 
             // Header row
             Row headerRow = sheet.createRow(rowNum++);
-            String[] headers = {"Date", "Total Bookings", "Completed", "Cancelled", "Total Revenue", "Avg. Booking Value", "Tour Name"};
+            String[] headers = getHeadersByReportType(reportType);
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers[i]);
@@ -116,7 +106,11 @@ public class ExcelReportGenerator {
                 Row dataRow = sheet.createRow(rowNum++);
 
                 Cell dateCell = dataRow.createCell(0);
-                dateCell.setCellValue(item.getDate() != null ? item.getDate().format(DATE_FORMATTER) : "N/A");
+                if (reportType == ReportType.TOUR_PERFORMANCE) {
+                    dateCell.setCellValue(item.getTourName() != null ? item.getTourName() : "N/A");
+                } else {
+                    dateCell.setCellValue(item.getDate() != null ? item.getDate().format(DATE_FORMATTER) : "N/A");
+                }
                 dateCell.setCellStyle(dateStyle);
 
                 Cell totalBookingsCell = dataRow.createCell(1);
@@ -138,10 +132,6 @@ public class ExcelReportGenerator {
                 Cell avgCell = dataRow.createCell(5);
                 avgCell.setCellValue(item.getAverageBookingValue() != null ? item.getAverageBookingValue().doubleValue() : 0);
                 avgCell.setCellStyle(currencyStyle);
-
-                Cell tourCell = dataRow.createCell(6);
-                tourCell.setCellValue(item.getTourName() != null ? item.getTourName() : "All Tours");
-                tourCell.setCellStyle(dataStyle);
 
                 // Accumulate totals
                 if (item.getTotalRevenue() != null) {
@@ -186,13 +176,25 @@ public class ExcelReportGenerator {
                 sheet.autoSizeColumn(i);
             }
 
-            // Write to file
-            try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
-                workbook.write(outputStream);
-            }
+            // Write to byte array
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
         }
+    }
 
-        return filePath;
+    private String[] getHeadersByReportType(ReportType reportType) {
+        if (reportType == ReportType.TOUR_PERFORMANCE) {
+            return new String[]{"Tour Name", "Total Bookings", "Completed", "Cancelled", "Total Revenue", "Avg. Booking Value"};
+        }
+        return new String[]{"Date", "Total Bookings", "Completed", "Cancelled", "Total Revenue", "Avg. Booking Value"};
+    }
+
+    /**
+     * Generate filename for the report
+     */
+    public String generateFileName(String reportCode, ReportType reportType) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        return String.format("revenue_report_%s_%s.xlsx", reportCode, timestamp);
     }
 
     private CellStyle createTitleStyle(Workbook workbook) {
@@ -266,9 +268,5 @@ public class ExcelReportGenerator {
         style.setBorderLeft(BorderStyle.MEDIUM);
         style.setBorderRight(BorderStyle.MEDIUM);
         return style;
-    }
-
-    public String getStoragePath() {
-        return storagePath;
     }
 }
