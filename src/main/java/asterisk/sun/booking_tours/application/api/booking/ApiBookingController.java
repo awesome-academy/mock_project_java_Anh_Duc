@@ -57,14 +57,7 @@ public class ApiBookingController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Create 5 bookings at once using available tour departures.
-     * This endpoint will automatically find 5 available tour departures and create bookings for each.
-     *
-     * @param requestBatchBookingDTO The batch booking request containing common booking info
-     * @param userDetails The authenticated user details
-     * @return BatchBookingResultDTO containing results of all booking attempts
-     */
+
     @Loggable
     @PostMapping("/batch-booking")
     public ResponseEntity<SuccessResponse<BatchBookingResultDTO>> batchBooking(
