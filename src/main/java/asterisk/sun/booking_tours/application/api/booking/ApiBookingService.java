@@ -1,7 +1,9 @@
 package asterisk.sun.booking_tours.application.api.booking;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import asterisk.sun.booking_tours.application.api.booking.dto.BatchBookingResultDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBatchBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.dto.RequestBatchBookingMockDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
 import asterisk.sun.booking_tours.application.rest.admin.dashboard.dto.ListBookingLatestDTO;
 import asterisk.sun.booking_tours.common.utils.CodeGenerator;
@@ -24,6 +27,7 @@ import asterisk.sun.booking_tours.core.tourdepartures.TourDeparture;
 import asterisk.sun.booking_tours.core.tourdepartures.TourDeparturesRepository;
 import asterisk.sun.booking_tours.core.user.User;
 import asterisk.sun.booking_tours.core.user.UserRepository;
+import asterisk.sun.booking_tours.core.user.UserStatus;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -300,6 +304,167 @@ public class ApiBookingService {
 
         logger.info("Batch booking completed: {} successful, {} failed out of {} requested",
                 successCount, failedCount, BATCH_SIZE);
+
+        return result;
+    }
+
+    /**
+     * Book multiple tours using mock data from users in database.
+     * This method will find available tour departures and create bookings using random users from database.
+     *
+     * @param requestBatchBookingDTO The batch booking request containing number of bookings and basic info
+     * @return BatchBookingResultDTO containing results of all booking attempts
+     */
+    @Transactional
+    public BatchBookingResultDTO bookMultipleToursWithMockUsers(RequestBatchBookingMockDTO requestBatchBookingDTO) {
+        final int batchSize = requestBatchBookingDTO.getNumberOfBookings() != null
+                ? requestBatchBookingDTO.getNumberOfBookings() : 5;
+        final Random random = new Random();
+
+        BatchBookingResultDTO result = new BatchBookingResultDTO();
+        result.setTotalRequested(batchSize);
+
+        // Get all active users from database (prioritize USER role, but include all)
+        List<User> allUsers = userRepository.findAll()
+                .stream()
+                .filter(user -> user.getStatus() == UserStatus.ACTIVE)
+                .toList();
+
+        if (allUsers.isEmpty()) {
+            throw new IllegalArgumentException("No active users found in database for mock booking.");
+        }
+
+        // Shuffle users for random selection
+        List<User> shuffledUsers = new java.util.ArrayList<>(allUsers);
+        Collections.shuffle(shuffledUsers, random);
+
+        // Find available tour departures (with available slots and future return dates)
+        List<TourDeparture> availableDepartures = tourDeparturesRepository.findAll()
+                .stream()
+                .filter(td -> td.getAvailableSlots() != null && td.getAvailableSlots() > 0)
+                .filter(td -> td.getReturnDate() != null && !java.time.LocalDate.now().isAfter(td.getReturnDate()))
+                .filter(td -> td.getAvailableSlots() <= td.getTotalSlots())
+                .limit(batchSize)
+                .toList();
+
+        if (availableDepartures.isEmpty()) {
+            throw new IllegalArgumentException("No available tour departures found.");
+        }
+
+        int successCount = 0;
+        int failedCount = 0;
+
+        int numAdults = requestBatchBookingDTO.getNumAdultsPerBooking() != null
+                ? requestBatchBookingDTO.getNumAdultsPerBooking() : 1;
+        int numChild = requestBatchBookingDTO.getNumChildPerBooking() != null
+                ? requestBatchBookingDTO.getNumChildPerBooking() : 0;
+        int totalParticipants = numAdults + numChild;
+
+        for (int i = 0; i < availableDepartures.size(); i++) {
+            TourDeparture tourDeparture = availableDepartures.get(i);
+            // Select a user (cycle through if fewer users than bookings)
+            User selectedUser = shuffledUsers.get(i % shuffledUsers.size());
+
+            try {
+                Tour tour = tourDeparture.getTour();
+
+                // Check if enough slots available
+                if (tourDeparture.getAvailableSlots() < totalParticipants) {
+                    BatchBookingResultDTO.BookingResult bookingResult = new BatchBookingResultDTO.BookingResult(
+                            tourDeparture.getId(),
+                            tour.getName(),
+                            null,
+                            false,
+                            "Not enough available slots"
+                    );
+                    result.addResult(bookingResult);
+                    failedCount++;
+                    continue;
+                }
+
+                // Calculate price
+                PriceCalculator priceCalculator = new PriceCalculator(
+                        numAdults,
+                        numChild,
+                        tour.getPriceAdult(),
+                        tour.getPriceChild()
+                );
+
+                // Build contact name from user's first and last name
+                String contactName = (selectedUser.getFirstName() + " " + selectedUser.getLastName()).trim();
+                if (contactName.isEmpty()) {
+                    contactName = selectedUser.getUsername();
+                }
+
+                // Create booking using user's information
+                Booking booking = new Booking();
+                booking.setUser(selectedUser);
+                booking.setTourDeparture(tourDeparture);
+                booking.setCode(CodeGenerator.generateBookingCode(bookingRepository::existsByCode));
+                booking.setNotes(requestBatchBookingDTO.getNotes() != null
+                        ? requestBatchBookingDTO.getNotes()
+                        : "Mock booking for user: " + selectedUser.getUsername());
+                booking.setNumAdults(numAdults);
+                booking.setNumChild(numChild);
+                booking.setContactName(contactName);
+                booking.setContactEmail(selectedUser.getEmail());
+                booking.setContactPhone(selectedUser.getPhone());
+                booking.setSubTotal(priceCalculator.getSubTotal());
+                booking.setDiscount(priceCalculator.getDiscount());
+                booking.setFinalTotal(priceCalculator.getFinalTotal());
+                booking.setStatus(BookingStatus.PENDING);
+
+                // Set payment deadline
+                LocalDateTime paymentDeadline;
+                if (paymentDeadlineHours <= 0) {
+                    paymentDeadline = LocalDateTime.now().plusMinutes(1);
+                } else {
+                    paymentDeadline = LocalDateTime.now().plusHours(paymentDeadlineHours);
+                }
+                booking.setPaymentDeadline(paymentDeadline);
+
+                // Update available slots
+                tourDeparture.setAvailableSlots(tourDeparture.getAvailableSlots() - totalParticipants);
+                tourDeparturesRepository.save(tourDeparture);
+
+                // Save booking
+                bookingRepository.save(booking);
+
+                logger.info("Created mock batch booking {} for tour departure {} with user {} ({}), payment deadline: {}",
+                        booking.getCode(), tourDeparture.getId(), selectedUser.getUsername(),
+                        selectedUser.getEmail(), paymentDeadline);
+
+                BatchBookingResultDTO.BookingResult bookingResult = new BatchBookingResultDTO.BookingResult(
+                        tourDeparture.getId(),
+                        tour.getName(),
+                        booking.getCode(),
+                        true,
+                        "Booked by user: " + selectedUser.getUsername() + " (" + selectedUser.getEmail() + ")"
+                );
+                result.addResult(bookingResult);
+                successCount++;
+
+            } catch (Exception e) {
+                logger.error("Failed to create mock booking for tour departure {} with user {}: {}",
+                        tourDeparture.getId(), selectedUser.getUsername(), e.getMessage());
+
+                BatchBookingResultDTO.BookingResult bookingResult = new BatchBookingResultDTO.BookingResult(
+                        tourDeparture.getId(),
+                        tourDeparture.getTour() != null ? tourDeparture.getTour().getName() : "Unknown",
+                        null,
+                        false,
+                        e.getMessage()
+                );
+                result.addResult(bookingResult);
+                failedCount++;
+            }
+        }
+
+        result.setSuccessCount(successCount);
+        result.setFailedCount(failedCount);
+
+        logger.info("Mock batch booking completed: {} successful, {} failed out of {} requested (using {} unique users)",
+                successCount, failedCount, batchSize, Math.min(shuffledUsers.size(), batchSize));
 
         return result;
     }

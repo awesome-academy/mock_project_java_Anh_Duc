@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import asterisk.sun.booking_tours.application.api.booking.dto.BatchBookingResultDTO;
-import asterisk.sun.booking_tours.application.api.booking.dto.RequestBatchBookingDTO;
+import asterisk.sun.booking_tours.application.api.booking.dto.RequestBatchBookingMockDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestBookingDTO;
 import asterisk.sun.booking_tours.application.api.booking.dto.RequestCancelBookingDTO;
 import asterisk.sun.booking_tours.application.api.common.dto.SuccessResponse;
@@ -61,11 +61,9 @@ public class ApiBookingController {
     @Loggable
     @PostMapping("/batch-booking")
     public ResponseEntity<SuccessResponse<BatchBookingResultDTO>> batchBooking(
-            @Valid @RequestBody RequestBatchBookingDTO requestBatchBookingDTO,
-            @AuthenticationPrincipal UserDetails userDetails) {
+            @Valid @RequestBody RequestBatchBookingMockDTO requestBatchBookingDTO) {
 
-        BatchBookingResultDTO result = clientBookingService.bookMultipleTours(
-                requestBatchBookingDTO, userDetails.getUsername());
+        BatchBookingResultDTO result = clientBookingService.bookMultipleToursWithMockUsers(requestBatchBookingDTO);
 
         SuccessResponse<BatchBookingResultDTO> response = new SuccessResponse<>(
                 HttpStatus.OK.value(),
