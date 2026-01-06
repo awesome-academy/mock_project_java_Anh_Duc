@@ -62,17 +62,17 @@ public class BatchBookingResultDTO {
         private String tourName;
         private String bookingCode;
         private boolean success;
-        private String errorMessage;
+        private String message;
 
         public BookingResult() {
         }
 
-        public BookingResult(Long tourDepartureId, String tourName, String bookingCode, boolean success, String errorMessage) {
+        public BookingResult(Long tourDepartureId, String tourName, String bookingCode, boolean success, String message) {
             this.tourDepartureId = tourDepartureId;
             this.tourName = tourName;
             this.bookingCode = bookingCode;
             this.success = success;
-            this.errorMessage = errorMessage;
+            this.message = message;
         }
 
         public Long getTourDepartureId() {
@@ -107,12 +107,12 @@ public class BatchBookingResultDTO {
             this.success = success;
         }
 
-        public String getErrorMessage() {
-            return errorMessage;
+        public String getMessage() {
+            return message;
         }
 
-        public void setErrorMessage(String errorMessage) {
-            this.errorMessage = errorMessage;
+        public void setMessage(String message) {
+            this.message = message;
         }
     }
 }

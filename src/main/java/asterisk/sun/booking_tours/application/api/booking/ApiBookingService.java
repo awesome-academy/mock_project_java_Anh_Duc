@@ -268,7 +268,11 @@ public class ApiBookingService {
                 tourDeparturesRepository.save(tourDeparture);
 
                 // Save booking
-                bookingRepository.save(booking);
+                Booking savedBooking = bookingRepository.save(booking);
+
+                // Send realtime notification to dashboard
+                ListBookingLatestDTO dto = convertToRecentBookingDTO(savedBooking);
+                messagingTemplate.convertAndSend("/topic/dashboard/recent-bookings", dto);
 
                 logger.info("Created batch booking {} for tour departure {} with payment deadline: {}",
                         booking.getCode(), tourDeparture.getId(), paymentDeadline);
@@ -428,10 +432,14 @@ public class ApiBookingService {
                 tourDeparturesRepository.save(tourDeparture);
 
                 // Save booking
-                bookingRepository.save(booking);
+                Booking savedBooking = bookingRepository.save(booking);
+
+                // Send realtime notification to dashboard
+                ListBookingLatestDTO dto = convertToRecentBookingDTO(savedBooking);
+                messagingTemplate.convertAndSend("/topic/dashboard/recent-bookings", dto);
 
                 logger.info("Created mock batch booking {} for tour departure {} with user {} ({}), payment deadline: {}",
-                        booking.getCode(), tourDeparture.getId(), selectedUser.getUsername(),
+                        savedBooking.getCode(), tourDeparture.getId(), selectedUser.getUsername(),
                         selectedUser.getEmail(), paymentDeadline);
 
                 BatchBookingResultDTO.BookingResult bookingResult = new BatchBookingResultDTO.BookingResult(
@@ -439,7 +447,7 @@ public class ApiBookingService {
                         tour.getName(),
                         booking.getCode(),
                         true,
-                        "Booked by user: " + selectedUser.getUsername() + " (" + selectedUser.getEmail() + ")"
+                        "Booked by " + contactName + " (" + selectedUser.getUsername() + " - " + selectedUser.getEmail() + ")"
                 );
                 result.addResult(bookingResult);
                 successCount++;
